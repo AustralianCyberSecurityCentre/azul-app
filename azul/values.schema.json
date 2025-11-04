@@ -536,9 +536,21 @@
             "unauthorized_help"
           ],
           "additionalProperties": false
+        },
+        "replicas": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pdb": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/podDisruptionBudget"
+            }
+          ]
         }
       },
-      "required": ["config"]
+      "required": ["config", "replicas", "pdb"]
     },
     "dispatcher": {
       "type": "object",
@@ -870,6 +882,14 @@
         },
         "resources": {
           "type": "object"
+        },
+        "pdb": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/podDisruptionBudget"
+            }
+          ]
         }
       },
       "allOf": [
@@ -1751,6 +1771,32 @@
       },
       "else": {}
     },
+    "podDisruptionBudget": {
+      "description": "A PodDisruptionBudget manager for a particular resource.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "minAvailable": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["enabled"],
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": ["minAvailable"]
+      },
+      "else": {}
+    },
     "securityLabel": {
       "description": "A human readable security marking.",
       "type": "string",
@@ -1867,6 +1913,14 @@
         "replicas": {
           "type": "integer",
           "minimum": 0
+        },
+        "pdb": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/podDisruptionBudget"
+            }
+          ]
         },
         "resources": {
           "$ref": "#/definitions/resources"

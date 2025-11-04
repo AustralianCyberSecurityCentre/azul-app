@@ -9,6 +9,10 @@
 {{- include "dispatcher.service" (dict "root" . "name" "dp-metastore-streams" "app" "dp-metastore-streams")}}
 {{- include "dispatcher.service" (dict "root" . "name" "dp-plugin-events" "app" "dp-plugin-events")}}
 {{- include "dispatcher.service" (dict "root" . "name" "dp-plugin-streams" "app" "dp-plugin-streams")}}
+{{- include "dispatcher.pdb" (dict "root" . "name" "dp-metastore-events" "app" "dp-metastore-events" "config" $cfg.metastore.events )}}
+{{- include "dispatcher.pdb" (dict "root" . "name" "dp-metastore-streams" "app" "dp-metastore-streams" "config" $cfg.metastore.streams )}}
+{{- include "dispatcher.pdb" (dict "root" . "name" "dp-plugin-events" "app" "dp-plugin-events" "config" $cfg.plugin.events )}}
+{{- include "dispatcher.pdb" (dict "root" . "name" "dp-plugin-streams" "app" "dp-plugin-streams" "config" $cfg.plugin.streams )}}
 
 {{/* Migrations */}}
 {{- $root := . }}

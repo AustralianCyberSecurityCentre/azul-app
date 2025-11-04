@@ -1,0 +1,17 @@
+{{- define "dispatcher.pdb" }}
+{{- if .config.pdb.enable }}
+{{- if (lt .config.replicas 2) }}
+{{- fail (printf "poddisruptionbudgets require at least 2 replicas for dispatcher instance: %s" .name) }}
+{{- end }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .name }}-pdb
+spec:
+  minAvailable: {{ .minAvailable }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+{{- end }}
+{{- end }}

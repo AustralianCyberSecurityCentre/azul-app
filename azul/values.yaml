@@ -662,6 +662,10 @@ web:
     # If statement matches and failures are logged as "debug" console messages in the
     # web UI, and information for the schema can be spotted via the "debug" tab.
     binary_external_links: []
+  replicas: 2
+  hpa:
+    enable: true
+    minAvailable: 1
 
 # Message and event coordinator.
 dispatcher:
@@ -687,6 +691,10 @@ dispatcher:
     metastore:
       events:
         replicas: 1
+        # requires >1 replica
+        pdb:
+          enable: false
+          minAvailable: 1
         resources:
           requests:
             memory: "1Gi"
@@ -702,6 +710,10 @@ dispatcher:
           DP.EVENTS.DEDUPE_CACHE_BYTES: "10Mi"
       streams:
         replicas: 1
+        # requires >1 replica
+        pdb:
+          enable: false
+          minAvailable: 1
         resources:
           requests:
             memory: "1Gi"
@@ -720,6 +732,10 @@ dispatcher:
     plugin:
       events:
         replicas: 1
+        # requires >1 replica
+        pdb:
+          enable: false
+          minAvailable: 1
         resources:
           requests:
             memory: "2Gi"
@@ -740,6 +756,10 @@ dispatcher:
           DP.EVENTS.REPLAY_PLUGIN_CACHE.MIN_RUNTIME_SECONDS: "10"
       streams:
         replicas: 1
+        # requires >1 replica
+        pdb:
+          enable: false
+          minAvailable: 1
         resources:
           requests:
             memory: "2Gi"
@@ -890,6 +910,10 @@ metastore:
 restapi:
   minReplicas: 1
   maxReplicas: 4
+  # requires >1 replica
+  pdb:
+    enable: false
+    minAvailable: 1
   resources:
     requests:
       memory: "4Gi"

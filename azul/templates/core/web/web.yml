@@ -7,7 +7,7 @@ metadata:
     section: core
     component: frontend
 spec:
-  replicas: 2
+  replicas: {{ .Values.web.replicas }}
   revisionHistoryLimit: 1
   selector:
     matchLabels:
@@ -101,6 +101,21 @@ spec:
             items:
             - key: config.json
               path: config.json
+{{- if .Values.web.hpa.enable }}
+{{- if (lt .Values.web.replicas 2) }}
+{{- fail "web pod needs multiple replicas to enable poddisruptionbudgets" }}
+{{- end }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: webui-pdb
+spec:
+  minAvailable: {{ .Values.web.hpa.minAvailable }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+{{- end }}
 ---
 apiVersion: v1
 kind: Service
