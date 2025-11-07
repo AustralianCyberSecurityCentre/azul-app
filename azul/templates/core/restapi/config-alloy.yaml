@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restapi-alloy
+data:
+  config.river: |
+    local.file_match "restapi_server_audit" {
+      path_targets = [{
+        __address__ = "localhost",
+        __path__    = "/logs/*.log*",
+        app         = "restapi-server-audit",
+        component   = "frontend",
+        namespace   = "{{ .Release.Namespace }}",
+        section     = "core",
+      }]
+    }
+
+    loki.source.file "restapi_server_audit" {
+      targets               = local.file_match.restapi_server_audit.targets
+      forward_to            = [loki.write.default.receiver]
+      legacy_positions_file = "/logs/positions.yaml"
+    }
+
+    loki.write "default" {
+      endpoint {
+        url = "{{ .Values.external.loki.endpoint }}/loki/api/v1/push"
+      }
+      external_labels = {}
+    }
+

@@ -1,0 +1,74 @@
+{{- define "plugin.container.source.init" -}}
+- name: git-sync
+  image: {{ get .root.Values.images.external "git-sync" | required (printf "missing image for git-sync") }}
+  imagePullPolicy: {{ .root.Values.images.pullPolicy }}
+  # container not fully hardened due to need to edit /etc/passwd for ssh
+  securityContext:
+    fsGroup: 21000
+    runAsUser: 21000
+    runAsGroup: 21000
+    allowPrivilegeEscalation: false
+    # FUTURE - readonly root file system (some plugins fail if this is enabled).
+    # readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+      add: ["NET_BIND_SERVICE"]
+  volumeMounts:
+  - name: code
+    mountPath: /code
+  - name: tmp
+    mountPath: /tmp/
+  {{- if .source.secretSSH }}
+  - name: ssh
+    subPath: id_rsa
+    mountPath: /etc/git-secret/ssh
+  {{- end }}
+  {{- if .source.secretEnv }}
+  envFrom:
+  - secretRef:
+      name: {{ .source.secretEnv }}
+  {{- end }}
+  env:
+  - name: GITSYNC_REPO
+    value: {{ .source.repo}}
+  - name: GITSYNC_REF
+    value: {{ .source.branch }}
+  - name: GITSYNC_ROOT
+    value: /code
+  - name: GITSYNC_LINK
+    value: dest
+  - name: GITSYNC_ONE_TIME
+    value: "true"
+  - name: GITSYNC_DEPTH
+    value: "1"
+  - name: GITSYNC_SUBMODULES
+    value: {{ .source.includeSubmodules | default "\"off\"" }}
+  {{- if .source.secretSSH }}
+  - name: GITSYNC_SSH
+    value: "true"
+  - name: GITSYNC_SSH_KNOWN_HOSTS
+    value: "false"
+  - name: GITSYNC_ADD_USER
+    value: "true"
+  {{- end }}
+  {{- if eq (.source.sslVerify | default true) false }}
+  - name: GITSYNC_GIT_CONFIG
+    value: "http.sslVerify:false"
+  {{- end }}
+- name: dir-clean
+  image: {{ get .root.Values.images.external "git-sync" | required (printf "missing image for git-sync") }}
+  imagePullPolicy: {{ .root.Values.images.pullPolicy }}
+  {{- include "harden.container" . | nindent 2 }}
+  volumeMounts:
+  - name: code
+    mountPath: /code
+  - name: tmp
+    mountPath: /tmp/
+  command:
+  - "/bin/sh"
+  - "-c"
+  - |
+    cd /code/dest
+    ls -la /code/dest
+    echo `git log -1 --format="%ci" | cut -c1-10`-`git rev-parse --short HEAD` > /code/gitversion
+{{- end }}

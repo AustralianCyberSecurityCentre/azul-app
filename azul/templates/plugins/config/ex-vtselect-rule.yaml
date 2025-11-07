@@ -1,0 +1,17 @@
+{{- if .Values.plugins.virustotal.demoConfig}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vtselect-rules
+data:
+  DEMO.yaml: |
+    - any_av_gh0st:
+        syntax: gjson
+        rule: 'scans|@iany:gh0st,ghost'
+        daily_quota: 10
+    - any_av_gh0st_v3:
+        syntax: gjson
+        rule: 'attributes.last_analysis_results|@iany:gh0st,ghost'
+        daily_quota: 10
+
+{{- end }}

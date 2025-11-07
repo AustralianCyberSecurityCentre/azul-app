@@ -1,0 +1,1804 @@
+namespace:
+  # The actual namespace used depends on how you deploy this helm chart. It is not specified in this file.
+  # Create the namespace resource. Some environments might not have permissions to do this.
+  create: true
+  # Apply latest security standards to the namespace.
+  # If you want to do something custom, disable and manually define appropriate labels.
+  # ref https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-namespace-labels/
+  secure: true
+  # custom labels to apply to the namespace
+  labels: {}
+
+# Names of secrets containing the container registry login details.
+imagePullSecrets: []
+
+# Any annotations to apply to ALL pods.
+podAnnotations: {}
+
+# Label: Values to filter valid nodes that Azul can be deployed onto.
+nodeSelector: {}
+
+# K8s toleration definitions to apply to Azul.
+tolerations: []
+
+# K8s node and pod affinity/anti-affinity definitions to apply to Azul.
+affinity: {}
+
+# K8s storage class name to use for all PVCs
+storageClassName: "default"
+
+# Name of ConfigMap that contains CA bundle to trust.
+# If empty, default certificates supplied by debian will be used
+# Must contain the key 'ca.crt' and be prepopulated with ALL relevant CA certificates.
+# In debian this file resides at /etc/ssl/certs/ca-certificates.crt
+CACertificateConfigMap: ""
+
+# Deploy network policies.
+networkPolicy: true
+
+# Allow all pods to connect to the istio TBONE network. (Ambient mode for Istio)
+# Note this is equivalent to opening all ports for anything in the Istio Service Mesh.
+# To continue to control network traffic there needs to be an Istio AuthorizationPolicy enabled that enforces what
+# the networkPolicy would normally do, however network policy also needs to be enabled for communication with
+# services outside of the service mesh, as those connections will bypass istio, if you set istio's mode to STRICT
+# instead of the default permissive, you can disable network policy and just rely on AuthorizationPolicy.
+# IMPORTANT - istio must be installed and the namespace annotated with istio ambient mode (refer to example-values.yaml)
+istioEnabled: false
+
+# List any of the existing network policies by name that shouldn't be created.
+# This is useful for replacing policies or if there is a policy that isn't applicable to your environment.
+disableNetworkPolicies: []
+
+# Define any custom network policy here
+# This will be a list of kubernetes network policies
+customNetworkPolicies: []
+# - apiVersion: networking.k8s.io/v1
+#   kind: NetworkPolicy
+#   metadata:
+#     name: allow-egress-custom1
+#   spec:
+#     podSelector:
+#       matchLabels:
+#         allow-egress-custom1: "true"
+#     policyTypes:
+#       - Egress
+#     egress:
+#       - to:
+#           - podSelector:
+#               matchLabels:
+#                 part-of: azul
+#       - ports:
+#           - port: 80
+#             protocol: TCP
+# - apiVersion: networking.k8s.io/v1
+#   kind: NetworkPolicy
+#   metadata:
+#     name: allow-egress-custom2
+#   spec:
+#     podSelector:
+#       matchLabels:
+#         allow-egress-custom2: "true"
+#     policyTypes:
+#       - Egress
+#     egress:
+#       - to:
+#           - podSelector:
+#               matchLabels:
+#                 part-of: azul
+#       - ports:
+#           - port: 80
+#             protocol: TCP
+
+# Set global resource limits to Azul namespace.
+limitRange:
+  enabled: true
+  spec:
+    limits:
+      - defaultRequest:
+          cpu: 100m
+          memory: "300Mi"
+        default:
+          cpu: 1000m
+          memory: "2Gi"
+        type: Container
+
+# default values for plugin HPA, unless overwritten individually
+coreHPA:
+  averageUtilization: 100
+  maxReplicas: 3
+  minReplicas: 1
+
+# Default HPA values for plugins not using git-sync unless overwritten by individual component.
+pluginHPA:
+  maxReplicas: 10
+  minReplicas: 1
+  averageUtilization: 100
+  # EXPERIMENTAL FEATURE - BE VERY CAREFUL
+  # THIS MAY CAUSE ADVERSE SCALING IN YOUR CLUSTER, DEPENDING ON THE DISTRIBUTION OF YOUR
+  # FILES
+  # MONITOR HPAs CAREFULLY IF YOU DECIDE TO ENABLE THIS
+  # If Azul's internal scaler should be used as the source of scaling
+  # This requires KEDA in the environment
+  useSmartScaler: false
+  # If using the internal scaler, if historical entities should be considered
+  includeHistoric: false
+  # If using the internal scaler, the maximum backlog for a plugin before scaling occurs
+  maxQueueLength: 50
+
+# Default HPA values for plugins using git-sync unless overwritten by individual component.
+pluginSyncHPA:
+  maxReplicas: 10
+  minReplicas: 1
+  averageUtilization: 100
+  useSmartScaler: false
+  includeHistoric: false
+  maxQueueLength: 50
+
+# Create insecure/known secrets and passwords for a demo setup. DO NOT USE IN PRODUCTION.
+createExampleSecrets: false
+
+# Default names of secrets and their expected values.
+# The name of the secret can be change here, to generate their value refer to kubernetes docs:
+# CLI: https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_secret_generic/
+# or
+# YAML: https://kubernetes.io/docs/concepts/configuration/secret/
+secrets:
+  # Filestore secret has multiple variations depending on the chosen filestore e.g azure vs S3. (Created by infra chart.)
+  # S3 format:
+  # data:
+  #   accesskey: <access-key-from-minio-or-s3> # Access key / username from S3 UI.
+  #   secretkey: <secret-key-from-minio-or-s3> # Secret key / password from S3 UI.
+  # Azure format Option A ()
+  # data:
+  #   accesskey: <secret-key-from-azure> # Get the storage accounts access key from access keys tab.
+  # Azure format Option B (storage account by authorizing an application registration)
+  # To setup the app registration, create a new azure app registration and add the app role "azul-storage" ensure the
+  # allowed members including applications and the registered application can contact azul-storage and read and write.
+  # Once the role exists map it to your storage account with read/write permissions.
+  # relevant documentation https://github.com/Azure/azure-sdk-for-go/tree/main/sdk/azidentity - service principal with secret.
+  # The three values here map to Environment variables AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET respectively.
+  # data:
+  #   tenantId: <azure-tenancy-id>
+  #   clientId: <azure-app-registration-client-id>
+  #   clientsecret: <secret-key-from-azure> # Get when creating a new authorized application.
+  filestore: "s3-keys"
+  # Redis that is used by dispatcher (automatically created in infra chart if you are using the built-in chart)
+  # Must keep in sync with redis.author.existingSecret
+  # data:
+  #   redis-username: <redis-username> # username used when setting up redis
+  #   redis-password: <redis-password> # password used when setting up redis.
+  redis: "redis"
+
+  # Credentials used by metastore pods (ingestors and restapi.)
+  # data:
+  #   writer: <opensearch-user-writer-password> # As part of azul installation a user called "writer" should be created in Opensearch.
+  #                                             # This is the password for that user so that metastore pods can access Opensearch.
+  metastoreCreds: "metastore-creds"
+
+  # Credentials used to recieve events from assemblyline post-processing actions.
+  # data:
+  #   al_token: <assemblyline-api-token-generated-from-the-assemblyline-API> # refer to https://cybercentrecanada.github.io/assemblyline4_docs/integration/key_generation/
+  #   al_user: <assemblyline-username-used-to-generate-api-token>
+  assemblylineReceiver: "assemblyline-receiver"
+
+  # Virustotal credentials used by various plugins to contact virustotal.
+  # data:
+  #   apikey: <apikey-from-vt> # When you signup for virustotal you get an API key to use there API, that value is required here.
+  virustotalCreds: "virustotal-creds"
+
+  # Backup S3 credentials used to backup important kafka data to an S3 instance.
+  # data:
+  #   access_key: <access-key-from-backup-minio-or-s3> # Access key / username from S3 UI.
+  #   secret_key: <secret-key-from-backup-minio-or-s3> # Secret key / password from S3 UI.
+  backupS3Keys: "s3-backup-keys"
+
+  # Stats holds the secrets for azul-stats to contact auth.
+  # This is expected to be a service account that can authenticate to the authentication provider and get an auth token.
+  # data:
+  #    client_id: <client-id-for-the-service-account-logging-into-auth>
+  #    client_secret: <secret-for-the-client-id-for-service-account>
+  azulStats: "azul-stats"
+
+# Configuration related to connection to external services.
+# for any deployment, you'll need to override most properties in this section
+external:
+  # Details for the OpenSearch metadata store.
+  opensearch:
+    # OpenSearch API endpoint.
+    endpoint: ""
+    # endpoint: "http://metastore.example.internal:9200"
+    # This user must have permissive access to azul.*, to crud indices and documents.
+    # Must also be able to create aliases and a few other permissions on the global level, see doco.
+    username: "azul_writer"
+    # password must be supplied via secret 'metastore-creds' on key 'writer'
+    # password: ""
+    # azul will create indices under under 'azul.(x/o).(partition).*'
+    partition: "default01"
+    # If this value is incremented, all events will be reindexed from dispatcher.
+    # This is needed if moving between opensearch clusters or if mapping has changed.
+    # This is not needed if the partition has been changed.
+    versionSuffix: "0"
+  # Details of stream store.
+  filestore:
+    # Supported backends: s3, azure
+    backend: "s3"
+    endpoint: ""
+    # endpoint: "s3-store.example.internal:9000"
+    # backend: "azure"
+    # endpoint: "https://<storage-account-name>.blob.core.windows.net/"
+    # # bucket in s3, container in azure blob
+    # Where to store the streams in the backend. This is the `bucket` for s3, `container` for azure.
+    location: "azul"
+    # http or https, if applicable
+    secure: true
+    # storage region if applicable
+    region: ""
+    # XOR encode content to avoid AV detections
+    # Once this is enabled, you MUST NOT turn this off or otherwise binary data will become
+    # inaccessible.
+    xorEncoding: false
+  # Details of kafka.
+  kafka:
+    endpoint: ""
+    # endpoint: "events-kafka.example.internal:9092"
+    # The 'prefix' for the active Azul kafka topics (azul.<prefix>.something).
+    # i.e. azul.default01.system.status, azul.default01.mysource.binary.data
+    # This will need to be modified when the event format changes, to transform existing events to new format.
+    topicPrefix: "default01"
+    # default replication factor of Azul's kafka topics
+    topicDefaultReplicas: 3
+    # default number of partitions (max replicas of dispatcher) for kafka topics
+    # if you increase/decrease this number, you will need to alter prefix and reprocess existing kafka data to see the change.
+    topicDefaultPartitions: 4
+    # Override specific kafka topic properties.
+    # This is where you can override default ageoff for specific kafka topics that Azul uses.
+    # If you want to configure topics for specific sources, you should configure in the `sources: {}` section
+    #   of this file instead.
+    # Topics defined in this section should exclude 'azul.<partition>.',
+    #   i.e. kafka topic 'azul.test01.system.status' should be controlled below as 'system.status'.
+    topics: []
+    # - topic: system.status
+    #   numpartitions: 3
+    #   replicationfactor: 1
+    #   config:
+    #     segment.bytes: 1073741824
+    #     cleanup.policy: compact
+
+  redis:
+    # shouldn't need to change this
+    endpoint: "azul-redis-master:6379"
+
+  # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
+  loki:
+    endpoint: ""
+    # endpoint: "loki.namespace.svc.cluster.local:3100"
+
+  # External service endpoints that plugins will connect to.
+  services: {}
+  # virustotal api server
+  # virustotal: "httpx://www.virustotal.com"
+  # assemblyline
+  # assemblyline: "httpx://assemblyline.internal"
+
+# redis is a required component of Azul
+redis:
+  enabled: true
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+  pvcSize: "1Gi"
+
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+
+  persistentVolumeClaimRetentionPolicy:
+    enabled: true
+    whenScaled: Retain
+    whenDeleted: Retain
+
+# Monitoring dashboards for use with Grafana.
+# This just deploys configurations and does not include a Grafana deployment -
+# where this lives is a implementation decision and is left to the user.
+monitoring:
+  enabled: true
+
+  # If alerting of bad system metrics should be enabled.
+  alerting: false
+
+  # The target messenging system for alerts.
+  # alertWebhookType: "teams"
+  # alertWebhookGeneric: "https://webhook"
+  # alertWebhookPlugin: "http://sameordifferentwebhook"
+  # Webhook to messaging system for alerting for any errors in a maco plugins.
+  # alertWebhookMacoErrors: "http://sameordifferentwebhook"
+  # Webhook to messaging system for Alerts for infrastructure health, like Kafka, Opensearch and Minio.
+  # alertWebhookInfraHealth: "http://sameordifferentwebhook"
+  # Key in Contact Point for title look at grafana alerting contact points for what this should be (Microsoft Teams/slack/mattermost this should be 'title')
+  alertWebhookTitleKey: "title"
+  # Key in Contact Point for message look at grafana alerting contact points for what this should be (Microsoft Teams this should be 'message') (slack/mattermost this should be 'text')
+  alertWebhookMessageKey: "message"
+
+# the audit forwarder will forward azul restapi logs to a remote service
+auditForwarder:
+  enabled: false
+  # destination server such as https://my-audit-server.internal/audit/feed/7
+  # set to 'LOG_ONLY' to log to stdout (for testing)
+  destination: "LOG_ONLY"
+  # optional proxy to use to contact destination
+  proxy: ""
+  # additional static http headers to send through
+  headers:
+    system: "Azul"
+  # send to destination every x seconds
+  sendInterval: 5
+
+# The apiServices key is used to define various stateless pods
+# that provide specific functionalities within the Kubernetes cluster.
+# These services are designed to be called internally via APIs
+# and can include a variety of utility functions that enhance the capabilities of the cluster.
+apiServices:
+  # human-readable string filter using ML model.
+  smartStringFilter:
+    enabled: true
+    replicas: 1
+    # resources may require adjustment based on workloads.
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 4Gi
+      requests:
+        cpu: 500m
+        memory: 4Gi
+
+stats:
+  enabled: false
+  config:
+    # Maximum time to scrape metrics.
+    maxScrapeTime: "60"
+    # Enable scraping of Opensearch service.
+    opensearch:
+      enabled: true
+      # Scrape settings (Scrape the shard secondary and primary sizes)
+      scrapeStatsEnabled: true
+      # Pattern for index to scrape the stats of.
+      scrapeIndexPattern: "azul*"
+
+      # Set index settings.
+      testAlias: "azul.test.alias"
+      testIndex: "azul.test.index"
+      testIndexPattern: "azul.test.*"
+      # Verify Opensearch SSL certificates
+      verifyCerts: "true"
+    # Kafka
+    # Enable scraping of kafka service.
+    kafka: true
+    # Name of the kafka test topic to create, delete produce and consume from.
+    kafkaTestTopic: "test-kafka-up-topic"
+
+    # Redis
+    # Enable scraping of dispatchers redis server.
+    redis: true
+
+    # Auth
+    # Enable scraping of auth server to verify it is up and has expected audience and roles.
+    auth: true
+    # The scope for the service account which is typically slightly different to the oidc scopes.
+    # authScopes: "openid profile offline_access"
+    # Auth method to use when authenticating against the oauth server.
+    # Known working methods for azure and keycloak with the recommended setup are 'client_secret_basic' and 'client_secret_post'
+    authOauthMethod: client_secret_basic
+    # Expected audience that should be on the JWT, if unset no audience is checked.
+    # In the JWT this it he value of the 'aud' key.
+    # authExpectedAudience: "audience-name"
+    # Expected roles that should be on the JWT, if set to an empty list no roles are checked.
+    # In the JWT this is the value of the 'roles' key.
+    authExpectedRoles:
+      - azul_read
+
+    # Filestore
+    # Enable scraping of the filestore.
+    filestore: true
+    # Name of the test blob to be created/deleted on the filestore.
+    testBlob: "test-blob"
+
+    # Backup Filestore
+    # Enable scraping of the backup filestore
+    backupFilestore: true
+    # Name of the test blob to be created/deleted on the backup filestore.
+    backupTestBlob: "backup-test-blob"
+
+    # Azul Prove overrides
+    azulProbe:
+      enabled: true
+      # url: # Override for the default url used by azul_probe
+      timeoutSeconds: 5
+      # Path to probe for the restrapi docs and ui e.g `GET 'https://azul.internal/api'`
+      restapiPath: "/api"
+      docsPath: "/docs/"
+      webuiPath: "/ui/"
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+#  Stats collector for kafka consumer lag and consumer lag offset.
+burrow:
+  enabled: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512M
+    requests:
+      cpu: 100m
+      memory: 256M
+
+# Azul native HPA metrics server. Requirement for smart plugin HPAs.
+# Depends on burrow.
+scaler:
+  # Use in conjunction with useSmartScaler - see above
+  enabled: false
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256M
+    requests:
+      cpu: 100m
+      memory: 128M
+
+# The Azul backup tool will take a continuing backup of the nominated events in sources.
+# If you configure sources with ageoff to be backed up, the old events will not be removed from the backup.
+recovery:
+  # mode can be 'off', 'backup' or 'restore'
+  # 'off' does no backup or restore operation
+  # 'backup' will backup Azul events and streams from Dispatcher to an S3 instance.
+  # 'restore' will restore Azul events and streams to Dispatcher from an S3 instance.
+  mode: "off"
+  # Setting to enable S3/Events restore. restoreType can be 'all', 'streams' or 'events'
+  # 'all' will restore events and streams
+  # 'streams' will only restore S3 artifacts
+  # 'events' will only restore Kafka events
+  restoreType: "all"
+  # This should not be the same s3 instance that Azul uses!
+  externalS3Endpoint: ""
+  # externalS3Endpoint: "minio-backup.internal" # NOTE - no leading http/https allowed.
+  externalS3Secure: "true"
+  # Automatically age-off events and streams that are older than the retention of the source they are backing
+  enableAutomaticAgeoff: false
+  # backup unique identifier
+  # If this label is changed, a full backup will be started into a new set of buckets.
+  # Bucket names are `<recovery.bucketNamePrefix><recovery.label>-(streams|events)`.
+  label: "01"
+  # Bucket name prefix for backup buckets.
+  bucketNamePrefix: "azul-backup-"
+  backup:
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "1"
+  # generally you'd want restore to have more 'capacity' than backup as you run it in emergencies,
+  # however it'll mostly be limited by performance of dispatcher
+  restore:
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "1"
+
+# Configuration of the Azul documentation container.
+docs:
+  resources:
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+    limits:
+      memory: "200Mi"
+      cpu: "100m"
+
+# Global security settings for restapiservers in azul
+global:
+  # The default Content Security Policy utilised. Will be overridden for compatibility
+  # where required.
+  # These keys require the same name/value formatting as CSP directives themselves.
+  # An overview of CSPs can be found at https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+  # A listing of available keys and their values is at https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+  defaultCsp:
+    default-src: "'none'"
+    base-uri: "'self'"
+    form-action: "'self'"
+    frame-src: "'none'"
+    frame-ancestors: "'none'"
+    font-src: "'self'"
+    script-src: "'self'"
+    script-src-attr: "'self'"
+    style-src: "'self'"
+    img-src: "'self'"
+    connect-src: "'self'"
+    worker-src: "'none'"
+    object-src: "'none'"
+    media-src: "'none'"
+
+  headers:
+    # START HEADER HARDENING
+    # Configure various headers to override lazy brower behaviour
+    # https://owasp.org/www-project-secure-headers/index.html
+    X-Frame-Options: "deny"
+    # This is the primary one - Azul can stream various (trusted) files to clients, but
+    # Don't allow mime types to be overridden.
+    X-Content-Type-Options: "nosniff"
+    X-Permitted-Cross-Domain-Policies: "none"
+    Cross-Origin-Resource-Policy: "same-origin"
+    Cross-Origin-Embedder-Policy: "require-corp"
+    # For authentication
+    Cross-Origin-Opener-Policy: "unsafe-none"
+    # 'X-XSS-Protection' is old & broken: https://bugzilla.mozilla.org/show_bug.cgi?id=528661
+    X-XSS-Protection: "0"
+
+# Web UI configuration
+web:
+  ingress:
+    # main ingress to Azul webui, you'll probably need this unless you want to do something totally custom
+    enabled: false
+    annotations:
+      # Note hard limit is 4096m in nginx configuration
+      nginx.ingress.kubernetes.io/proxy-body-size: 4096m
+    hosts: []
+    # - "azul.example.internal"
+    ingressClassName: "default"
+    secretName: "web-tls"
+    security:
+      enableHarden: true
+      csp:
+        webui:
+          # Consider limiting this to the actual OIDC domain instead of a wildcard 'https:'
+          connect-src: "'self' https:"
+          # Below items are required for Azul to run:
+          # Monaco needs web workers (via blob:) for performance reasons:
+          worker-src: "'self' blob:"
+          # Enable access to webmanifests for Chromium browsers
+          manifest-src: "'self'"
+          # object/frame blobs are required for PDF readers.
+          object-src: "blob:"
+          frame-src: "blob:"
+          # Generated/decoded images from API requests
+          img-src: "'self' blob:"
+          # FUTURE: Remove this override once Firefox has EOL'd browsers that do not support
+          #         script-src-attr
+          script-src: "'self' 'unsafe-inline'"
+          # FUTURE: unsafe-inline: nonces would be good here once Angular works with them
+          #                        correctly.
+          script-src-attr: "'unsafe-inline'"
+          style-src: "'self' 'unsafe-inline'"
+        api:
+          # Consider limiting this to the actual OIDC domain instead instead of a wildcard 'https:'
+          connect-src: "'self' https:"
+          # Below items are required for Swagger:
+          # Swagger uses inline JS:
+          script-src: "'self' 'unsafe-inline'"
+        docs:
+          # Enable the use of webworkers for search:
+          worker-src: "'self'"
+          # mkdocs uses inline images:
+          img-src: "'self' data:"
+          # Doc searches/etc uses inline JS/CSS:
+          script-src: "'self' 'unsafe-inline' 'unsafe-eval'"
+          style-src: "'self' 'unsafe-inline'"
+  config:
+    # custom deployment info to display alongside chart version
+    # This is used to differentiate between QA/prod instances
+
+    # Title displayed in web browser window.
+    deployment_title: Azul
+    deployment_alticon: false
+    # Background colour of release info block.
+    deployment_back_colour: "#0f0f0f"
+    # Text colour of release info block.
+    deployment_colour: "#ffffff"
+    # Info text to display along side Chart Version in release info block.
+    deployment_text: ""
+    # Message of the day content. Put important messages here that users must see, for example the terms of service.
+    motd_body: This is the default message for the base azul kustomize application.
+    # Text in the close button.
+    motd_footer: Close
+    # Title for the modal box.
+    motd_header: Important Notice
+    # Number of hours until the message of the day modal is shown again.
+    motd_hours: 24
+
+    # A message displayed to users who do not meet the minimumRequiredAccess parameter.
+    # This supports basic Markdown for e.g. links and email addresses.
+    unauthorized_help: Please contact your system administrator for assistance.
+
+    # Optional message to display to users to inform them about something - e.g. patching in progress, system is read-only,
+    # etc.
+    # banner_message: The system will be going down for patching at 00:00 UTC.
+    # The severity of the message - info | warning | error
+    # banner_severity: info
+    # If the banner can be closed
+    # banner_dismissable: true
+
+    # External links enable the linking to external systems on the binary page
+    # - useful for simplifying various enduser processes.
+    #
+    # This is composed of two elements - an "if" clause with a limited set of operators,
+    # and a URL to display on a binary overview if the if clause matches.
+    #
+    # An if statement is able to check against either the summary of a file or features.
+    #
+    # Valid operators are:
+    # - eq - case sensitive match against the "match" field.
+    # - regex - regex match, regex specified in the "match" field.
+    # - exists - if the field exists. No additional field.
+    #
+    # The URL is formatted with any number of arguments that you specify, also sourced
+    # from a binaries summary or features. Each argument is specified with {}.
+    #
+    # Both if search queries and URL arguments traverse arrays & objects and will return
+    # the first hit if one is found.
+    #
+    # The "if" clause and url arguments are independent.
+    #
+    # If statement matches and failures are logged as "debug" console messages in the
+    # web UI, and information for the schema can be spotted via the "debug" tab.
+    binary_external_links: []
+
+# Message and event coordinator.
+dispatcher:
+  ingress:
+    # ATTENTION exposing dispatcher should only be done in non-production scenarios
+    # as it does not have sufficient access controls for general availability
+    enabled: false
+    # change below properties as necessary
+    hosts: []
+    # - "dispatcher.azul.example.internal"
+    ingressClassName: "default"
+    secretName: "dispatcher-tls"
+    annotations: {}
+    security:
+      enableHarden: true
+      # Overrides
+      csp: {}
+  # allow custom session affinity for dispatcher services
+  sessionAffinity: ClientIP
+  # If the dispatcher pods crash due to OOM, consider increasing memory allocation
+  config:
+    # Dispatcher instances dedicated to processing metadata related content.
+    metastore:
+      events:
+        replicas: 1
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "200m"
+        env:
+          # size of cache used for events being consumed
+          # this cache is useful - hit rate of 50% after historical catches up with live processing
+          # recommend at least 100Mi for production deployments
+          # only ingestors hit this instance, so cache can be smaller
+          DP.EVENTS.DEDUPE_CACHE_BYTES: "10Mi"
+      streams:
+        replicas: 1
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "200m"
+        env:
+          # allow deletion of s3 items - for data purging operations
+          DP.STREAMS.API_ALLOW_DELETE: "true"
+    # Dispatcher instances dedicated to processing plugin related content.
+    plugin:
+      events:
+        replicas: 1
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "100m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        env:
+          # size of cache used for events being consumed
+          # this cache is useful - hit rate of 50% after historical catches up with live processing
+          # cache should be relatively large to account for concurrent plugins
+          # recommend at least 1Gi for production deployments
+          DP.EVENTS.DEDUPE_CACHE_BYTES: "10Mi"
+          # this cache will replay a plugin run on a binary if it is seen multiple times from
+          # different sources or paths
+          # recommend at least 1Gi for production deployments
+          DP.EVENTS.REPLAY_PLUGIN_CACHE.SIZE_BYTES: "10Mi"
+          DP.EVENTS.REPLAY_PLUGIN_CACHE.MIN_RUNTIME_SECONDS: "10"
+      streams:
+        replicas: 1
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "100m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        env:
+          # This cache greatly reduces calls dispatcher makes to S3 during plugin processing.
+          # NOTE: Additional RAM consumed will equal DP.STREAMS.CACHE.SIZE * 1.5
+          # Max file that can be cached equals cache_bytes/(cache_shards *2) - default of 1Gi and 32 Equals max size of cached file being 16MiB
+          # recommend at least 1Gi for production deployments
+          DP.STREAMS.CACHE.SIZE_BYTES: "100Mi"
+          # NOTE - Shards must be a power of 2.
+          DP.STREAMS.CACHE.SHARDS: 32
+          # no plugin should be deleting from s3
+          DP.STREAMS.API_ALLOW_DELETE: "false"
+
+# find processing tasks that were lost and generate event errors
+lostTasks:
+  args: ["lost-tasks"]
+  replicas: 1
+  env: {}
+  resources:
+    requests:
+      memory: "500Mi"
+      cpu: "100m"
+    limits:
+      memory: "500Mi"
+      cpu: "100m"
+
+# Migrations to new versions of Azul
+migration:
+  # Configuration for migrating Prefixless topics to prefixed topics.
+  kafka:
+    enabled: false
+    previousTopicPrefix: "default00"
+    # setting this to true means you are migrating from a pre-6.0.0 topic in json format
+    legacyJson: false
+    # Number of seconds to poll an empty kafka topic and getting no value before assuming it's empty.
+    # This is a backstop to help prevent an edge case where an empty topic will not appear empty.
+    MaxNumberOfEmptyPolls: 180
+    # Setting this to DEBUG will significantly
+    # decrease performance of the dispatcher, as each individual event
+    # reprocessed causes logging.
+    # Users should override this for migrations if this information
+    # is desired.
+    logLevel: INFO
+    config:
+      args: ["reprocess"]
+      replicas: 1
+      resources:
+        # Reprocessing all topics requires substantial resources.
+        # These values may need to be tuned to your environment depending on
+        # how many binaries & sources you have.
+        # Recommend this be increased to something like 32GB & 8 cpu for a production deployment.
+        requests:
+          memory: "4Gi"
+          cpu: "500m"
+        limits:
+          memory: "8Gi"
+          cpu: "1"
+
+# Metadata storage.
+metastore:
+  # after updating these settings you need to re-index or wait for the old index to age off to take affect.
+  status_index:
+    number_of_shards: 3
+    number_of_replicas: 2
+  # after updating these settings you will need to re-index for it to take affect.
+  plugin_index:
+    number_of_shards: 3
+    number_of_replicas: 2
+  # Service for metastore to hit dispatcher instances
+  # Should not need to be changed
+  env: {}
+  instances:
+    # Metadata age off.
+    ageoff:
+      error_log: true
+      minReplicas: 1
+      maxReplicas: 2
+      command:
+        - azul-metastore
+        - age-off
+      resources:
+        requests:
+          memory: "500Mi"
+          cpu: "300m"
+        limits:
+          memory: "2Gi"
+          cpu: "1000m"
+    # Binary/entity ingestion.
+    ingest-binary:
+      error_log: true
+      minReplicas: 1
+      maxReplicas: 5
+      command:
+        - azul-metastore
+        - ingest-binary
+      resources:
+        requests:
+          memory: "500Mi"
+          cpu: "300m"
+        limits:
+          memory: "2Gi"
+          cpu: "1000m"
+    # Plugin event ingestion.
+    ingest-plugin:
+      error_log: true
+      minReplicas: 1
+      maxReplicas: 2
+      command:
+        - azul-metastore
+        - ingest-plugin
+      resources:
+        requests:
+          memory: "500Mi"
+          cpu: "300m"
+        limits:
+          memory: "2Gi"
+          cpu: "1000m"
+    # Status event ingestion.
+    ingest-status:
+      error_log: true
+      minReplicas: 1
+      maxReplicas: 5
+      command:
+        - azul-metastore
+        - ingest-status
+      resources:
+        requests:
+          memory: "500Mi"
+          cpu: "400m"
+        limits:
+          memory: "2Gi"
+          cpu: "1200m"
+
+# API server configuration
+restapi:
+  minReplicas: 1
+  maxReplicas: 4
+  resources:
+    requests:
+      memory: "4Gi"
+      cpu: "1000m"
+    limits:
+      memory: "8Gi"
+      cpu: "1000m"
+  # NOTE - if these are changed and you are using argoCD you have to delete the statefulset
+  #        for the size increase to work, this is an argoCD limitation.
+  #        e.g `kubectl delete statefulset restapi`
+  # Size of the PVC storing restapi audit logs
+  # Note - there is no log rotation so this will eventually overflow and cause a crash.
+  logPvcSize: "1Gi"
+  # Size of the PVC storing all sha256's purged from the system.
+  purgePvcSize: "1Gi"
+  cors:
+    allowOrigins: "[]"
+    allowCredentials: "false"
+    allowMethods: "[]"
+    allowHeaders: "[]"
+  oidc:
+    rolesKey: "roles"
+    usernameKey: "preferred_username"
+    cacheTTL: "600"
+    swaggerRedirectUrl: "/api/oauth2-redirect"
+  config:
+    ca_bundle: "/cafile/ca.crt"
+    host: "0.0.0.0"
+    port: "8000"
+    processWorkers: 2
+    asyncioWorkers: 2
+    logLevel: "info"
+  env: {}
+
+# Access control configuration.
+security:
+  # Roles that if a user has at least one of means they are an admin user.
+  admin_roles:
+    - admin
+  # OpenID Connect configuration
+  oidc:
+    enabled: false
+    # Base path the to OIDC provider. You must leave off '/.well-known/configuration'.
+    authority_url: ""
+    # The ClientID from the OIDC provider for the web application.
+    client_id: ""
+    # A space separated list of scopes
+    # scopes: "openid profile email offline_access"
+    scopes: ""
+
+  # terminology
+  # security label - a single token/group that a user may possess and grants access to information
+  # security string - a collection of security labels merged together into a readable string
+
+  # Individual security labels in the system
+  labels:
+    # Events must have one of these markings and user must have it to access.
+    # Order is from least restrictive to most restrictive.
+    # If multiple are preset only the most restrictive is kept.
+    # These items are rendered first.
+    classification:
+      # Group name to show in the web interface.
+      title: Classification
+      # names of this specific security label that can be chosen
+      options:
+        - name: OFFICIAL
+          # Priority of this classification higher priority is considered more secure.
+          # Also impacts which classifications can have TLPs and which ones can have releasabilities.
+          priority: "0"
+    # Access control marker which is exclusively applied (ie a user must be a member of all groups to gain access).
+    # These items are rendered second.
+    caveat:
+      # Group name to show in the web interface.
+      title: Caveat
+      # names of this specific security label that can be chosen
+      options: []
+      # - name: FIREBALL
+      # - name: TRUESTRIKE
+
+    # Access control marker which is inclusively applied (ie a user must be a member of at least one to gain access).
+    # Must be prefixed with 'REL:'
+    # For example, REL:APPLE and REL:BANANA automatically combine into a 'REL:APPLE,BANANA' label.
+    # These items are rendered third.
+    releasability:
+      # Group name to show in the web interface.
+      title: Releasability
+      # A common prefix that applies to all groups in this section that will be combined when multiple groups are present.
+      prefix: "REL:"
+      # Always add this group even if it was not manually added.
+      origin: ""
+      # names of this specific security label that can be chosen
+      options: []
+      # - name: REL:APPLE
+      # - name: REL:BEE
+      # - name: REL:CAR
+      # - name: REL:DOG
+      # - name: REL:ELEPHANT
+    # These markings are descriptive only and do not control access. They are shown at the end of the security string.
+    # i.e. TLP
+    # Order is from least restrictive to most restrictive.
+    # If multiple are preset only the most restrictive is kept.
+    # These items are rendered last.
+    tlp:
+      # Group name to show in the web interface.
+      title: TLP
+      # names of this specific security label that can be chosen
+      options:
+        - name: TLP:CLEAR
+        - name: TLP:GREEN
+        - name: TLP:AMBER
+        - name: TLP:AMBER+STRICT
+          enforce_security: true
+
+  # Define the priority at which releasabilities are allowed (inclusive of this value).
+  # All values below this priority are allowed TLPs all values above and equal to are allowed releasability.
+  allow_releasability_priority_gte: "0"
+
+  # List of security labels that all users will possess.
+  # If users do not have these security labels, they will be denied access to Azul.
+  # This is important for optimising queries to opensearch as if large amounts of data are
+  # available to all users there is no need to apply DLS to those documents.
+  # If you remove an entry from this list, you must perform a partition switch to restrict existing docs
+  # with that security label.
+  # If you add labels to this list, existing documents will not be optimised until a partition switch occurs.
+  minimumRequiredAccess:
+    - OFFICIAL
+
+  # The security string to use for plugins/events without any security information.
+  # This should be the minimum security level for the system as any 'restricted' plugins should be explicitly noted.
+  default: OFFICIAL TLP:CLEAR
+
+  # Security preset strings available for users
+  presets:
+    - OFFICIAL TLP:AMBER+STRICT
+    - OFFICIAL TLP:AMBER
+    - OFFICIAL TLP:GREEN
+    - OFFICIAL TLP:CLEAR
+
+# Sources identify where files originated from and are required when submitting files.
+# At least one source must be present.
+# See example-values.yaml for example sources.
+sources: {}
+
+# Configuration applied to all plugins.
+pluginConfig: {}
+
+# enable/disable all plugins
+# use when restoring from backup or during an upgrade
+pluginsEnabled: true
+
+# Define all the plugins to deploy.
+plugins:
+  # Accept submissions forwarded from an Assemblyline instance.
+  assemblyline:
+    # Requires secret 'assemblyline-receiver' to be set to work.
+    type: standard
+    enabled: false
+    # Optional security map.
+    config:
+      # Required config (map, that maps assemblyline classification `key` to a list of azul security strings `value (list[str])`)
+      SECURITY_MAP:
+        OFFICIAL:
+          - OFFICIAL
+      # deconflict jobs if multiple azul deployments connect to the same assemblyline
+      azul_instance: "azul"
+    plugins:
+      assemblyline-receiver:
+        enabled: true
+        image: plugin-assemblyline
+        # This doesn't have a trackable queue
+        useSmartScaler: false
+        additionalLabels:
+          # Allow ingress from assemblyline post processing actions.
+          allow-ingress-assemblyline-receiver: "true"
+          # Allow egress to Assemblyline for pulling in files.
+          allow-egress-https-http: "true"
+        promMetricsEnabled: true
+        promPort: "8852"
+        ingress:
+          name: assemblyline
+          serviceName: plugin-assemblyline-receiver
+          servicePort: 8850
+          host: ""
+          secretName: ""
+          annotations: {}
+          security:
+            enableHarden: true
+            # Overrides
+            csp: {}
+        envFrom:
+          - configMapRef:
+              name: metastore
+        env:
+          - name: al_url
+            valueFrom:
+              configMapKeyRef:
+                name: endpoints
+                key: assemblyline
+          - name: al_user
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.assemblylineReceiver }}"
+                key: al_user
+          - name: al_token
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.assemblylineReceiver }}"
+                key: al_token
+
+      assemblyline-forwarder:
+        enabled: true
+        image: plugin-assemblyline
+        command:
+          - "azul-plugin-assemblyline-forwarder"
+        # This doesn't have a trackable queue
+        useSmartScaler: false
+        additionalLabels:
+          # allow egress to assemblyline on port 443 or 80.
+          allow-egress-https-http: "true"
+        envFrom:
+          - configMapRef:
+              name: metastore
+        env:
+          - name: al_url
+            valueFrom:
+              configMapKeyRef:
+                name: endpoints
+                key: assemblyline
+          - name: al_user
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.assemblylineReceiver }}"
+                key: al_user
+          - name: al_token
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.assemblylineReceiver }}"
+                key: al_token
+
+  # Dynamic analysis plugins.
+  dynamic:
+    type: standard
+    enabled: true
+    plugins:
+      cape:
+        enabled: false
+        # This allows the CAPE plugin to talk externally to a CAPE server on any port
+        additionalLabels:
+          allow-egress-anything: "true"
+        baseEnv:
+          # URL of the CAPE server, eg http://localhost:8000
+          - name: PLUGIN_CAPE_SERVER
+            value: ""
+            # Token for server auth, or blank for none
+          - name: PLUGIN_CAPE_AUTH_TOKEN
+            value: ""
+            # Report error if CAPE doesn't start running the sample within this time
+          - name: PLUGIN_START_TIMEOUT
+            value: "600"
+            # CAPE runs take a while
+          - name: PLUGIN_RUN_TIMEOUT
+            value: "900"
+            # File size to process
+          - name: PLUGIN_FILTER_MAX_CONTENT_SIZE
+            value: "16MiB"
+            # How long to wait for the server before error
+          - name: PLUGIN_REQUEST_TIMEOUT
+            value: "30"
+            # Seconds to wait between polling of CAPE server for job status
+          - name: PLUGIN_POLL_INTERVAL
+            value: "15"
+            # How many times to retry API requests on timeout or temporary error
+          - name: PLUGIN_API_RETRY_COUNT
+            value: "3"
+
+  # maco extractor plugin
+  # plugin is configured by adding new sources
+  maco:
+    type: maco
+    image: plugin-maco
+    enabled: true
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1500m"
+    config:
+      # should handle larger files than most plugins
+      PLUGIN_FILTER_MAX_CONTENT_SIZE: "1GiB"
+      # Disable memory limits because maco doesn't release memory in the same way as most plugins
+      # This causes the plugin to exit with OOM when it won't actually run out of memory.
+      PLUGIN_ENABLE_MEM_LIMITS: "false"
+    sources: {}
+
+  # NSRL cataloge lookup.
+  nsrl:
+    type: standard
+    enabled: true
+    pvc:
+      size: "256Gi"
+    server:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      averageUtilization: 500
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "500Mi"
+        limits:
+          cpu: "500m"
+          memory: "500Mi"
+      ingress:
+        name: plugin-nsrl-lookup
+        serviceName: plugin-nsrl-lookup
+        servicePort: 8853
+        host: ""
+        secretName: ""
+        annotations: {}
+        security:
+          enableHarden: true
+          # Overrides
+          csp: {}
+    config:
+      NSRL_LOOKUP_ENDPOINT: http://plugin-nsrl-lookup:8853
+      RDS_RELEASE_VERSION: 2024.03.1
+      # OPTIONAL PATCHES FOR THE DB - makes it even more up to date.
+      # WARNING patches take multiple hours to apply on the pods first startup.
+      # WARNING if a patch only partially applies the db will be corrupted and the pvc will need to be deleted and the
+      # full database will need to be rebuilt.
+      #DELTA_RELEASE_VERSION: 2024.09.1
+      BASE_PATH: /data/nsrl/db/
+      # URL to download nsrl database zip from.
+      # On the server the URL points to there should be the following path:
+      # rds_${RDS_RELEASE_VERSION}/RDS_${RDS_RELEASE_VERSION}_modern_minimal.zip
+      # e.g: 'rds_2024.03.1/RDS_2024.03.1_modern_minimal.zip'
+      # Will download from https://s3.amazonaws.com/rds.nsrl.nist.gov/RDS/rds_2024.03.1/RDS_2024.03.1_modern_minimal.zip
+      DOWNLOAD_URL: https://s3.amazonaws.com/rds.nsrl.nist.gov/RDS
+    plugins:
+      nsrl:
+        additionalLabels:
+          allow-egress-nsrl-lookup-server: "true"
+        args:
+          - "--config"
+          - "uri"
+          - $(NSRL_LOOKUP_ENDPOINT)
+          - "--config"
+          - "details"
+          - "false"
+
+  # Office document analysis plugins.
+  office:
+    type: standard
+    enabled: true
+    plugins:
+      office-dde:
+        image: plugin-office
+        command:
+          - "azul-plugin-dde"
+      office-decrypt:
+        image: plugin-office
+        command:
+          - "azul-plugin-officedecrypt"
+      office-macros:
+        image: plugin-office
+        command:
+          - "azul-plugin-macros"
+      office-mimeinfo:
+        image: plugin-office
+        command:
+          - "azul-plugin-mimeinfo"
+      office-oleinfo:
+        image: plugin-office
+        command:
+          - "azul-plugin-oleinfo"
+      office-openxmlinfo:
+        image: plugin-office
+        command:
+          - "azul-plugin-openxmlinfo"
+      office-rtfinfo:
+        image: plugin-office
+        command:
+          - "azul-plugin-rtfinfo"
+      office-sylk:
+        image: plugin-office
+        command:
+          - "azul-plugin-sylk"
+
+  # Note - not open-sourced yet.
+  # Ingest reports and samples for analysis.
+  # Only runs as a cronjob.
+  report-feeds:
+    type: reportFeeds
+    # Note - not open-sourced yet, cannot be enabled.
+    enabled: false
+    # Prometheus push gateway for collecting metrics
+    prometheusPushGateway: "http://prometheus-pushgateway.monitoring.svc.cluster.local:9091"
+    pvc:
+      size: "1Gi"
+    env:
+      # Optional suffix to append to job name to indicate namespace in metrics.
+      - name: PLUGIN_NAMESPACE_SUFFIX
+        value: ""
+    # Use a demo configuration for report-feeds
+    demoConfig: false
+    # feedConfig allows you to provide a yaml config for the report feeds plugin to pull from various websites.
+    # Refer to the docs for more details on how to configure.
+    # feedConfig: |
+    #   feeds:
+    #     - publisher: Microsoft
+    #       source: reporting
+    #       module: reportcollector.feeds.rss.RSSFeed
+    #       distribution: public
+    #       site: "https://www.microsoft.com/security/"
+    #       feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
+    #   pdfconversion:
+    #       command: wkhtmltopdf
+    #       options:
+    #         - "--proxy-hostname-lookup"
+    #         - "--disable-javascript"
+    #         - "--disable-external-links"
+    #         - "--disable-internal-links"
+    #         - "--disable-forms"
+    #         - "--zoom"
+    #         - "0.8"
+    #         - "--image-dpi"
+    #         - "120"
+
+  # On demand historic yara rules scanning.
+  retrohunt:
+    type: standard
+    enabled: true
+    pvc:
+      size: "1000Gi"
+    # Group config applied to all retrohunt containers and extraContainers.
+    config:
+      # Memory limits disabled for this plugin because it causes OOM when it shouldn't due to cgroups misbehaving.
+      PLUGIN_ENABLE_MEM_LIMITS: "false"
+      PLUGIN_ROOT_PATH: "/indices"
+      PLUGIN_INDEXERS:
+        content:
+          name: content
+          stream_labels:
+            - content
+          # Max content before triggering retrohunt to create a new long term index
+          max_bytes_before_indexing: "10GiB"
+          # Number of minutes to wait before triggering a periodic index which overrides itself every time it triggers.
+          periodic_index_frequency_min: "60"
+          # Number of minutes that indexing can take before it's timed out and crashes.
+          timeout_minutes: "60"
+          # Allow failed index directories to be split in half and then deleted if they fail to index twice in a row.
+          allow_splitting_and_deletion: "true"
+    plugins:
+      retrohunt-server:
+        ingress:
+          name: plugin-retrohunt-server
+          serviceName: plugin-retrohunt-server
+          servicePort: 8852
+          host: ""
+          secretName: ""
+          annotations: {}
+          security:
+            enableHarden: true
+            # Overrides
+            csp:
+              # Swagger uses inline JS:
+              script-src: "'self' 'unsafe-inline'"
+        image: plugin-retrohunt
+        minReplicas: 1
+        maxReplicas: 1
+        averageUtilization: 300
+        # Not able to be detected via the scaler
+        useSmartScaler: false
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "500Mi"
+          limits:
+            cpu: "1500m"
+            memory: "2Gi"
+        additionalLabels:
+          allow-ingress-retrohunt-server: "true"
+        promMetricsEnabled: true
+        promPort: "8852"
+        args:
+          - --events-url
+          - $(PLUGIN_EVENTS_URL)
+          - --data-url
+          - $(PLUGIN_DATA_URL)
+          - --host
+          - 0.0.0.0
+          - --port
+          - "8852"
+      retrohunt-worker:
+        strategy:
+          type: Recreate
+        promMetricsEnabled: true
+        promPort: "8900"
+        image: plugin-retrohunt
+        runTimeout: "6000" # 100 minutes (probably for compaction?)
+        maxFileSize: "100000000" # a 100MB - expected to take at least 60seconds if it's this large.
+        # Not able to be detected via the scaler
+        useSmartScaler: false
+        command:
+          - azul-plugin-retroingestor
+        volumeMounts:
+          - name: indices
+            mountPath: "/indices"
+        volumes:
+          - name: indices
+            persistentVolumeClaim:
+              claimName: plugin-retrohunt
+        extraContainers:
+          worker:
+            template: "plugin.container.main"
+            promMetricsEnabled: true
+            # Promport must be the same value as PLUGIN_PROMETHEUS_PORT_WORKER
+            promPort: "8901"
+            # Environment variable can be used to change prometheus port if you want multiple workers
+            # All containers in retrohunt must have different prometheus scrape ports.
+            env:
+              - name: PLUGIN_PROMETHEUS_PORT_WORKER
+                value: "8901"
+            image: plugin-retrohunt
+            resources:
+              requests:
+                memory: "4Gi"
+                cpu: "100m"
+              limits:
+                memory: "4Gi"
+                cpu: "1000m"
+            command:
+              - azul-plugin-retroworker
+            volumeMounts:
+              - name: indices
+                mountPath: "/indices"
+          content-indexer:
+            template: "plugin.container.main"
+            promMetricsEnabled: true
+            # Promport must be the same value as PLUGIN_PROMETHEUS_PORT_INDEXER
+            promPort: "8902"
+            # Environment variable can be used to change prometheus port if you want multiple indexers
+            # All containers in retrohunt must have different prometheus scrape ports.
+            env:
+              - name: PLUGIN_PROMETHEUS_PORT_INDEXER
+                value: "8902"
+            image: plugin-retrohunt
+            resources:
+              requests:
+                memory: "8Gi"
+                cpu: "100m"
+              limits:
+                memory: "16Gi"
+                cpu: "4000m"
+            command:
+              - azul-plugin-retroindexer
+              - "--indexer-name"
+              - "content"
+            volumeMounts:
+              - name: indices
+                mountPath: "/indices"
+                # Not used because there is no good way of ingesting PCAP files currently.
+                # pcap-indexer:
+                #   template: "plugin.container.main"
+                #   image: plugin-retrohunt
+                #   resources:
+                #     requests:
+                #       memory: "1Gi"
+                #       cpu: "100m"
+                #     limits:
+                #       memory: "2Gi"
+                #       cpu: "1000m"
+                #   command:
+                #     - azul-plugin-retroindexer
+                #   volumeMounts:
+                #     - name: indices
+                #       mountPath: "/indices"
+
+  # Generic metadata extraction.
+  tika:
+    type: standard
+    enabled: true
+    plugins:
+      tika:
+        extraContainers:
+          server:
+            template: "plugin.container.main"
+            image: tika_external
+            resources:
+              limits:
+                memory: "1Gi"
+                cpu: "1000m"
+        args:
+          - "--config"
+          - "tika_server"
+          - "http://localhost:9998"
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+
+  # Virustotal lookups, metadata mirroring and sample downloads.
+  # By default, virustotal integration is disabled as an api key is required.
+  virustotal:
+    type: standard
+    enabled: false
+    pvc:
+      size: "10Gi"
+    # Use a demo configuration for the virustotal plugin.
+    demoConfig: false
+    # If `true`, creates a CronJob to download the VT filefeed metadata.
+    # hit virustotal api using credentials and pull metadata feed
+    pullFromApi: false
+    config:
+      # Choose between "v2" or "v3" of the virustotal API.
+      VIRUSTOTAL_APIVERSION: "v3"
+      # Set to allow metric collection via push gateway.
+      PLUGIN_PROMETHEUS_PUSH_GATEWAY: ""
+    plugins:
+      # server for pushing metadata feed to (alternative to pullFromApi)
+      vtfilefeedserver:
+        enabled: false
+        additionalLabels:
+          allow-ingress-virustotal-file-feed-server: "true"
+          allow-egress-prometheus-push-gateway: "true"
+        # This doesn't have a trackable queue
+        useSmartScaler: false
+        image: plugin-virustotal
+        env:
+          - name: RUN_AS_SERVER
+            value: "true"
+          - name: STATEDIR
+            value: "/data"
+          - name: RULES_ROOT
+            value: /rules
+        args:
+          - "filefeed"
+        volumeMounts:
+          - name: data
+            mountPath: /data
+          - name: rules
+            mountPath: /rules
+        volumes:
+          - name: data # in server mode this shouldn't be needed
+            emptyDir:
+              sizeLimit: 10Mi
+          - name: rules
+            configMap:
+              name: vtselect-rules
+              optional: true
+        ingress:
+          name: plugin-vtfilefeedserver
+          serviceName: plugin-vtfilefeedserver
+          servicePort: 8854
+          host: ""
+          secretName: ""
+          annotations: {}
+          security:
+            enableHarden: true
+            # Overrides
+            csp: {}
+      # lookup azul binaries in virustotal to enrich with metadata
+      vtfilelookup:
+        enabled: false
+        # Allow contact out to virustotal
+        additionalLabels:
+          allow-egress-https-http: "true"
+        image: plugin-virustotal
+        env:
+          - name: VIRUSTOTAL_APISERVER
+            valueFrom:
+              configMapKeyRef:
+                name: endpoints
+                key: virustotal
+          - name: VIRUSTOTAL_APIKEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.virustotalCreds }}"
+                key: apikey
+          - name: LOOKUP_SOURCES
+            value: "testing,incidents,reports,samples,tasking,watch"
+        args:
+          - "filelookup"
+      # perform vt downloads for interesting files marked by plugin-vtfilefeed
+      vtdownload:
+        enabled: false
+        # Allow contact out to virustotal
+        additionalLabels:
+          allow-egress-https-http: "true"
+        image: plugin-virustotal
+        env:
+          - name: VIRUSTOTAL_APIKEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.virustotalCreds }}"
+                key: apikey
+        args:
+          - "download"
+
+  # Yara-X rules scanning.
+  # plugin is configured by adding new sources
+  yara-x:
+    type: yara-x
+    image: plugin-yara
+    enabled: true
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1500m"
+    sources: {}
+
+  # Suricata rules scanning.
+  # plugin is configured by adding new sources
+  suricata:
+    type: suricata
+    image: plugin-suricata
+    enabled: true
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1500m"
+    sources: {}
+
+  # Catch-all generic analysis plugins.
+  # single deployment, less complex plugins
+  generic:
+    type: standard
+    enabled: true
+    plugins:
+      alphabets:
+        tmp: "1Gi"
+      android-parser: {}
+      build-time-strings: {}
+      mandiant-capa: # Needs more resources to prevent it cutting out when communicating with dispatcher causing 500 errors on dispatcher.
+        resources:
+          requests:
+            memory: "6Gi"
+            cpu: "500m"
+          limits:
+            memory: "6Gi"
+            cpu: "1000m"
+      certificates: {}
+      debloat:
+        tmp: "7Gi" # Needs lots of tmp to shrink down even large binaries.
+      de4dot: {}
+      dotnet-decompiler: {}
+      dotnet-deob: {}
+      email-headers:
+        image: plugin-email
+        command:
+          - "azul-plugin-mail-headers"
+      email-mimedecoder:
+        image: plugin-email
+        command:
+          - "azul-plugin-mime-decoder"
+      email-olemail:
+        image: plugin-email
+        command:
+          - "azul-plugin-olemail"
+      entropy:
+        maxFileSize: "0" # unlimited
+      entrypointcheck:
+        resources:
+          limits:
+            memory: "4Gi"
+      exiftool:
+        tmp: "300Mi"
+        resources:
+          requests:
+            memory: "2Gi"
+          limits:
+            memory: "4Gi"
+      export-hashes: {}
+      floss:
+        tmp: "2Gi"
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "1000m"
+      goinfo: {}
+      image-convert: {}
+      index-coincidence: {}
+      js-deobf: {}
+      lief-elf:
+        image: plugin-lief
+        command:
+          - "azul-plugin-lief-elf"
+      lief-fatmacho:
+        image: plugin-lief
+        command:
+          - "azul-plugin-fat-macho"
+      lief-macho:
+        image: plugin-lief
+        command:
+          - "azul-plugin-lief-macho"
+      lief-pe:
+        image: plugin-lief
+        command:
+          - "azul-plugin-lief-pe"
+      lookback-hash:
+        image: plugin-lookback
+        command:
+          - "azul-plugin-lookback-hash"
+      lookback-search:
+        image: plugin-lookback
+        command:
+          - "azul-plugin-lookback-search"
+      malcarve:
+        args:
+          - "--config"
+          - "plugin_depth_limit"
+          - "3"
+          - "--config"
+          - "plugin_depth_authors"
+          - "Malcarve"
+      netinfo: {}
+      pdftools-pdfid:
+        image: plugin-pdftools
+        command:
+          - "azul-plugin-pdfid"
+      pdftools-pdfinfo:
+        image: plugin-pdftools
+        command:
+          - "azul-plugin-pdfinfo"
+      pdftools-pdftext:
+        image: plugin-pdftools
+        command:
+          - "azul-plugin-pdftext"
+      portex:
+        volumes:
+          - name: fontconfig-cache
+            emptyDir:
+              sizeLimit: 200Mi
+        volumeMounts:
+          - name: fontconfig-cache
+            mountPath: /var/cache/fontconfig
+        env:
+          - name: XDG_CACHE_HOME
+            value: /var/cache/fontconfig
+      qrcode: {}
+      python-decompiler: {}
+      repeated-bytes:
+        tmp: "1Gi"
+      richid: {}
+      script-decoder:
+        tmp: "1Gi"
+      shortcut:
+        tmp: "1Gi"
+      unbox:
+        maxFileSize: "1000000000" # 1gb
+        tmp: "2Gi"
+
+# Container registry image names
+images:
+  pullPolicy: Always
+  # External image dependencies - These will be cloned into our registry on release of Azul.
+  external:
+    git-sync: registry.k8s.io/git-sync/git-sync:v4.5.0@sha256:0e64aedb0d0ae0a3bab880349a5109b2a31891d646dd61e433ca36ed220dff1f
+    tika_external: docker.io/apache/tika:3.2.3.0-full@sha256:21d8052de04e491ccf66e8680ade4da6f3d453a56d59f740b4167e54167219b7
+    alloy: docker.io/grafana/alloy:v1.11.2@sha256:6ab34b8201f0e8b0c4346be4934c9965723af3f7f21dd9a65fd73f270f69b451
+    # Pod to scrape kafka consumer lag statistics from Kafka.
+    burrow: ghcr.io/linkedin/burrow/burrow:v1.9.4@sha256:3a0bb0b5087bf01d7fdb4513bf84e42147235875fe355ca0cfa35aa46ce2ce02
+    redis: docker.io/redis:8.2.2-bookworm@sha256:f0957bcaa75fd58a9a1847c1f07caf370579196259d69ac07f2e27b5b389b021
+  # custom registry to retrieve 'custom' images from (prepended)
+  customRegistry: docker.io/asdazul/
+  # images that form part of an azul release
+  custom:
+    audit-forwarder: audit-forwarder:20251101T0002-unstable@sha256:891f7d43944aa505ed7b67a0d205a5000e16e92aef1c956a6a7d29d4611376e4
+    backup: backup:20251106T0103-unstable@sha256:fcf182c0ab92dcfb16c19bbd1819ca9e7948fe807974b11bfb9d6e39f4882be1
+    client: client:20251104T2325-unstable@sha256:c1114a93e8c2d617240607238351f8cd1912877df0951a99b46a67f8aa9bbde4
+    dispatcher: dispatcher:20251105T2235-unstable@sha256:e6e697aa4fa775b5ba952a4ee8c260b1665375fd9ae69fa9dc79bde3784996e4
+    docs: docs:20251106T2250-unstable@sha256:1320c0a417e931437ad1d3943676a9c181204b05f416f112de142cad564cef24
+    restapi-server: restapi-server:20251106T2251-unstable@sha256:f02e66063c1a1c7caf98611d1f39b28a90811664a4cefb63041b89dce8c2973f
+    webui: webui:20251106T2020-unstable@sha256:e9aab33aa4d91524fb45d43fd1a50c39b658d19d0ee8f87ae387336cbe25f10e
+    plugin-alphabets: plugin-alphabets:20251105T2231-unstable@sha256:238ba1167392ec10d91394178c830c90ab9fefd3c260d092d944ad9fc0c45dff
+    plugin-android-parser: plugin-android-parser:20251105T2237-unstable@sha256:93863ddad9df2b94d889643acc60bc72a0e17fbf03161a75c98fe394699a3fdf
+    plugin-assemblyline: plugin-assemblyline:20251105T2232-unstable@sha256:26fa06f2feac58b099e60b4f88a189073c4113c65a5665246c97cc77b1bc1bd6
+    plugin-build-time-strings: plugin-build-time-strings:20251105T2232-unstable@sha256:78d80139f8a3eb6b27227f911332a88fd3f140e7ee02037ffaa1c4125ccaab5c
+    plugin-mandiant-capa: plugin-mandiant-capa:20251105T2234-unstable@sha256:336029329b6efa9df93f8bcaad61fe25bab83f32363d7b287f3931519f53f2cf
+    plugin-cape: plugin-cape:20251020T2322-unstable@sha256:4ab641f606e567a57387a2538a8bd27b5f6f74750951218d7d7f0a494d43f874
+    plugin-de4dot: plugin-de4dot:20251105T2235-unstable@sha256:4c66b195a1264c7fb0f729d69da491f39ae41af5c135ca8cf381cf9ae0c4cc96
+    plugin-dotnet-decompiler: plugin-dotnet-decompiler:20251105T2242-unstable@sha256:f6397ee23757570ca33f0df8253c779e0595f44eab5a7e81be52e25eb9ac72d2
+    plugin-dotnet-deob: plugin-dotnet-deob:20251105T2233-unstable@sha256:6f657957f63c6ab2c2389f6a8c2b4af3313a10efd6faa40f5d79af0c47c9322b
+    plugin-email: plugin-email:20251105T2237-unstable@sha256:436ffcf537bb7f201d9024293c149f356eb94a95cd716201911ab4c9db512b19
+    plugin-entropy: plugin-entropy:20251105T0022-unstable@sha256:b6b77a292c4d79d784096b627302a7844c3aaa2bf4ccb55e4eb0d5687a3e91e4
+    plugin-entrypointcheck: plugin-entrypointcheck:20251105T2237-unstable@sha256:28914ec37f6768646026a4e160a34844f184cf1251c2e9af466969b8b489cbea
+    plugin-exiftool: plugin-exiftool:20251105T2233-unstable@sha256:d826630ae4499ae104ff865e2efdc310a701afd57c96b6fad9509454df8dda7c
+    plugin-export-hashes: plugin-export-hashes:20251105T2235-unstable@sha256:6773e771d98d39f7216e82aec345961a684e52965bd871efd2d3dd1590817e43
+    plugin-maco: plugin-maco:20251105T2234-unstable@sha256:6ea751baa479d3df6bf997ee4706b6ddffd8c44eb15b76099b618e789ec39c3b
+    plugin-floss: plugin-floss:20251105T2235-unstable@sha256:b0998ef8a4a6b1d81132a81cc16930f96d08d8e477b66f497c3866ce420c5619
+    plugin-goinfo: plugin-goinfo:20251105T0023-unstable@sha256:0b4bdd305bf31fbe4026687bdf3cee7dd76328f79ed2787b6a83ee545d7313a6
+    plugin-image-convert: plugin-image-convert:20251105T2237-unstable@sha256:fd0961283e99acab319a138c6ade4feaf25731ac313411bbe32d461ff0d8eaac
+    plugin-index-coincidence: plugin-index-coincidence:20251105T2233-unstable@sha256:45938312d9b36bad83ed584ad44b2361d68b2626b8d31426a72b0cf05dac6416
+    plugin-js-deobf: plugin-js-deobf:20251105T2237-unstable@sha256:baceda96acf392578e9cdc795032ffc35fe3fd9205b5321d21c94909ed5cdfb0
+    plugin-lief: plugin-lief:20251105T2233-unstable@sha256:af7a7638cf8ca4fe58f847caaf82250d10511f2d78e2187510f42b7db657df4a
+    plugin-lookback: plugin-lookback:20251105T2235-unstable@sha256:adeb3e2554ec033e8d886dc176e46ad292c91a7e3ccd6e856798085162ec88de
+    plugin-malcarve: plugin-malcarve:20251105T2242-unstable@sha256:9d4fb0ce7c2c7725f7f0a11e6b2db4031733d9bee8765f72e0c1ce0aa5a9c4a6
+    plugin-netinfo: plugin-netinfo:20251105T2236-unstable@sha256:88126c9f615a30fec8b447a21db9cc82db32fde196a73a1fd72f386c09ae1a2d
+    plugin-nsrl: plugin-nsrl:20251105T2237-unstable@sha256:9e0f3bc86cdf47f8e671c43228b980311d992a91095bbaa1b373bb6bdb8bcc77
+    plugin-office: plugin-office:20251105T2244-unstable@sha256:cfdaddb870672529754f7841305b549eac66f92d7272cfbf3e5423025f2113ce
+    plugin-pdftools: plugin-pdftools:20251020T2317-unstable@sha256:f6d7839e9b5c10868eeb8067bbe1a7e6e23e02dab3c431f4ae012f760b827c0b
+    plugin-python-decompiler: plugin-python-decompiler:20251105T2242-unstable@sha256:4695e9dad2323d43b9d2d552a745f08b4acd61269ec61bd540cdf90c89fc8f9a
+    plugin-repeated-bytes: plugin-repeated-bytes:20251105T2241-unstable@sha256:44e29b698a48294d66a2662c2eb702699d17e545228f291e06ed5c500c3afb4a
+    plugin-retrohunt: plugin-retrohunt:20251105T2237-unstable@sha256:5d85a95625416cbb48a4582a7b2ec38e685d3e0c979067ffbcc302abcca1e098
+    plugin-richid: plugin-richid:20251105T2231-unstable@sha256:25cf8fb2be8be0cf5eddbf3101e572662d265d169e53600451d82f9d53e538ea
+    plugin-script-decoder: plugin-script-decoder:20251105T2237-unstable@sha256:5ff5e89f9ef1fc04135ac4ef7ceedb1e4ccee3acf55854af1afa60d7d15268ab
+    plugin-shortcut: plugin-shortcut:20251105T2235-unstable@sha256:ad4ece56b497cdf21168f47fabcd5b421ee92978b125c5d1d38a0cf5bdd0edf8
+    plugin-tika: plugin-tika:20251105T2247-unstable@sha256:0c9e6ddbc8e1802669f55de67d56d7756196b2004951b6724948aa417d0dd3a6
+    plugin-unbox: plugin-unbox:20251105T2237-unstable@sha256:2f644ab7758173509a6121a4e2f77568c041037b024887383fd9c58bba25f8e1
+    plugin-virustotal: plugin-virustotal:20251105T0023-unstable@sha256:75b9a91b6d23004f3325af95cccda9375e96f08e3ca08dd5c5270d4905d6cd3b
+    stats: stats:20251101T0004-unstable@sha256:96cc36819af74458b490a4da198d45db94f32324bb2df6c5228b4204f4f7b34a
+    nsrl-lookup-server: nsrl-lookup-server:20251101T0005-unstable@sha256:bb20f9c7286fd54dee8f1e2c2b790759c936eb21d0d21197b17f16b8a14e39a6
+    plugin-suricata: plugin-suricata:20251105T2232-unstable@sha256:1401e608daa6050da1aedff504e1b3b59d42145bf3a164b72fc7d852a6d067f4
+    scaler: scaler:20251101T0002-unstable@sha256:0a751685bc7f879bfb66ba20cd291d8646e76a8448eb5d1e297bf6f43eaf978f
+    plugin-debloat: plugin-debloat:20251105T2233-unstable@sha256:2a4caa1c52ce13b137a9428013931bdd18bfb44d5185934f56c9caed916ca34b
+    plugin-yara: plugin-yara:20251105T2239-unstable@sha256:698c2e6414bfb5997e50dde1c2267339fec1ba8c73c5f3a36fa333b37eb97a1b
+    plugin-portex: plugin-portex:20251105T2236-unstable@sha256:239b363fd23eaed1dbd403df77f8ca20bbad30d0cdfea77e2daa78904417a132
+    plugin-truncated: plugin-truncated:20251105T2232-unstable@sha256:7b036328c413a1976da99fbf89dd1045007458f839227e251d26aefe7bb076aa
+    plugin-certificates: plugin-certificates:20251105T2237-unstable@sha256:72df581b55fd720c11d8242cd2ca72132162a98a6fcde3f1c9e38108cdf21e4d
+    plugin-qrcode: plugin-qrcode:20251105T2237-unstable@sha256:28aacec7cdf4579d952ee4619b79e5368bd9e6aeb279d683749eca7ec44685c5
+    smart-string-filter: smart-string-filter:20251106T2233-unstable@sha256:ec0ed0b186528f27069010ccf33133791b853ee9f6dff6bf5ba65d381d8a4515

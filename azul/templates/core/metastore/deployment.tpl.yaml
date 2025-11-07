@@ -1,0 +1,195 @@
+{{- define "metastore.deployment" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  labels:
+    part-of: azul
+    section: core
+    component: ingest
+spec:
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  {{- if .config.pvc }}
+  strategy:
+    type: Recreate
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+        part-of: azul
+        section: core
+        component: ingest
+        allow-egress-opensearch: "true"
+        allow-egress-dispatcher: "true"
+        allow-ingress-prometheus-scrape: "true"
+        {{- if .root.Values.external.loki.endpoint }}
+        allow-egress-loki: "true"
+        {{- end }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8900"
+        # ensure deployment restarts if config is changed
+        checksum/config: {{ .cmSHA256 }}
+      {{- with .root.Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .root.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .root.Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .root.Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .root.Values.images "name" "restapi-server")}}
+        imagePullPolicy: {{ .root.Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        {{- if .config.resources }}
+        resources:
+        {{- .config.resources | toYaml | nindent 10 }}
+        {{- end }}
+        command:
+          {{- .config.command | toYaml | nindent 10 }}
+        envFrom:
+        - configMapRef:
+            name: metastore
+        env:
+        - name: METASTORE_OPENSEARCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .root.Values.secrets.metastoreCreds }}
+              key: writer
+        {{ if .config.error_log }}
+        - name: METASTORE_ERROR_LOG_FILE_PATH
+          value: /logs/ingest-error.log
+        {{- end }}
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp/
+        {{- if .root.Values.CACertificateConfigMap }}
+        - mountPath: /cafile
+          name: ca-cert
+        {{- end }}
+        {{- if .config.pvc }}
+        - name: {{ .name }}
+          mountPath: {{ .config.pvc.path }}
+        {{- end }}
+        - name: logs
+          mountPath: "/logs"
+      {{- if and .root.Values.external.loki.endpoint .config.error_log }}
+      - name: alloy
+        image: {{ get .root.Values.images.external "alloy" | required "missing image for alloy" }}
+        {{- include "harden.container" . | nindent 8 }}
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "50m"
+          limits:
+            memory: "150Mi"
+            cpu: "500m"
+        args:
+          - run
+          - /etc/alloy/config.river
+          - --storage.path=/data/alloy
+        volumeMounts:
+          - name: {{ .name }}-alloy
+            mountPath: /etc/alloy
+          - name: alloy-data
+            mountPath: /data/alloy
+          - name: logs
+            mountPath: "/logs"
+      {{- end }}
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 200Mi
+      {{- if .root.Values.CACertificateConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ .root.Values.CACertificateConfigMap }}
+      {{- end }}
+      {{- if .config.pvc }}
+      - name: {{ .name }}
+        persistentVolumeClaim:
+          claimName: {{ .name }}
+      {{- end }}
+      {{ if .config.error_log }}
+      - name: {{ .name }}-alloy
+        configMap:
+          name: {{ .name }}-alloy
+      - name: alloy-data
+        emptyDir:
+          sizeLimit: 200Mi
+      - name: logs
+        emptyDir:
+          sizeLimit: 200Mi
+      {{- end }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .name }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .name }}
+  minReplicas: {{ .config.minReplicas | default .coreHPA.minReplicas }}
+  maxReplicas: {{ .config.maxReplicas | default .coreHPA.maxReplicas }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .config.averageUtilization | default .coreHPA.averageUtilization }}
+{{ if and .config.error_log .root.Values.external.loki.endpoint }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name }}-alloy
+data:
+  config.river: |
+    local.file_match "____name____ingest_error" {
+      path_targets = [{
+        __address__ = "localhost",
+        __path__    = "/logs/*.log*",
+        app         = "{{ .name }}-ingest-error",
+        component   = "ingest",
+        namespace   = "{{ .root.Release.Namespace }}",
+        section     = "core",
+      }]
+    }
+
+    loki.source.file "____name____ingest_error" {
+      targets               = local.file_match.____name____ingest_error.targets
+      forward_to            = [loki.write.default.receiver]
+      legacy_positions_file = "/logs/positions.yaml"
+    }
+
+    loki.write "default" {
+      endpoint {
+        url = "{{ .root.Values.external.loki.endpoint }}/loki/api/v1/push"
+      }
+      external_labels = {}
+    }
+{{ end }}
+{{ end }}

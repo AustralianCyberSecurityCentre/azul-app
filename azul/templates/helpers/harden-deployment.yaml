@@ -1,0 +1,15 @@
+{{- define "harden.deployment" -}}
+# prevent environment spam from services
+# env vars from services clash with our config
+enableServiceLinks: false
+# Security setting to prevent leaking kubernetes JWTs.
+automountServiceAccountToken: false
+# enforce security hardening
+securityContext:
+  fsGroup: 21000
+  runAsUser: 21000
+  runAsGroup: 21000
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+{{- end }}

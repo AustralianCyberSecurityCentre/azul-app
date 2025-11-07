@@ -1,0 +1,21 @@
+{{/* standard plugin configuration */}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: plugin-standard
+data:
+  PYTHONUNBUFFERED: "yes"
+  PLUGIN_DATA_URL: "http://dp-plugin-streams:8111"
+  PLUGIN_EVENTS_URL: "http://dp-plugin-events:8111"
+{{- range $k, $v := .Values.pluginConfig }}
+  {{ $k }}: "{{ $v }}"
+{{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: plugin-gitconfig
+data:
+  .gitconfig: |-
+    [safe]
+      directory = /code

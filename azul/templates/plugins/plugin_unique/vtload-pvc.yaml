@@ -1,0 +1,3 @@
+{{- if .Values.plugins.virustotal.pullFromApi }}
+{{- include "pvc" (dict "root" .Values "name" "plugin-vtfilefeed" "size" .Values.plugins.virustotal.pvc.size) | nindent 0}}
+{{- end }}

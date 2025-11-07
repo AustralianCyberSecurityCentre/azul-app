@@ -1,0 +1,1342 @@
+imagePullSecrets: []
+
+tolerations: []
+
+affinity: {}
+
+# Any annotations to apply to ALL pods. such as sidecar.istio.io/inject: "false"
+podAnnotations: {}
+
+# Enable the custom network policy for infrastructure.
+networkPolicy:
+  enabled: false
+
+# Allow all pods to connect to the istio TBONE network. (Ambient mode for Istio)
+# Note this is equivalent to opening all ports for anything in the Istio Service Mesh.
+# To continue to control network traffic there needs to be an Istio AuthorizationPolicy enabled that enforces what
+# the networkPolicy would normally do, however network policy also needs to be enabled for communication with
+# services outside of the service mesh, as those connections will bypass istio, if you set istio's mode to STRICT
+# instead of the default permissive, you can disable network policy and just rely on AuthorizationPolicy.
+# IMPORTANT - istio must be installed and the infra namespace be annotated with the istio ambient annotation.
+# `kubectl label namespace infra istio.io/dataplane-mode=ambient`
+istioEnabled: false
+
+# List any of the existing network policies by name that shouldn't be created.
+# This is useful for replacing policies or if there is a policy that isn't applicable to your environment.
+disableNetworkPolicies: []
+
+customNetworkPolicies: []
+# - apiVersion: networking.k8s.io/v1
+#   kind: NetworkPolicy
+#   metadata:
+#     name: allow-egress-custom1
+#   spec:
+#     podSelector:
+#       matchLabels:
+#         allow-egress-custom1: "true"
+#     policyTypes:
+#       - Egress
+#     egress:
+#       - to:
+#           - podSelector:
+#               matchLabels:
+#                 part-of: azul
+#       - ports:
+#           - port: 80
+#             protocol: TCP
+# - apiVersion: networking.k8s.io/v1
+#   kind: NetworkPolicy
+#   metadata:
+#     name: allow-egress-custom2
+#   spec:
+#     podSelector:
+#       matchLabels:
+#         allow-egress-custom2: "true"
+#     policyTypes:
+#       - Egress
+#     egress:
+#       - to:
+#           - podSelector:
+#               matchLabels:
+#                 part-of: azul
+#       - ports:
+#           - port: 80
+#             protocol: TCP
+
+minio:
+  # Main instance, used to store files
+  main:
+    enable: true
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    secretName: s3-keys
+
+    # multiply this with requests.storage to get total size of minio
+    replicas: 3
+
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "1"
+
+    labels:
+      app: s3-store-minio
+      storage: minio-disk
+      allow-ingress-minio: "true"
+
+    storageClass: managed-csi
+    requests:
+      storage: 50Gi
+
+    ingress:
+      api:
+        enable: true
+        host: "minio-api.example.internal"
+      console:
+        enable: true
+        host: "minio.example.internal"
+      # change below properties as necessary
+      ingressClassName: "default"
+      secretName: "minio-tls"
+      annotations: {}
+
+  # Backup instance, used to store Kafka events
+  # NOT RECOMMENDED FOR PRODUCTION USE - put your backups external to Kubernetes!
+  backup:
+    enable: true
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    secretName: s3-backup-keys
+
+    # multiply this with requests.storage to get total size of minio
+    replicas: 3
+
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "1"
+    labels:
+      app: s3-store-minio-backup
+      storage: minio-disk-backup
+      allow-ingress-minio: "true"
+
+    storageClass: managed-csi
+    requests:
+      storage: 50Gi
+
+    ingress:
+      api:
+        enable: true
+        host: "minio-backup-api.example.internal"
+      console:
+        enable: true
+        host: "minio-backup.example.internal"
+      # change below properties as necessary
+      ingressClassName: "default"
+      secretName: "minio-backup-tls"
+      annotations: {}
+
+opensearch:
+  enable: true
+  name: azul-opensearch
+
+  # Hardening Opensearch requires your nodes to already have
+  # vm.max_map_count=262144 - this may not be default in your
+  # cluster!
+  harden: false
+
+  general:
+    version: 3.2.0
+    replicas: 3
+    setVMMaxMapCount: true
+    # defaultRepo: docker.io/opensearchproject
+
+  nodes:
+    # The amount of storage PER data node
+    diskSize: "50Gi"
+    resources:
+      # Request should equal limit unless you know what you
+      # are doing
+      requests:
+        memory: "2Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "500m"
+
+  selfSigned: true
+  # OR
+  issuerRef:
+    #name: --REQUIRED--
+    #kind: Issuer or ClusterIssuer
+
+  # Domain suffix for generated certificates
+  certificateSuffix: opensearch
+
+  # FUTURE inline bcrypt for these credentials? Would likely need a helper container
+  #        Worth noting that if OIDC was configurable with CRDs the CRDs will automatically
+  #        generate these credentials for us...
+  # Admin user credential secret - this should match with internalUsers admin
+  adminCredentialsSecret: azul-cluster-admincredentials
+  # Dashboards user credential secret - this should match with internalUsers kibanaserver
+  dashboardCredentialsSecret: azul-cluster-dashboardcredentials
+
+  additionalCerts: {}
+
+  ingress:
+    enable: false
+    ingressClassName: default
+    host: opensearch.azul.internal
+    secretName: "opensearch-tls"
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "600m"
+      nginx.org/client-max-body-size: "600m"
+
+  dashboard:
+    version: 3.2.0
+
+    ingress:
+      enable: true
+      ingressClassName: default
+      host: dashboard.azul.internal
+      secretName: "dashboard-ingress-tls"
+      annotations: {}
+
+    env: []
+
+    additionalConfig:
+      opensearch_security.multitenancy.enabled: "true"
+      opensearch_security.multitenancy.tenants.preferred: '["Private", "Global"]'
+      opensearch_security.readonly_mode.roles: '["kibana_read_only"]'
+
+  # internal_users.yml
+  internalUsers:
+    # This is the internal user database
+    # The hash value is a bcrypt hash and can be generated with:
+    # python -c 'import bcrypt; print(bcrypt.hashpw("admin123".encode("utf-8"), bcrypt.gensalt(12, prefix=b"2a")).decode("utf-8"))'
+
+    _meta:
+      type: "internalusers"
+      config_version: 2
+
+    admin:
+      # adminpassword
+      #hash: "$2y$12$H8ozJHFFeSQsXQ7Gm/2dhOBsCQNO01vNrjC1trrAoPzEKW.pc2DSW"
+      reserved: true
+      backend_roles:
+        - "admin"
+      description: "admin user"
+
+    kibanaserver:
+      # kibanaserverpassword
+      #hash: "$2y$12$bHlG9Bvlbfyn7ipQSkdVxeEKX.T5Xu2tti76GtcJ9QCRXEosoyqCq"
+      reserved: true
+
+    monitor:
+      #monitorpassword
+      #hash: $2y$12$Wl2JrXSNgwUyzckKlz8K3uD2Xp8oxVtTM/r7O0jyCSGBeZsgp1ruG
+      description: "Exporter monitoring"
+
+    azul_writer:
+      #azulwriterpassword
+      #hash: $2y$12$GzoEXpS7eGW5N4yAhygQrue32wYZ7w5T3r03PRqHZnunEPnZC7yxm
+      backend_roles:
+        - "azul_write"
+      description: "Service account for metastore writer testing"
+
+  # roles_mapping.yml
+  roleMapping:
+    _meta:
+      type: "rolesmapping"
+      config_version: 2
+
+    ##### azul #####
+    azul_read:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_read"
+        - "azul_read_indirect"
+        - "azul-access"
+      description: "Maps azul_read role"
+
+    # these roles need to be mapped to azul users to prevent SG 900D errors
+    # 4 seems the minimum required, add 5 for safety
+    azul-fill1:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_read"
+      description: "fix SG 900D error"
+    azul-fill2:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_read"
+      description: "fix SG 900D error"
+    azul-fill3:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_read"
+      description: "fix SG 900D error"
+    azul-fill4:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_read"
+      description: "fix SG 900D error"
+    azul-fill5:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_read"
+      description: "fix SG 900D error"
+
+    s-any:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_read"
+        - "azul-access"
+      description: "Map"
+
+    s-official:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_read"
+        - "azul-access"
+      description: "Map"
+
+    azul_admin:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_admin"
+      description: "Maps azul_admin role"
+
+    azul_write:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - "azul_write"
+      description: "Maps azul_write role"
+
+    ##### misc #####
+
+    monitor:
+      reserved: false
+      hidden: false
+      users:
+        - "monitor"
+      description: "Maps monitor user to monitor role"
+
+    all_access:
+      reserved: true
+      backend_roles:
+        - "admin"
+      description: "Maps admin to all_access"
+    readall:
+      reserved: true
+      backend_roles:
+        - "readall"
+    kibana_server:
+      reserved: true
+      users:
+        - "kibanaserver"
+
+    logstash:
+      reserved: false
+      backend_roles:
+        - "logstash"
+    kibana_user:
+      reserved: false
+      backend_roles:
+        - "kibanauser"
+      description: "Maps kibanauser to kibana_user"
+    manage_snapshots:
+      reserved: false
+      backend_roles:
+        - "snapshotrestore"
+
+  # roles.yml
+  roles:
+    _meta:
+      type: "roles"
+      config_version: 2
+
+    ##### azul #####
+
+    s-any:
+      reserved: false
+      hidden: false
+      static: false
+
+    s-official:
+      reserved: false
+      hidden: false
+      static: false
+
+    azul_read:
+      # https://opensearch.org/docs/latest/security/access-control/permissions
+      reserved: false
+      hidden: false
+      static: false
+      cluster_permissions:
+        # users must be permitted to do all complex read operation types (multisearch, multi term vector, etc)
+        - "indices:data/read/*"
+        - "kibana_user"
+      index_permissions:
+        # allow alias resolution (all azul indices are accessed via aliases)
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:admin/resolve/index"
+        # assist with getting index mappings and analysing text
+        - index_patterns:
+            - "azul.*"
+          allowed_actions:
+            - "indices:admin/get"
+            - "indices:admin/analyze"
+        # azul docs that have security restrictions above default access
+        - index_patterns:
+            - "azul.x.*"
+          allowed_actions:
+            - "read"
+          dls: '{"bool": {"filter": [{"terms": {"encoded_security.inclusive": [${user.securityRoles}]}}, {"terms_set": {"encoded_security.exclusive": {"terms": [${user.securityRoles}], "minimum_should_match_field": "encoded_security.num_exclusive"}}}]}}'
+        # azul docs that anyone with system access can query
+        - index_patterns:
+            - "azul.o.*"
+          allowed_actions:
+            - "read"
+      tenant_permissions:
+        - tenant_patterns:
+            - "azul"
+          allowed_actions:
+            - "kibana_all_write"
+
+    # these roles need to be mapped to azul users to prevent SG 900D errors
+    # 4 seems the minimum required, add 5 for safety
+    azul-fill1:
+      reserved: false
+      hidden: false
+      static: false
+    azul-fill2:
+      reserved: false
+      hidden: false
+      static: false
+    azul-fill3:
+      reserved: false
+      hidden: false
+      static: false
+    azul-fill4:
+      reserved: false
+      hidden: false
+      static: false
+    azul-fill5:
+      reserved: false
+      hidden: false
+      static: false
+
+    azul_admin:
+      # https://opensearch.org/docs/latest/security/access-control/permissions
+      reserved: false
+      hidden: false
+      static: false
+      cluster_permissions:
+        - "cluster_monitor"
+        - "cluster:admin/script/*"
+        - "indices:admin/index_template/*"
+        - "indices:admin/mapping/*"
+        - "indices:admin/template/*"
+        - "indices:data/read/*"
+        - "indices:data/write/bulk"
+        - "kibana_user"
+      index_permissions:
+        - index_patterns:
+            - "azul.*"
+          allowed_actions:
+            - "unlimited"
+        - index_patterns:
+            - "virustotal*"
+          allowed_actions:
+            - "unlimited"
+      tenant_permissions:
+        - tenant_patterns:
+            - "azul"
+            - "global_tenant"
+          allowed_actions:
+            - "kibana_all_write"
+
+    azul_write:
+      # https://opensearch.org/docs/latest/security/access-control/permissions
+      reserved: false
+      hidden: false
+      static: false
+      # these index permissions don't work when specified on indices :(
+      cluster_permissions:
+        - "cluster_monitor"
+        - "cluster:admin/script/*"
+        - "indices:admin/index_template/*"
+        - "indices:admin/mapping/*"
+        - "indices:admin/template/*"
+        - "indices:data/read/*"
+        - "indices:data/write/bulk"
+        - "kibana_user"
+      index_permissions:
+        - index_patterns:
+            - "azul.*"
+          allowed_actions:
+            - "unlimited"
+
+    ##### misc #####
+
+    monitor:
+      reserved: false
+      hidden: false
+      static: false
+      cluster_permissions:
+        - "cluster_monitor"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices_monitor"
+
+    # Restrict users so they can only view visualization and dashboard on OpenSearchDashboards
+    kibana_read_only:
+      reserved: true
+
+    # The security REST API access role is used to assign specific users access to change the security settings through the REST API.
+    security_rest_api_access:
+      reserved: true
+
+    # Allows users to view monitors, destinations and alerts
+    alerting_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/alerting/alerts/get"
+        - "cluster:admin/opendistro/alerting/destination/get"
+        - "cluster:admin/opendistro/alerting/monitor/get"
+        - "cluster:admin/opendistro/alerting/monitor/search"
+
+    # Allows users to view and acknowledge alerts
+    alerting_ack_alerts:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/alerting/alerts/*"
+
+    # Allows users to use all alerting functionality
+    alerting_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster_monitor"
+        - "cluster:admin/opendistro/alerting/*"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices_monitor"
+            - "indices:admin/aliases/get"
+            - "indices:admin/mappings/get"
+
+    # Allow users to read Anomaly Detection detectors and results
+    anomaly_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/ad/detector/info"
+        - "cluster:admin/opendistro/ad/detector/search"
+        - "cluster:admin/opendistro/ad/detectors/get"
+        - "cluster:admin/opendistro/ad/result/search"
+        - "cluster:admin/opendistro/ad/tasks/search"
+
+    # Allows users to use all Anomaly Detection functionality
+    anomaly_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster_monitor"
+        - "cluster:admin/opendistro/ad/*"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices_monitor"
+            - "indices:admin/aliases/get"
+            - "indices:admin/mappings/get"
+
+    # Allows users to read Notebooks
+    notebooks_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/notebooks/list"
+        - "cluster:admin/opendistro/notebooks/get"
+
+    # Allows users to all Notebooks functionality
+    notebooks_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/notebooks/create"
+        - "cluster:admin/opendistro/notebooks/update"
+        - "cluster:admin/opendistro/notebooks/delete"
+        - "cluster:admin/opendistro/notebooks/get"
+        - "cluster:admin/opendistro/notebooks/list"
+
+    # Allows users to read and download Reports
+    reports_instances_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/reports/instance/list"
+        - "cluster:admin/opendistro/reports/instance/get"
+        - "cluster:admin/opendistro/reports/menu/download"
+
+    # Allows users to read and download Reports and Report-definitions
+    reports_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/reports/definition/get"
+        - "cluster:admin/opendistro/reports/definition/list"
+        - "cluster:admin/opendistro/reports/instance/list"
+        - "cluster:admin/opendistro/reports/instance/get"
+        - "cluster:admin/opendistro/reports/menu/download"
+
+    # Allows users to all Reports functionality
+    reports_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/reports/definition/create"
+        - "cluster:admin/opendistro/reports/definition/update"
+        - "cluster:admin/opendistro/reports/definition/on_demand"
+        - "cluster:admin/opendistro/reports/definition/delete"
+        - "cluster:admin/opendistro/reports/definition/get"
+        - "cluster:admin/opendistro/reports/definition/list"
+        - "cluster:admin/opendistro/reports/instance/list"
+        - "cluster:admin/opendistro/reports/instance/get"
+        - "cluster:admin/opendistro/reports/menu/download"
+
+    # Allows users to use all asynchronous-search functionality
+    asynchronous_search_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/asynchronous_search/*"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:data/read/search*"
+
+    # Allows users to read stored asynchronous-search results
+    asynchronous_search_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/asynchronous_search/get"
+
+    # Allows user to use all index_management actions - ism policies, rollups, transforms
+    index_management_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/ism/*"
+        - "cluster:admin/opendistro/rollup/*"
+        - "cluster:admin/opendistro/transform/*"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:admin/opensearch/ism/*"
+
+    # Allows users to use all cross cluster replication functionality at leader cluster
+    cross_cluster_replication_leader_full_access:
+      reserved: true
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:admin/plugins/replication/index/setup/validate"
+            - "indices:data/read/plugins/replication/changes"
+            - "indices:data/read/plugins/replication/file_chunk"
+
+    # Allows users to use all cross cluster replication functionality at follower cluster
+    cross_cluster_replication_follower_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/plugins/replication/autofollow/update"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:admin/plugins/replication/index/setup/validate"
+            - "indices:data/write/plugins/replication/changes"
+            - "indices:admin/plugins/replication/index/start"
+            - "indices:admin/plugins/replication/index/pause"
+            - "indices:admin/plugins/replication/index/resume"
+            - "indices:admin/plugins/replication/index/stop"
+            - "indices:admin/plugins/replication/index/update"
+            - "indices:admin/plugins/replication/index/status_check"
+
+  # config.yml
+  securityConfig:
+    _meta:
+      type: "config"
+      config_version: 2
+
+    config:
+      dynamic:
+        kibana:
+          # Disabling private tenants fixes 'SG 900D' errors when using DLS in Azul.
+          private_tenant_enabled: false
+
+        # Set filtered_alias_mode to 'disallow' to forbid more than 2 filtered aliases per index
+        # Set filtered_alias_mode to 'warn' to allow more than 2 filtered aliases per index but warns about it (default)
+        # Set filtered_alias_mode to 'nowarn' to allow more than 2 filtered aliases per index silently
+        #filtered_alias_mode: warn
+        #do_not_fail_on_forbidden: false
+        authc:
+          # This is needed for internal authentication
+          basic_internal_auth_domain:
+            description: "Authenticate via HTTP Basic against internal users database"
+            http_enabled: true
+            transport_enabled: true
+            order: 0
+            http_authenticator:
+              type: basic
+              challenge: false
+            authentication_backend:
+              type: intern
+
+kafka:
+  enable: true
+  name: azul-kafka
+  version: 4.0.0
+  metadataVersion: 4.0-IV3
+
+  replicas: 3
+  resources:
+    requests:
+      memory: 4Gi
+      cpu: 1000m
+    limits:
+      memory: 4Gi
+      cpu: 1000m
+  jvmOptions:
+    # leave room for segment file cache
+    # should probably be 1/2 of the ram
+    -Xms: 2g
+    -Xmx: 2g
+
+  # Helper pod to enable debugging in-cluster
+  kafkactl:
+    enable: true
+    image: deviceinsight/kafkactl:v5.13.0-ubuntu
+
+  storage:
+    type: persistent-claim
+    size: 100Gi
+    kraftMetadata: shared
+    deleteClaim: false # do not delete pvcs if kafka is disabled
+    class: managed-csi
+
+  matchAgentPool: ""
+  antiAgentPool: ""
+
+  clusterConfig:
+    offsets.topic.replication.factor: 3
+    transaction.state.log.replication.factor: 3
+    transaction.state.log.min.isr: 2
+    # DO NOT ENABLE - manually define topics instead
+    auto.create.topics.enable: false
+    default.replication.factor: 3
+    min.insync.replicas: 2
+    num.io.threads: 8
+    num.network.threads: 5
+    num.partitions: 4
+    num.replica.fetchers: 2
+    socket.request.max.bytes: 104857600
+    unclean.leader.election.enable: true
+    message.max.bytes: 4194352
+    compression.type: snappy
+
+keycloak:
+  enable: true
+  image: quay.io/keycloak/keycloak:26.1
+  # Normally forwarded or xforwarded
+  proxyHeaderArg: xforwarded
+  ingress:
+    hostname: "keycloak.example.internal"
+    secretName: keycloak-tls
+    annotations: {}
+  postgres:
+    storageClassName: "managed-csi"
+    size: 5Gi
+
+kube-prometheus-stack:
+  fullnameOverride: "kube-prometheus-stack"
+  enable: true
+  namespaceOverride: "namespace"
+  alertmanager:
+    enabled: false
+  # Create default rules for monitoring the cluster
+  defaultRules:
+    create: true
+    rules:
+      alertmanager: true
+      etcd: false
+      configReloaders: false
+      general: true
+      k8sContainerCpuUsageSecondsTotal: false
+      k8sContainerMemoryCache: false
+      k8sContainerMemoryRss: false
+      k8sContainerMemorySwap: false
+      k8sContainerResource: false
+      k8sPodOwner: false
+      kubeApiserverAvailability: false
+      kubeApiserverBurnrate: false
+      kubeApiserverHistogram: false
+      kubeApiserverSlos: false
+      kubeControllerManager: false
+      kubelet: false
+      kubeProxy: false
+      kubePrometheusGeneral: false
+      kubePrometheusNodeRecording: false
+      kubernetesApps: true
+      kubernetesResources: false
+      kubernetesStorage: false
+      kubernetesSystem: false
+      kubeSchedulerAlerting: false
+      kubeSchedulerRecording: false
+      kubeStateMetrics: true
+      network: false
+      node: false
+      nodeExporterAlerting: false
+      nodeExporterRecording: false
+      prometheus: false
+      prometheusOperator: false
+      windows: false
+
+  grafana:
+    enabled: true
+    namespaceOverride: ""
+
+    # Name of a Kubernetes secret (must be manually created in the same namespace) containing values to be added to the environment
+    envFromSecret: ""
+
+    # Configure grafana notifiers
+    notifiers: {}
+
+    admin:
+      # The name of an existing secret containing the admin credentials
+      existingSecret: prometheus-grafana
+      # The key in the existing admin secret containing the username
+      userKey: admin-user
+      # The key in the existing admin secret containing the password
+      passwordKey: admin-password
+
+    # Grafana's primary configuration
+    grafana.ini:
+      server:
+        domain: monitoring.example.com
+        root_url: "https://monitoring.example.com"
+      unified_alerting:
+        enabled: true
+      alerting:
+        enabled: false
+      # Grafana provides a basic authentication system with password authentication enabled by default
+      auth.basic:
+        enabled: true
+
+    # Deploy default dashboards
+    defaultDashboardsEnabled: true
+
+    # Timezone for the default dashboards
+    # Other options are: browser or a specific timezone, i.e. Europe/Luxembourg
+    defaultDashboardsTimezone: utc
+
+    # To make Grafana persistent (Using Statefulset)
+    persistence:
+      type: pvc
+      enabled: true
+      storageClassName: default
+      accessModes:
+        - ReadWriteOnce
+      size: 10Gi
+      finalizers:
+        - kubernetes.io/pvc-protection
+
+    ingress:
+      # If true, Grafana Ingress will be created
+      enabled: true
+
+      # IngressClassName for Grafana Ingress.
+      # Should be provided if Ingress is enable.
+      ingressClassName: nginx
+
+      # Annotations for Grafana Ingress
+      annotations:
+        # kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        cert-manager.io/cluster-issuer: example-clusterissuer
+      # Labels to be added to the Ingress
+      labels: {}
+
+      # Hostnames.
+      # Must be provided if Ingress is enable.
+      hosts:
+        - monitoring.example.com
+
+      # Path for grafana ingress
+      path: /
+
+      # TLS configuration for grafana Ingress
+      # Secret must be manually created in the namespace
+      tls:
+        - secretName: monitoring-tls
+          hosts:
+            - monitoring.example.com
+
+    readinessProbe:
+      failureThreshold: 100
+      initialDelaySeconds: 30
+      timeoutSeconds: 1000
+
+    livenessProbe:
+      failureThreshold: 100
+      initialDelaySeconds: 30
+      timeoutSeconds: 1000
+
+    sidecar:
+      # Enables the cluster wide search for alerts and adds/updates/deletes them in grafana
+      alerts:
+        enabled: true
+        # Label that config maps with alerts should have to be added
+        label: grafana_alert
+        labelValue: "1"
+        searchNamespace: ALL
+      # Enables the cluster wide search for dashboards and adds/updates/deletes them in grafana
+      dashboards:
+        enabled: true
+        SCProvider: false
+        # Label that config maps with dashboards should have to be added
+        label: grafana_dashboard
+        labelValue: "1"
+        searchNamespace: ALL
+        # The annotation the sidecar will look for in configmaps to override the destination folder for files
+        folderAnnotation: "grafana_folder"
+
+        ## Annotations for Grafana dashboard configmaps
+        annotations: {}
+        multicluster:
+          global:
+            enabled: false
+          etcd:
+            enabled: false
+        folder: /tmp/dashboards
+        defaultFolderName: default
+        # provider:
+        #   # provider here has bugs with folder, defaultFolderName is appended afterward which breaks non defaults from being loaded
+        #   folder: /tmp/dashboards
+        #   foldersFromFilesStructure: true
+        #   allowUiUpdates: false
+      # Enables the cluster wide search for datasources and adds/updates/deletes them in grafana
+      datasources:
+        enabled: false
+
+    # Configure grafana dashboard providers
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: "all"
+            type: file
+            disableDeletion: true
+            allowUiUpdates: false
+            options:
+              path: /tmp/dashboards/
+              foldersFromFilesStructure: true
+
+    ## Configure grafana alerting (can be templated)
+    ## ref: http://docs.grafana.org/administration/provisioning/#alerting
+    alerting: {}
+    # Configure grafana datasources
+    # ref: http://docs.grafana.org/administration/provisioning/#datasources
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Prometheus
+            uid: prometheus
+            type: prometheus
+            url: http://kube-prometheus-stack-prometheus:9090
+            access: proxy
+            isDefault: true
+          - name: Loki
+            uid: loki
+            type: loki
+            url: http://loki:3100
+            access: proxy
+            isDefault: false
+
+  # Component scraping the kube controller manager
+  kubeControllerManager:
+    enabled: false
+
+  # Component scraping etcd
+  kubeEtcd:
+    enabled: false
+
+  # Component scraping kube scheduler
+  kubeScheduler:
+    enabled: false
+
+  # Deploy node exporter as a daemonset to all nodes
+  nodeExporter:
+    enabled: false
+
+  # Deploy a Prometheus instance
+  prometheus:
+    ingress:
+      enabled: true
+
+      # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+      # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+      ingressClassName: nginx
+
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        cert-manager.io/cluster-issuer: example-clusterissuer
+
+      hosts:
+        - prometheus.example.com
+
+      # Paths to use for ingress rules - one path should match the prometheusSpec.routePrefix
+      paths:
+        - /
+
+      # For Kubernetes >= 1.18 you should specify the pathType (determines how Ingress paths should be matched)
+      # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#better-path-matching-with-path-types
+      pathType: Prefix
+
+      # TLS configuration for Prometheus Ingress
+      # Secret must be manually created in the namespace
+      tls:
+        - secretName: prometheustest-tls
+          hosts:
+            - prometheus.example.com
+
+    # Settings affecting prometheusSpec
+    # ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#prometheusspec
+    prometheusSpec:
+      externalUrl: "https://prometheus.example.com/"
+
+      # If true, a nil or {} value for prometheus.prometheusSpec.serviceMonitorSelector will cause the
+      # prometheus resource to be created with selectors based on values in the helm deployment,
+      # which will also match the servicemonitors created
+      # if set to false, it will select all ServiceMonitors by default
+      serviceMonitorSelectorNilUsesHelmValues: false
+      podMonitorSelectorNilUsesHelmValues: false
+      probeSelectorNilUsesHelmValues: false
+      # PrometheusRules to be selected for target discovery.
+      # If {}, select all PrometheusRules
+      ruleSelector:
+        ## Example which select all PrometheusRules resources
+        ## with label "prometheus" with values any of "example-rules" or "example-rules-2"
+        matchExpressions:
+          - key: app
+            operator: In
+            values:
+              - azul-dev
+              - azul
+
+      retention: 30d
+
+      ## Maximum size of metrics
+      retentionSize: "50GB"
+
+      # Resource limits & requests
+      resources:
+        requests:
+          memory: 8Gi
+          cpu: "500m"
+        limits:
+          memory: 16Gi
+          cpu: "1000m"
+
+      # Prometheus StorageSpec for persistent data
+      # ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
+      storageSpec:
+        # Using PersistentVolumeClaim
+        volumeClaimTemplate:
+          spec:
+            storageClassName: default
+            accessModes: ["ReadWriteOnce"]
+            resources:
+              requests:
+                storage: 50Gi
+
+      additionalScrapeConfigs:
+        - job_name: "kubernetes-pods"
+          scrape_timeout: 30s
+          kubernetes_sd_configs:
+            - role: pod
+
+          relabel_configs:
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels:
+                [
+                  __address__,
+                  __meta_kubernetes_pod_annotation_prometheus_io_port,
+                ]
+              action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - source_labels: [__meta_kubernetes_namespace]
+              action: replace
+              target_label: kubernetes_namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              action: replace
+              target_label: kubernetes_pod_name
+
+        - job_name: "kubernetes-service-endpoints"
+
+          kubernetes_sd_configs:
+            - role: endpoints
+
+          relabel_configs:
+            - source_labels:
+                [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels:
+                [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+              action: replace
+              target_label: __scheme__
+              regex: (https?)
+            - source_labels:
+                [__meta_kubernetes_service_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels:
+                [
+                  __address__,
+                  __meta_kubernetes_service_annotation_prometheus_io_port,
+                ]
+              action: replace
+              target_label: __address__
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+            - action: labelmap
+              regex: __meta_kubernetes_service_label_(.+)
+            - source_labels: [__meta_kubernetes_namespace]
+              action: replace
+              target_label: kubernetes_namespace
+            - source_labels: [__meta_kubernetes_service_name]
+              action: replace
+              target_label: kubernetes_name
+
+  prometheusOperator:
+    image:
+      pullPolicy: IfNotPresent
+    admissionWebHooks:
+      patch:
+        image:
+          pullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 1
+            memory: 4Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+
+loki:
+  enable: true
+  serviceAccount:
+    # annotations:
+    #   # Example to disable RBAC for the service account
+    #   authorization.k8s.io/get: "[]"
+    create: true
+    automountServiceAccountToken: true
+    name: "loki"
+  # SingleBinary: Loki is deployed as a single binary, useful for small installs typically without HA, up to a few tens of GB/day.
+  deploymentMode: SingleBinary
+  networkPolicy:
+    enabled: false
+
+  singleBinary:
+    replicas: 1
+    persistence:
+      enableStatefulSetAutoDeletePVC: false
+      size: 50Gi
+    resources:
+      limits:
+        cpu: 1
+        memory: 8Gi
+      requests:
+        cpu: 500m
+        memory: 2Gi
+    memcachedExporter:
+      resources:
+        limits:
+          cpu: 1
+          memory: 8Gi
+        requests:
+          cpu: 500m
+          memory: 2Gi
+  # Disable the Simple Scalable Deployment (SSD) Mode replicas
+  write:
+    # -- Number of replicas for the write
+    replicas: 0
+  read:
+    # -- Number of replicas for the write
+    replicas: 0
+  backend:
+    # -- Number of replicas for the write
+    replicas: 0
+
+  nameOverride: "loki"
+  fullnameOverride: "loki"
+
+  gateway:
+    enabled: false
+
+  loki:
+    image:
+      pullPolicy: IfNotPresent
+    # When configured with auth_enabled: false, Loki uses a single tenant. The X-Scope-OrgID header is not required in Loki API requests.
+    auth_enabled: false
+    useTestSchema: false
+    commonConfig:
+      replication_factor: 1
+    # schemaConfig based on base TestSchema supplied with Loki (setting object_store to filesystem instead)
+    schemaConfig:
+      configs:
+        - from: 2024-04-01
+          store: tsdb
+          object_store: "filesystem"
+          schema: v13
+          index:
+            prefix: index_
+            period: 24h
+    storage:
+      type: "filesystem"
+    # Settings to resolve "too many outstanding requests" issue on Dashboards.
+    # https://github.com/grafana/loki/issues/5123#issuecomment-1167018445
+    query_scheduler:
+      max_outstanding_requests_per_tenant: 4096
+
+    frontend:
+      max_outstanding_per_tenant: 4096
+
+    query_range:
+      parallelise_shardable_queries: true
+
+    limits_config:
+      split_queries_by_interval: 15m
+      max_query_parallelism: 32
+      retention_period: 168h # delete after 7 days
+
+    server:
+      # increase these 10x to try resolve issues with long log lines displaying in grafana
+      grpc_server_max_recv_msg_size: 41943040
+      grpc_server_max_send_msg_size: 41943040
+
+    compactor:
+      # enable compactor to enforce retention_period
+      retention_enabled: true
+      delete_request_store: filesystem
+
+  # Disable lokiCanary and helm test
+  lokiCanary:
+    enabled: false
+  test:
+    enabled: false
+
+prometheus-blackbox-exporter:
+  enable: true
+
+  ## Override the namespace
+  namespaceOverride: "namespace"
+
+  ## set to true to add the release label so scraping of the servicemonitor with kube-prometheus-stack works out of the box
+  releaseLabel: true
+
+  image:
+    pullPolicy: IfNotPresent
+    digest: sha256:a50c4c0eda297baa1678cd4dc4712a67fdea713b832d43ce7fcc5f9bea05094d
+
+  serviceMonitor:
+    ## If true, a ServiceMonitor CRD is created for a prometheus operator
+    ## https://github.com/coreos/prometheus-operator for each target
+    enabled: true
+
+  podSecurityContext:
+    fsGroup: 91000
+    runAsNonRoot: true
+    runAsUser: 91000
+    seccompProfile:
+      type: RuntimeDefault
+
+  securityContext:
+    runAsUser: 91000
+    runAsGroup: 91000
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+  resources:
+    limits:
+      memory: 300Mi
+      cpu: 100m
+    requests:
+      memory: 50Mi
+      cpu: 30m
+
+prometheus-pushgateway:
+  enable: true
+  # Provide a namespace to substitude for the namespace on resources
+  namespaceOverride: "namespace"
+
+  # Enable this if you're using https://github.com/coreos/prometheus-operator
+  serviceMonitor:
+    enabled: true
+    namespace: namespace
+
+  image:
+    pullPolicy: IfNotPresent
+    tag: v1.11.1@sha256:03738d278e082ee9821df730c741b3b465c251fc2b68a85883def301a55a6215
+
+  automountServiceAccountToken: false
+
+  resources:
+    limits:
+      cpu: 200m
+      memory: 100Mi
+    requests:
+      cpu: 100m
+      memory: 30Mi
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsUser: 65534
+    runAsNonRoot: true
+    capabilities:
+      drop: ["ALL"]
+      add: ["NET_BIND_SERVICE"]

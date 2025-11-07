@@ -1,0 +1,125 @@
+{{/* Build headers to be added to the nginx config */}}
+{{- $mergedCsp := mustMergeOverwrite (deepCopy .Values.global.defaultCsp) .Values.web.ingress.security.csp.webui -}}
+{{- $cspString := "upgrade-insecure-requests" -}}
+{{- range $k, $v := $mergedCsp -}}
+    {{ $cspString = print $cspString "; " $k " " $v }}
+{{- end -}}
+{{ $outputdict := dict "Content-Security-Policy" (print $cspString ";") }} 
+{{- range $k, $v := .Values.global.headers -}}
+  {{- $_ := set $outputdict (print $k) (print $v) -}}
+{{- end -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |-
+    worker_processes  auto;
+
+    error_log  /tmp/error.log warn;
+    pid        /tmp/nginx.pid;
+
+
+    events {
+        worker_connections  1024;
+    }
+
+
+    http {
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp_path;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
+
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+
+        # log to file (nginx forwards to stderr)
+        access_log  /tmp/access.log  main;
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        keepalive_timeout  65;
+
+        #gzip  on;
+
+        # include /etc/nginx/conf.d/*.conf;
+
+        # Security headers
+        add_header Cross-Origin-Opener-Policy "unsafe-none";
+        add_header Content-Security-Policy "{{ $cspString }}";
+        {{- range $k, $v := .Values.global.headers }}
+        add_header {{ $k }} "{{ $v }}";
+        {{- end }}
+
+        server {
+            listen 8080;
+            absolute_redirect off;
+            port_in_redirect off;
+
+            access_log /tmp/reverse-access.log;
+            error_log /tmp/reverse-error.log;
+
+            location = /robots.txt {
+                # Serve the no crawler config
+                root /usr/share/nginx/html/dist/browser;
+            }
+
+            location /ui {
+                # reset Security headers for new location that has an add_header directive
+                add_header Cross-Origin-Opener-Policy "unsafe-none";
+                add_header Content-Security-Policy "{{ $cspString }}";
+                {{- range $k, $v := .Values.global.headers }}
+                add_header {{ $k }} "{{ $v }}";
+                {{- end }}
+
+                # Serve static UI files
+                alias /usr/share/nginx/html/dist/browser;
+
+                # Force index.html/SPA pages/config.json to always be stale and always force clients to
+                # revalidate that they have the latest - these files do not have hashes in their filenames.
+                add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+
+                # Display the root index.html for the root directory
+                location = /ui/ {
+                    try_files $uri /ui/index.html;
+                }
+
+                # Also send the index page for SPA routes
+                location ~ ^(/ui/pages/|/ui/unauthorized|/ui/callback) {
+                    try_files $uri /ui/index.html;
+                }
+
+                # Cache JavaScript, CSS, etc - these all have hashes in their filename, so unless
+                # filenames have been manipulated these are safe to cache indefinitely
+                # These also ignore authentication headers for the purposes of caching ("public")
+                location ~* \.[a-fA-F0-9]+\.(js|css|woff2|png|svg)$ {
+                    # reset Security headers for new location that has an add_header directive
+                    add_header Cross-Origin-Opener-Policy "unsafe-none";
+                    add_header Content-Security-Policy "{{ $cspString }}";
+                    {{- range $k, $v := .Values.global.headers }}
+                    add_header {{ $k }} "{{ $v }}";
+                    {{- end }}
+                    add_header Cache-Control "public, max-age=604800, immutable";
+                }
+            }
+
+
+            location /pages/ {
+                # support legacy links
+                rewrite /pages/ /ui/$uri redirect;
+            }
+
+            location = / {
+                rewrite / /ui/ redirect;
+            }
+        }
+
+        client_max_body_size 4096M;
+    }

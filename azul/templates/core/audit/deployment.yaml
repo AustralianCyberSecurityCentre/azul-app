@@ -1,0 +1,82 @@
+{{if .Values.auditForwarder.enabled}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-forwarder
+  labels:
+    app: audit-forwarder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audit-forwarder
+  template:
+    metadata:
+      labels:
+        app: audit-forwarder
+        # To allow access to loki in the monitoring namespace
+        allow-egress-loki: "true"
+        allow-ingress-audit-forwarder-health: "true"
+      annotations:
+        # ensure deployment restarts if config is changed
+        checksum/config: {{ include (print $.Template.BasePath "/core/audit/config.yaml") . | sha256sum }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: audit-forwarder
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "audit-forwarder")}}
+        {{- include "harden.container" . | nindent 8 }}
+        envFrom: 
+          - configMapRef:
+              name: audit-forwarder
+        env: 
+          {{- if .Values.CACertificateConfigMap }}
+          - name: SSL_CERT_FILE
+            value: /etc/ssl/certs/ca-certificates.crt
+          {{- end }}
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8855
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: 2Gi
+            cpu: "1000m"
+        volumeMounts:
+          - name: forwarder-state
+            mountPath: /state
+          - name: logs
+            mountPath: "/logs"
+          {{- if .Values.CACertificateConfigMap }}
+          - mountPath: /etc/ssl/certs/ca-certificates.crt
+            name: ca-cert
+            subPath: ca.crt
+          {{- end }}
+      volumes:
+        - name: forwarder-state
+          persistentVolumeClaim:
+            claimName: audit-forwarder
+        - name: logs
+          emptyDir: 
+            sizeLimit: 200Mi
+        {{- if .Values.CACertificateConfigMap }}
+        - name: ca-cert
+          configMap:
+            name: {{ .Values.CACertificateConfigMap }}
+        {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+{{- end }}

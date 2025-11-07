@@ -1,0 +1,109 @@
+{{- define "plugin.deployment" -}}
+{{/* standard main container for plugin */}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .plugin_name }}
+  labels:
+    part-of: azul
+    section: plugins
+    component: {{ .group_name }}
+spec:
+  revisionHistoryLimit: 1
+  {{- with .plugin.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .plugin_name }}
+  template:
+    metadata:
+      name: {{ .plugin_name }}
+      labels:
+        app: {{ .plugin_name }}
+        part-of: azul
+        section: plugins
+        component: {{ .group_name }}
+        allow-egress-dispatcher: "true"
+        {{- if .plugin.allowAllTraffic }}
+        allow-connect-anything: "true"
+        {{- end }}
+        {{- if .plugin.additionalLabels }}
+          {{- range $key, $value := .plugin.additionalLabels }}
+        {{ $key }}: {{ $value | quote }}
+          {{- end }}
+        {{- end }}
+        {{- if eq (default .plugin.promMetricsEnabled false) true}}
+        {{/* The Promtheus scrape port networkPolicy ranges from 8900-8950 if the provided port isn't in this range the policy won't work so don't enable it. */}}
+        {{- if and (ge (default $.plugin.promPort 8900) 8900) (le (default $.plugin.promPort 8900) 8950) }}
+        allow-ingress-prometheus-scrape: "true"
+        {{- end }}
+        {{- end }}
+      annotations:
+        {{- if .plugin.additionalAnnotations }}
+          {{- range $key, $value := .plugin.additionalAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+          {{- end }}
+        {{- end }}
+        {{- if eq (default .plugin.promMetricsEnabled false) true}}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ quote $.plugin.promPort | default "\"8900\"" }}
+        {{- end }}
+        # ensure deployment restarts if config is changed
+        checksum/config: {{ .cmSHA256 }}
+      {{- with .root.Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .root.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .root.Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .root.Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .plugin.debug }}
+      {{- include "soften.deployment" . | nindent 6 }}
+      {{- else }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      {{- end }}
+      containers:
+      {{- include "plugin.container.main" . | nindent 6 }}
+      {{- if .plugin.extraContainers}}
+        {{- range $container_name, $container := .plugin.extraContainers}}
+          {{/* extra containers should receive their own context, not current */}}
+          {{- include $container.template (dict "container_name" $container_name "plugin" $container "group" $.group "group_name" $.group_name "root" $.root) | nindent 6 }}
+        {{- end}}
+      {{- end}}
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: {{ .plugin.tmp | default "200Mi" }}
+      {{- if .root.Values.CACertificateConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ .root.Values.CACertificateConfigMap }}
+      {{- end }}
+      {{- if .plugin.volumes }}
+      {{- .plugin.volumes | toYaml | nindent 6 }}
+      {{- end }}
+{{- if .plugin.extraContainers}}
+  {{- range $container_name, $container := .plugin.extraContainers}}
+    {{- if eq (default $container.promMetricsEnabled false) true}}
+---
+      {{- include "plugin.container.scrape.service" (dict "container_name" $container_name "container" $container "plugin_name" $.plugin_name ) }}
+    {{- end }}
+  {{- end}}
+{{- end}}
+{{- end }}

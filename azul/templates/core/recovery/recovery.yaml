@@ -1,0 +1,49 @@
+{{- if ne .Values.recovery.mode "backup" }}
+  {{- if ne .Values.recovery.mode "restore" }}
+    {{- if ne .Values.recovery.mode "off" }}
+      {{- fail "value for .Values.recovery.mode is not 'backup' or 'restore'" }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- if ne .Values.recovery.restoreType "all" }}
+  {{- if ne .Values.recovery.restoreType "events" }}
+    {{- if ne .Values.recovery.restoreType "streams" }}
+      {{- fail "value for .Values.recovery.restoreType is not 'all', 'streams' or 'events'" }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- include "pvc" (dict "root" .Values "name" (printf "%s-%s" "azul-backup" .Values.recovery.label ) "size" "1Gi") | nindent 0 }}
+{{- include "pvc" (dict "root" .Values "name" (printf "%s-%s" "azul-restore" .Values.recovery.label ) "size" "1Gi") | nindent 0 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recovery
+data:
+  BK.DISPATCHER_EVENTS: "http://dp-plugin-events:8111"
+  BK.DISPATCHER_STREAMS: "http://dp-plugin-streams:8111"
+  {{- if ne .Values.recovery.mode "off" }}
+  BK.EXTERNAL_BACKUP.ENDPOINT: "{{ .Values.recovery.externalS3Endpoint | required "Required .Values.recovery.externalS3Endpoint not specified"}}"
+  BK.EXTERNAL_BACKUP.SECURE: "{{ .Values.recovery.externalS3Secure }}"
+  {{- end }}
+  BK.SOURCES: |-
+    sources: 
+      {{- .Values.sources | toYaml | nindent 6 }}
+  # Number of stream jobs to queue up for processing.
+  # This is not the number of in-memory streams
+  BK.STREAM_CHANNEL_SIZE: "1000"
+  # Number of goroutine's backing up streams. (more means more CPU/RAM but higher throughput)
+  BK.STREAM_ROUTINE_COUNT: "40"
+  # Path to root of file cache, should be mounted PVC.
+  BK.LOCAL_DATA.ROOTDIR: "/fcache"
+  # Setting to enable S3/Events restore. Valid options are "all", "streams" or "events"
+  BK.RESTORE_TYPE: "{{ .Values.recovery.restoreType }}"
+  # If the backup id is changed, a new full backup will be started into a brand new set of buckets
+  # bucket format is `<BUCKET_NAME_PREFIX><backup_id>-(streams|events)`
+  BK.BACKUP_ID: "{{ .Values.recovery.label }}"
+  # Bucket name prefix for backup buckets.
+  BK.BUCKET_NAME_PREFIX: "{{ .Values.recovery.bucketNamePrefix }}"
+
+  # Enable automatic deletion of data that is older than what the source would keep.
+  BK.ENABLE_AUTOMATIC_AGEOFF: "{{ toString .Values.recovery.enableAutomaticAgeoff }}"
+  

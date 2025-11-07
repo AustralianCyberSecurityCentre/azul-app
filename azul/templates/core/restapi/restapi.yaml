@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: restapi
+  labels:
+    part-of: azul
+    section: core
+    component: frontend
+spec:
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: restapi
+  serviceName: "restapi"
+  template:
+    metadata:
+      name: restapi
+      labels:
+        app: restapi
+        part-of: azul
+        section: core
+        component: frontend
+        allow-ingress-restapi: "true"
+        allow-egress-dispatcher: "true"
+        allow-egress-opensearch: "true"
+        allow-egress-smart-string-finder: "true"
+        {{- if .Values.external.loki.endpoint }}
+        allow-egress-loki: "true"
+        {{- end }}
+        # Egress for OIDC
+        allow-egress-https: "true"
+      annotations:
+        # ensure deployment restarts if config is changed
+        checksum/config1: {{ include (print $.Template.BasePath "/core/restapi/config.yaml") . | sha256sum }}
+        checksum/config2: {{ include (print $.Template.BasePath "/core/metastore/config.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "restapi-server")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+
+        {{- include "harden.container" . | nindent 8 }}
+        {{- if .Values.restapi.resources }}
+        resources:
+        {{- .Values.restapi.resources | toYaml | nindent 10 }}
+        {{- end }}
+        envFrom:
+          - configMapRef:
+              name: metastore
+          - configMapRef:
+              name: restapi
+        env:
+          - name: METASTORE_OPENSEARCH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.metastoreCreds }}
+                key: writer
+          - name: METASTORE_PURGE_SHA256_FOLDER
+            value: "/purge"
+        volumeMounts:
+          - name: tmp
+            mountPath: /tmp/
+          - name: logs
+            mountPath: "/logs"
+          - name: purge-dir
+            mountPath: "/purge/"
+          {{- if .Values.CACertificateConfigMap }}
+          - mountPath: /cafile
+            name: ca-cert
+          {{- end }}
+      {{- if .Values.external.loki.endpoint }}
+      - name: alloy
+        image: {{ get .Values.images.external "alloy" | required "missing image for alloy" }}
+        {{- include "harden.container" . | nindent 8 }}
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "50m"
+          limits:
+            memory: "150Mi"
+            cpu: "500m"
+        args:
+          - run
+          - /etc/alloy/config.river
+          - --storage.path=/data/alloy
+        volumeMounts:
+          - name: restapi-alloy
+            mountPath: /etc/alloy
+          - name: logs
+            mountPath: "/logs"
+          - name: alloy-data
+            mountPath: /data/alloy
+      {{- end }}
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 200Mi
+      {{- if .Values.CACertificateConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ .Values.CACertificateConfigMap }}
+      {{- end }}
+      - name: restapi-alloy
+        configMap:
+          name: restapi-alloy
+      - name: alloy-data
+        emptyDir:
+          sizeLimit: 200Mi
+  volumeClaimTemplates:
+  - metadata:
+      name: logs
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: {{ .Values.storageClassName | required (printf "missing storage class for restapi") }}
+      resources:
+        requests:
+          storage: {{ .Values.restapi.logPvcSize }}
+  - metadata:
+      name: purge-dir
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: {{ .Values.storageClassName | required (printf "missing storage class for restapi") }}
+      resources:
+        requests:
+          storage: {{ .Values.restapi.purgePvcSize }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: restapi
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: restapi
+  minReplicas: {{ .Values.restapi.minReplicas | default .Values.coreHPA.minReplicas }}
+  maxReplicas: {{ .Values.restapi.maxReplicas | default .Values.coreHPA.maxReplicas }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.restapi.averageUtilization | default .Values.coreHPA.averageUtilization }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restapi
+  labels:
+    app: restapi
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8000"
+spec:
+  selector:
+    app: restapi
+  ports:
+  - port: 8000
+    name: http
+    protocol: TCP

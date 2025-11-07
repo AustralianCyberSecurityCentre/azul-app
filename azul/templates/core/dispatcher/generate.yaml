@@ -1,0 +1,22 @@
+{{- $cfg := .Values.dispatcher.config}}
+{{- $cmSHA256 := (include (print $.Template.BasePath "/core/dispatcher/config.yaml") . | sha256sum )}}
+# 4 versions of dispatcher that have different responsibilities
+{{- include "dispatcher.deployment" (dict "root" . "name" "dp-metastore-events" "config" $cfg.metastore.events "cmSHA256" $cmSHA256 "noProbes" "false" )}}
+{{- include "dispatcher.deployment" (dict "root" . "name" "dp-metastore-streams" "config" $cfg.metastore.streams "cmSHA256" $cmSHA256 "noProbes" "false" )}}
+{{- include "dispatcher.deployment" (dict "root" . "name" "dp-plugin-events" "config" $cfg.plugin.events "cmSHA256" $cmSHA256 "noProbes" "false" )}}
+{{- include "dispatcher.deployment" (dict "root" . "name" "dp-plugin-streams" "config" $cfg.plugin.streams "cmSHA256" $cmSHA256 "noProbes" "false" )}}
+{{- include "dispatcher.service" (dict "root" . "name" "dp-metastore-events" "app" "dp-metastore-events")}}
+{{- include "dispatcher.service" (dict "root" . "name" "dp-metastore-streams" "app" "dp-metastore-streams")}}
+{{- include "dispatcher.service" (dict "root" . "name" "dp-plugin-events" "app" "dp-plugin-events")}}
+{{- include "dispatcher.service" (dict "root" . "name" "dp-plugin-streams" "app" "dp-plugin-streams")}}
+
+{{/* Migrations */}}
+{{- $root := . }}
+{{- $cfg := .Values.migration.kafka.config }}
+{{- if .Values.migration.kafka.enabled }}
+{{- include "dispatcher.deployment" (dict "root" $root "name" "dp-reprocess-sources" "config" $cfg "cmSHA256" $cmSHA256 "reprocess" "sources" "noProbes" "true" )}}
+{{- include "dispatcher.deployment" (dict "root" $root "name" "dp-reprocess-system" "config" $cfg "cmSHA256" $cmSHA256 "reprocess" "system" "noProbes" "true" )}}
+{{- end }}
+
+{{/* Lost Task Processor */}}
+{{- include "dispatcher.deployment" (dict "root" $root "name" "dp-lost-tasks" "config" $root.Values.lostTasks "cmSHA256" $cmSHA256 "noProbes" "true" )}}

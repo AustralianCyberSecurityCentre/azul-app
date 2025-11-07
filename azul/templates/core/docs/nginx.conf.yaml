@@ -1,0 +1,87 @@
+{{/* Build headers to be added to the nginx config */}}
+{{- $mergedCsp := mustMergeOverwrite (deepCopy .Values.global.defaultCsp) .Values.web.ingress.security.csp.docs -}}
+{{- $cspString := "upgrade-insecure-requests" -}}
+{{- range $k, $v := $mergedCsp -}}
+    {{ $cspString = print $cspString "; " $k " " $v }}
+{{- end -}}
+{{ $outputdict := dict "Content-Security-Policy" (print $cspString ";") }} 
+{{- range $k, $v := .Values.global.headers -}}
+  {{- $_ := set $outputdict (print $k) (print $v) -}}
+{{- end -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: docs-nginx-config
+data:
+  nginx.conf: |-
+    # user  nginx;
+    worker_processes  auto;
+
+    error_log  /tmp/error.log warn;
+    pid        /tmp/nginx.pid;
+
+    events {
+        worker_connections  1024;
+    }
+
+
+    http {
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp_path;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
+
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /tmp/access.log  main;
+
+        sendfile        on;
+        #tcp_nopush     on;
+
+        keepalive_timeout  65;
+
+        #gzip  on;
+
+        # include /etc/nginx/conf.d/*.conf;
+
+        # Security headers
+        add_header Cross-Origin-Opener-Policy "unsafe-none";
+        add_header Content-Security-Policy "{{ $cspString }}";
+        {{- range $k, $v := .Values.global.headers }}
+        add_header {{ $k }} "{{ $v }}";
+        {{- end }}
+
+        server {
+            listen 8080;
+            absolute_redirect off;
+            port_in_redirect off;
+
+            access_log /tmp/reverse-access.log;
+            error_log /tmp/reverse-error.log;
+
+            index index.html;
+
+            location /docs {
+                # allow easier mounting from webui
+                alias /usr/share/nginx/html/dist/;
+                try_files $uri $uri/ =404;
+            }
+
+            location = / {
+                rewrite / /docs/ redirect;
+            }
+
+            location / {
+                # support legacy links
+                rewrite / /docs$uri redirect;
+            }
+        }
+
+        client_max_body_size 500M;
+    }

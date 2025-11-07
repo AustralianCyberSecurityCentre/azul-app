@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webui
+  labels:
+    part-of: azul
+    section: core
+    component: frontend
+spec:
+  replicas: 2
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: webui
+  template:
+    metadata:
+      labels:
+        app: webui
+        part-of: azul
+        section: core
+        component: frontend
+        allow-ingress-docs-webui: "true"
+      annotations:
+        # ensure deployment restarts if config is changed
+        checksum/config1: {{ include (print $.Template.BasePath "/core/web/nginx.conf.yaml") . | sha256sum }}
+        checksum/config2: {{ include (print $.Template.BasePath "/core/web/config.json.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "webui")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+          limits:
+            memory: "200Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp/
+        {{- if .Values.CACertificateConfigMap }}
+        - mountPath: /cafile
+          name: cafile
+        {{- end }}
+        - name: nginx-config
+          mountPath: "/etc/nginx/nginx.conf"
+          subPath: "nginx.conf"
+          readOnly: true
+        - name: webui-config
+          mountPath: "/usr/share/nginx/html/dist/browser/assets/config.json"
+          subPath: "config.json"
+          readOnly: true
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 2Gi
+        {{- if .Values.CACertificateConfigMap }}
+        - name: cafile
+          configMap:
+            name: {{ .Values.CACertificateConfigMap }}
+        {{- end }}
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+            items:
+            - key: nginx.conf
+              path: nginx.conf
+        - name: webui-config
+          configMap:
+            name: webui-config
+            items:
+            - key: config.json
+              path: config.json
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webui
+  labels:
+    app: webui
+spec:
+  selector:
+    app: webui
+  ports:
+    - protocol: TCP
+      port: 8080
+      name: dist

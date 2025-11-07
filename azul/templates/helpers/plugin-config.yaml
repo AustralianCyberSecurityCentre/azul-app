@@ -1,0 +1,16 @@
+{{- define "plugin.config" -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name | required "config has no name" }}
+data:
+{{- range $k, $v := .config }}
+  {{- if and $v (kindIs "map" $v) }}
+  {{ $k }}: |-
+    {{- $v | mustToPrettyJson | nindent 4 }}
+  {{- else }}
+  {{ $k }}: "{{ $v }}"
+  {{- end }}
+{{- end }}
+{{- end }}

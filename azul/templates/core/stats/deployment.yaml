@@ -1,0 +1,164 @@
+{{- if .Values.stats.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats
+  labels:
+    part-of: azul
+    section: core
+    component: stats
+spec:
+  revisionHistoryLimit: 1
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: stats
+  template:
+    metadata:
+      name: stats
+      labels:
+        app: stats
+        part-of: azul
+        section: core
+        component: stats
+        allow-egress-anything: "true"
+        allow-ingress-prometheus-scrape: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8900"
+        # ensure deployment restarts if config is changed
+        checksum/config: {{ include (print $.Template.BasePath "/core/stats/config.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.external.filestore.serviceAccountName }}
+      serviceAccountName: {{ .Values.external.filestore.serviceAccountName }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "stats")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        {{- if .Values.stats.resources }}
+        resources:
+        {{- .Values.stats.resources | toYaml | nindent 10 }}
+        {{- end }}
+        envFrom:
+          - configMapRef:
+              name: stats
+        env:
+          - name: OPENSEARCH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.metastoreCreds }}
+                key: writer
+          - name: REDIS_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.redis }}
+                key: redis-username
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.redis }}
+                key: redis-password
+          {{- if not .Values.external.filestore.serviceAccountName }}
+          {{- if eq "s3" (.Values.external.filestore.backend | lower) }}
+          - name: MINIO_ACCESSKEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.filestore }}
+                key: accesskey
+          - name: MINIO_SECRETKEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.filestore }}
+                key: secretkey
+          {{- else if eq "azure" (.Values.external.filestore.backend | lower) }}
+          - name: AZURE_STORAGE_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.filestore }}
+                key: accesskey
+                optional: true
+          # Needed by the go package that does azure authentication if you are using authorized applications.
+          - name: AZURE_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.filestore }}
+                key: clientsecret
+                optional: true
+          - name: AZURE_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.filestore }}
+                key: clientId
+                optional: true
+          - name: AZURE_TENANT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.filestore }}
+                key: tenantId
+                optional: true
+          {{- end }}
+          - name: MINIO_BKUP_ACCESSKEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.backupS3Keys }}
+                key: access_key
+          - name: MINIO_BKUP_SECRETKEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.backupS3Keys }}
+                key: secret_key
+          {{- end }}
+          # If auth is being scraped this secret is required.
+          {{- if .Values.stats.config.auth }}
+          - name: AUTH_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.azulStats }}
+                key: client_secret
+          - name: AUTH_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.azulStats }}
+                key: client_id
+          {{- end }}
+        volumeMounts:
+          - name: tmp
+            mountPath: /tmp/
+          {{- if .Values.CACertificateConfigMap }}
+          - mountPath: /cafile
+            name: ca-cert
+          {{- end }}
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 200Mi
+      {{- if .Values.CACertificateConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ .Values.CACertificateConfigMap }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,25 @@
+# on key collision, last value defined wins
+{{- define "config.web" -}}
+# catch-all generic config options
+{{ .Values.web.config | toYaml}}
+# ensure oidc configured correctly from custom fields
+{{- if .Values.security.oidc.enabled }}
+oauth_enabled: true
+oidc_url: {{ .Values.security.oidc.authority_url | required "oidc authority_url required" }}
+oidc_client: {{ .Values.security.oidc.client_id | required "oidc client_id required" }}
+oidc_scopes: {{ .Values.security.oidc.scopes | required "oidc scopes required" }}
+{{- end }}
+# add version information to deployment text
+{{- if .Values.web.config.deployment_text }}
+deployment_text: "{{ .Values.web.config.deployment_text }} {{ .Chart.Version }}"
+{{- else }}
+deployment_text: "{{ .Chart.Version }}"
+{{- end }}
+global_external_links:
+  {{- if .Values.plugins.retrohunt.enabled }}
+  retrohunt_url: https://{{ index .Values.plugins.retrohunt.plugins "retrohunt-server" "ingress" "host" }}
+  {{- end }}
+  {{- if .Values.plugins.nsrl.enabled }}
+  nsrl_url: https://{{ .Values.plugins.nsrl.server.ingress.host }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,94 @@
+{{- if .Values.scaler.enabled -}}
+{{- if not .Values.burrow.enabled }}
+{{- fail "Burrow must be enabled to use the smart scaler" }}
+{{- end }}
+{{- $cmSHA256 := (include (print $.Template.BasePath "/core/scaler/config.yaml") . | sha256sum )}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scaler
+  labels:
+    part-of: azul
+    section: core
+    component: scaler
+spec:
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: scaler
+  template:
+    metadata:
+      labels:
+        app: scaler
+        part-of: azul
+        section: core
+        component: scaler
+        allow-ingress-scaler: "true"
+        # Scaler egresses to burrow and redis and something else on the kafka redirects.
+        allow-egress-anything: "true"
+      annotations:
+        # ensure deployment restarts if config is changed
+        checksum/config: {{ $cmSHA256 }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "scaler")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        envFrom:
+        - configMapRef:
+            name: scaler
+        env:
+          - name: SCALER_REDIS_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.redis }}
+                key: redis-username
+          - name: SCALER_REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.redis }}
+                key: redis-password
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp/
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 200Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scaler
+  labels:
+    app: scaler
+spec:
+  selector:
+    app: scaler
+  ports:
+    - protocol: TCP
+      port: 8090
+      name: grpc
+{{- end }}

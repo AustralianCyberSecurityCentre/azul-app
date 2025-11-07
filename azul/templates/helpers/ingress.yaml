@@ -1,0 +1,29 @@
+{{- define "ingress" -}}
+{{- $values := .Values }}
+{{- with .ingress }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .name | required "ingress has no name" }}
+  annotations:
+    {{- toYaml .annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ .ingressClassName | default "nginx" }}
+  tls:
+  - hosts:
+    - {{ .host | required "ingress has no host" }}
+    secretName: {{ .secretName | required "ingress has no https secret" }}
+  rules:
+  - host: {{ .host | required "ingress has no host" }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .serviceName | required "ingress has no service" }}
+            port:
+              number: {{ .servicePort | required "ingress has no port" }}
+{{- end }}
+{{- end }}

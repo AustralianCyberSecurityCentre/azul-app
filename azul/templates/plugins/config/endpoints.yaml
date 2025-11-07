@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+data:
+{{- range $k, $v := .Values.external.services }}
+  {{ $k }}: "{{ $v | required "Required endpoint parameter under external.services is not specified" }}"
+{{- end }}
+metadata:
+  name: endpoints

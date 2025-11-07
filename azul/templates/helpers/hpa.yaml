@@ -1,0 +1,47 @@
+{{- define "hpa" -}}
+{{- if .useSmartScaler | default false }}
+{{- if not .root.Values.scaler.enabled }}
+{{- fail "Scaler must be enabled to use smart scaling for a HPA" }}
+{{- end }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ .name | required "hpa has no name" }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .name | required "hpa has no name" }}
+  minReplicaCount: {{ .min | default 1}}
+  maxReplicaCount: {{ .max | default 10}}
+  triggers:
+  - type: external
+    metadata:
+      scalerAddress: scaler.{{ .root.Release.Namespace }}:8090
+      entityType: plugin
+      pluginName: {{ .name | required "hpa has no name" }}
+      targetSize: "{{ .maxQueueLength }}"
+      includeHistoric: "{{ .includeHistoric }}"
+{{- else }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .name | required "hpa has no name" }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .name | required "hpa has no name" }}
+  minReplicas: {{ .min | default 1}}
+  maxReplicas: {{ .max | default 10}}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .avgUtil | default 100 }}
+{{- end }}
+{{- end }}

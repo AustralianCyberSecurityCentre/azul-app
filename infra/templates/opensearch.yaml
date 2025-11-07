@@ -1,0 +1,334 @@
+{{- if .Values.opensearch.enable }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.opensearch.name }}-certs
+data:
+{{ (.Files.Glob "ca-certificates").AsConfig | indent 2 }}
+{{- if gt (len .Values.opensearch.additionalCerts) 0 }}
+{{ .Values.opensearch.additionalCerts | toYaml | indent 2 }}
+{{- end }}
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.opensearch.name }}-securityconfig
+type: Opaque
+stringData:
+  action_groups.yml: |-
+    _meta:
+      type: "actiongroups"
+      config_version: 2
+  internal_users.yml: |-
+{{ .Values.opensearch.internalUsers | toYaml | indent 4 }}
+  nodes_dn.yml: |-
+    _meta:
+      type: "nodesdn"
+      config_version: 2
+  whitelist.yml: |-
+    _meta:
+      type: "whitelist"
+      config_version: 2
+  tenants.yml: |-
+    _meta:
+      type: "tenants"
+      config_version: 2
+    azul:
+      reserved: false
+      description: "Basic Azul tenant"
+  roles_mapping.yml: |-
+{{ .Values.opensearch.roleMapping | toYaml | indent 4 }}
+  roles.yml: |-
+{{ .Values.opensearch.roles | toYaml | indent 4 }}
+  config.yml: |-
+{{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
+
+# Self-signed CA (if required)
+{{- if .Values.opensearch.selfSigned }}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Values.opensearch.name }}-selfsigned-issuer
+spec:
+  selfSigned: {}
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.opensearch.name }}-ca-certificate
+spec:
+  secretName: {{ .Values.opensearch.name }}-ca-cert
+  duration: 87600h0m0s # ~10years
+  renewBefore: 8760h0m0s # ~1year before expiry
+  commonName: Test CA
+  isCA: true
+  privateKey:
+    size: 2048
+  usages:
+    - digital signature
+    - key encipherment
+  issuerRef:
+    name: {{ .Values.opensearch.name }}-selfsigned-issuer
+
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Values.opensearch.name }}-ca-issuer
+spec:
+  ca:
+    secretName: {{ .Values.opensearch.name }}-ca-cert
+{{- end }}
+
+# Automatically generated certificates for nodes
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.opensearch.name }}-certs
+spec:
+  secretName: {{ .Values.opensearch.name }}-certs
+  duration: 87600h0m0s # ~10years
+  renewBefore: 8760h0m0s # ~1year before expiry
+  privateKey:
+    size: 2048
+    algorithm: RSA
+    encoding: PKCS8
+  dnsNames:
+    - {{ .Values.opensearch.name }}.{{ .Values.opensearch.certificateSuffix }}
+{{- if .Values.opensearch.selfSigned }}
+    - {{ .Values.opensearch.name }}.{{ .Release.Namespace }}
+    - {{ .Values.opensearch.name }}.{{ .Release.Namespace }}.svc
+    - {{ .Values.opensearch.name }}.{{ .Release.Namespace }}.svc.cluster.local
+{{- end }}
+    - {{ .Values.opensearch.name }}-masters-0.{{ .Values.opensearch.certificateSuffix }}
+    - {{ .Values.opensearch.name }}-masters-1.{{ .Values.opensearch.certificateSuffix }}
+    - {{ .Values.opensearch.name }}-masters-2.{{ .Values.opensearch.certificateSuffix }}
+    - {{ .Values.opensearch.name }}-bootstrap-0.{{ .Values.opensearch.certificateSuffix }}
+  usages:
+    - signing
+    - key encipherment
+    - server auth
+    - client auth
+  commonName: Opensearch_Node.{{ .Values.opensearch.certificateSuffix }}
+  issuerRef:
+{{- if .Values.opensearch.selfSigned }}
+    name: {{ .Values.opensearch.name }}-ca-issuer
+{{- else }}
+{{ .Values.opensearch.issuerRef | toYaml | indent 4 }}
+{{- end }}
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.opensearch.name }}-admin-certs
+spec:
+  secretName: {{ .Values.opensearch.name }}-admin-certs
+  duration: 87600h0m0s # ~10years
+  renewBefore: 8760h0m0s # ~1year before expiry
+  privateKey:
+    size: 2048
+    algorithm: RSA
+    encoding: PKCS8
+  commonName: OpenSearch_Admin.{{ .Values.opensearch.certificateSuffix }}
+  usages:
+    - signing
+    - key encipherment
+    - server auth
+    - client auth
+  issuerRef:
+{{- if .Values.opensearch.selfSigned }}
+    name: {{ .Values.opensearch.name }}-ca-issuer
+{{- else }}
+{{ .Values.opensearch.issuerRef | toYaml | indent 4 }}
+{{- end }}
+
+---
+apiVersion: opensearch.opster.io/v1
+kind: OpenSearchCluster
+metadata:
+  name: {{ .Values.opensearch.name }}
+spec:
+  general:
+    {{- if .Values.opensearch.harden }}
+    securityContext:
+      {{- include "harden.opensearch.container" . | nindent 6 }}
+    podSecurityContext:
+      {{- include "harden.opensearch.pod" . | nindent 6 }}
+    {{- end }}
+    
+    {{- with .Values.defaultRepo }}
+    defaultRepo: {{ . }}
+    {{- end }}
+
+    serviceName: {{ .Values.opensearch.name }}
+    version: {{ .Values.opensearch.general.version }}
+    {{- if .Values.opensearch.general.setVMMaxMapCount }}
+    setVMMaxMapCount: true
+    {{- end }}
+    additionalVolumes:
+    - name: additional-certs
+      path: /usr/share/opensearch/config/certs
+      configMap:
+        name: {{ .Values.opensearch.name }}-certs
+      restartPods: true
+    # FUTURE: read-only hardening https://github.com/opensearch-project/helm-charts/issues/330
+    # - name: logging
+    #   path: /usr/share/opensearch
+    #   emptyDir:
+    #     medium: Memory
+    #     sizeLimit: 2Gi
+    #   restartPods: true
+    # - name: tmp
+    #   path: /tmp
+    #   emptyDir:
+    #     medium: Memory
+    #     sizeLimit: 1Gi
+    #   restartPods: true
+
+  security:
+    config:
+      adminSecret:
+        name: {{ .Values.opensearch.name }}-admin-certs
+      securityConfigSecret:
+        name: {{ .Values.opensearch.name }}-securityconfig
+      adminCredentialsSecret:
+        name: {{ .Values.opensearch.adminCredentialsSecret }}
+    tls:
+      transport:
+        generate: false
+        perNode: false
+        secret:
+          name: {{ .Values.opensearch.name }}-certs
+        nodesDn: ["CN=Opensearch_Node.{{ .Values.opensearch.certificateSuffix }}", ] 
+        adminDn: ["CN=OpenSearch_Admin.{{ .Values.opensearch.certificateSuffix }}", ]
+      http:
+        generate: false
+        secret:
+          name: {{ .Values.opensearch.name }}-certs
+
+  dashboards:
+    {{- if .Values.opensearch.harden }}
+    securityContext:
+      {{- include "harden.opensearch.container" . | nindent 6 }}
+    podSecurityContext:
+      {{- include "harden.opensearch.pod" . | nindent 6 }}
+    {{- end }}
+    enable: true
+    version: {{ .Values.opensearch.dashboard.version }}
+    replicas: 1
+    opensearchCredentialsSecret:
+      name: {{ .Values.opensearch.dashboardCredentialsSecret }}
+    {{- with .Values.imagePullSecrets }}
+    imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+    affinity:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+    tolerations:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+    resources:
+      requests:
+         memory: "768Mi"
+         cpu: "200m"
+      limits:
+         memory: "768Mi"
+         cpu: "200m"
+    tls:
+      enable: false
+      generate: false
+{{- if gt (len .Values.opensearch.dashboard.env) 0 }}
+    env:
+{{ .Values.opensearch.dashboard.env | toYaml | nindent 6 }}
+{{- end }}
+{{- if gt (len .Values.opensearch.dashboard.additionalConfig) 0 }}
+    additionalConfig:
+{{ .Values.opensearch.dashboard.additionalConfig | toYaml | nindent 6 }}
+{{- end }}
+
+  nodePools:
+    - component: nodes
+      replicas: {{ .Values.opensearch.general.replicas }}
+      
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ .Values.opensearch.nodes | toYaml | nindent 6 }}
+      roles:
+        - "cluster_manager"
+        - "data"
+
+{{- if .Values.opensearch.dashboard.ingress.enable }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.opensearch.name }}-dashboards
+  annotations:
+{{ .Values.opensearch.dashboard.ingress.annotations | toYaml | indent 4 }}
+spec:
+  tls:
+  - hosts:
+    - {{ .Values.opensearch.dashboard.ingress.host }}
+    secretName: {{ .Values.opensearch.dashboard.ingress.secretName }}
+  ingressClassName: {{ .Values.opensearch.dashboard.ingress.ingressClassName | default "nginx" }}
+  rules:
+  - host: {{ .Values.opensearch.dashboard.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.opensearch.name }}-dashboards
+            port:
+              number: 5601
+        path: /
+        pathType: Prefix
+{{- end }}
+
+{{- if .Values.opensearch.ingress.enable }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.opensearch.name }}
+  annotations:
+{{ .Values.opensearch.ingress.annotations | toYaml | indent 4 }}
+spec:
+  tls:
+  - hosts:
+    - {{ .Values.opensearch.ingress.host }}
+    secretName: {{ .Values.opensearch.ingress.secretName }}
+  ingressClassName: {{ .Values.opensearch.ingress.ingressClassName | default "nginx" }}
+  rules:
+  - host: {{ .Values.opensearch.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Values.opensearch.name }}
+            port:
+              number: 9200
+        path: /
+        pathType: Prefix
+{{- end }}
+
+{{- end }}

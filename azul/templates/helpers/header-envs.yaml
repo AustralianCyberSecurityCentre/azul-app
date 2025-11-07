@@ -1,0 +1,12 @@
+{{- define "server.headers.envs" -}}
+{{- $mergedCsp := mustMergeOverwrite (deepCopy .Values.global.defaultCsp) .inputCsp -}}
+{{- $cspString := "upgrade-insecure-requests" -}}
+{{- range $k, $v := $mergedCsp -}}
+  {{ $cspString = print $cspString "; " $k " " $v }}
+{{- end -}}
+{{ $outputdict := dict "Content-Security-Policy" (print $cspString ";") }} 
+{{- range $k, $v := .Values.global.headers -}}
+  {{- $_ := set $outputdict (print $k) (print $v) -}}
+{{- end -}}
+{{- $outputdict | mustToJson -}}
+{{- end -}}

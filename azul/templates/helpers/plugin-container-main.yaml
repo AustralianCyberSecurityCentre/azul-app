@@ -1,0 +1,116 @@
+{{- define "plugin.container.main" -}}
+{{- $root := .root.Values}}
+{{/* standard main container for plugin */}}
+{{- if .container_name }}
+- name: {{ .container_name }}
+{{- else }}
+- name: main
+{{- end}}  
+{{- if .plugin.image }}
+  image: {{ include "image.custom" (dict "images" $root.images "name" .plugin.image )}}
+{{- else if .k }}
+  {{- $image_name := printf "plugin-%s" .k }}
+  image: {{ include "image.custom" (dict "images" $root.images "name" $image_name )}}
+{{- else }}
+  {{ fail (printf "bad image ref %s %s" .plugin_name .group_name) }}
+{{- end }}
+  imagePullPolicy: {{ $root.images.pullPolicy }}
+{{- if .plugin.debug }}
+  {{- include "soften.container" . | nindent 2 }}
+{{- else }}
+  {{- include "harden.container" . | nindent 2 }}
+{{- end }}
+{{- if .plugin.resources }}
+  resources:
+  {{- .plugin.resources | toYaml | nindent 4 }}
+{{- end }}
+  volumeMounts:
+  - name: tmp
+    mountPath: /tmp/
+{{- if $root.CACertificateConfigMap }}
+  - mountPath: /etc/ssl/certs/ca-certificates.crt
+    name: ca-cert
+    subPath: ca.crt
+{{- end }}
+{{- if .plugin.volumeMounts }}
+  {{- .plugin.volumeMounts | toYaml | nindent 2 }}
+{{- end }}
+  env:
+  {{- /* GOMEMLIMIT Add a Go memory limit for the go plugins to enable them to prevent OOM errors themselves. */}}
+  {{- /* This converts from Kubernetes resource.memory format to the GOMEMLIMIT in bytes. */}}
+  {{- $memLimitVal := coalesce ((.plugin.resources).limits).memory ((.plugin.resources).requests).memory false -}}
+  {{- if and (not $memLimitVal) $root.limitRange.enabled -}}
+    {{- $memLimitVal = (first $root.limitRange.spec.limits).default.memory -}}
+  {{- end }}
+  {{- if $memLimitVal }}
+    {{- $multiplier := ternary 1024 1000 (hasSuffix "i" $memLimitVal) -}}
+    {{- /* Default case of Bytes (remove any letters) */}}
+    {{- $memLimitInt := regexReplaceAll "[a-z]*[A-Z]*" $memLimitVal "" -}}
+    {{- /* Multiply by multipler based on the unit (kiloBytes vs GigaBytes etc.) */}}
+      {{- if regexMatch "k" $memLimitVal }}
+      {{- $memLimitInt = mul $memLimitInt $multiplier }}
+      {{- else if regexMatch "M" $memLimitVal }}
+      {{- $memLimitInt = mul $memLimitInt $multiplier $multiplier }}
+      {{- else if regexMatch "G" $memLimitVal }}
+      {{- $memLimitInt = mul $memLimitInt $multiplier $multiplier $multiplier }}
+      {{- else if regexMatch "T" $memLimitVal }}
+      {{- $memLimitInt = mul $memLimitInt $multiplier $multiplier $multiplier $multiplier }}
+      {{- end }}
+    {{- /* Limit memory limit to 100% of the available memory. */}}
+  - name: GOMEMLIMIT
+    value: {{ mulf 1.0 $memLimitInt | int }}B
+  {{- end }}
+  {{- /* End of GOMEMLIMIT */}}
+  {{- if $root.CACertificateConfigMap }}
+  - name: SSL_CERT_FILE
+    value: /etc/ssl/certs/ca-certificates.crt
+  - name: REQUESTS_CA_BUNDLE
+    value: /etc/ssl/certs/ca-certificates.crt
+  {{- end }}
+  {{- if .plugin.baseEnv }}
+    {{- /* template this manually so that we can have dynamic secret names */}}
+    {{- tpl (.plugin.baseEnv | toYaml) .root | nindent 2 }}
+  {{- end }}
+  {{- if .plugin.env }}
+    {{- /* template this manually so that we can have dynamic secret names */}}
+    {{-  tpl (.plugin.env | toYaml) .root | nindent 2 }}
+  {{- end }}
+  {{- if .plugin.maxFileSize }}
+  - name: PLUGIN_FILTER_MAX_CONTENT_SIZE
+    value: "{{ .plugin.maxFileSize }}"
+  {{- end }}
+  {{- if .plugin.runTimeout }}
+  - name: PLUGIN_RUN_TIMEOUT
+    value: "{{ .plugin.runTimeout }}"
+  {{- end }}
+  - name: PLUGIN_DEPLOYMENT_KEY
+    value: "{{ .plugin_name }}"
+  {{- if and .plugin.ingress .plugin.ingress.security.enableHarden }}
+  - name: PLUGIN_HEADERS
+    value: |-
+      {{- include "server.headers.envs" (dict "Values" $root "inputCsp" .plugin.ingress.security.csp ) | nindent 6  }}
+  {{- end }}
+  envFrom:
+  - configMapRef:
+      name: plugin-standard
+  {{- if .group.config }}
+  - configMapRef:
+      name: {{ printf "plugin-%s" .group_name }}
+  {{- end }}
+  {{- if .plugin.config }}
+  - configMapRef:
+      name: {{ .plugin_name }}
+  {{- end }}
+  {{- if .plugin.envFrom }}
+    {{- /* template this manually so that we can have dynamic secret names */}}
+    {{-  tpl (.plugin.envFrom | toYaml) .root | nindent 2 }}
+  {{- end }}
+{{- if .plugin.command }}
+  command:
+    {{- .plugin.command | toYaml | nindent 4 }}
+{{- end }}
+{{- if .plugin.args }}
+  args:
+    {{- .plugin.args | toYaml | nindent 4 }}
+{{- end }}
+{{- end }}

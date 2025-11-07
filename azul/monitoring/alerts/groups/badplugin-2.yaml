@@ -1,0 +1,784 @@
+- orgId: 1
+  name: azul
+  folder: azul
+  interval: 1h
+  rules:
+    - uid: c4170052-820f-4eec-af83-b89f2c9606ca
+      title: outdated events published by clients
+      condition: C
+      data:
+        - refId: A
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: prometheus
+          model:
+            editorMode: code
+            expr: sum by(author, entity, version, kubernetes_namespace) (increase(dispatcher_events_produce_bad_version[1h]))
+            instant: true
+            intervalMs: 1000
+            legendFormat: __auto
+            maxDataPoints: 43200
+            range: false
+            refId: A
+        - refId: B
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: A
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: B
+            type: reduce
+        - refId: C
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: B
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: C
+            type: threshold
+      noDataState: OK
+      execErrState: Error
+      for: 0
+      annotations:
+        description: |-
+          Outdated events were published by dispatcher clients.
+          These clients should be updated to publish events matching the current schema.
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "author" }} - {{ index $labels "entity" }} - v{{ index $labels "version" }} - {{ humanize (index $values "B").Value }} old events published'
+      labels:
+        receiver: badplugin
+      isPaused: false
+    - uid: c2c585cb-8868-4e01-b41a-20c164ef0520
+      title: plugins have high error rate
+      condition: C
+      data:
+        - refId: A
+          relativeTimeRange:
+            from: 10800
+            to: 0
+          datasourceUid: prometheus
+          model:
+            datasource:
+              type: prometheus
+              uid: prometheus
+            editorMode: code
+            exemplar: false
+            expr: sum(increase(dispatcher_events_status_published{status=~"error-.*"}[1h])) by (plugin,kubernetes_namespace) / sum(increase(dispatcher_events_status_published{status=~"error-.*|completed.*"}[1h])) by (plugin, kubernetes_namespace)
+            instant: false
+            interval: ""
+            intervalMs: 15000
+            legendFormat: "{{plugin}}"
+            maxDataPoints: 43200
+            range: true
+            refId: A
+        - refId: D
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: prometheus
+          model:
+            datasource:
+              type: prometheus
+              uid: prometheus
+            editorMode: code
+            expr: sum(increase(dispatcher_events_status_published{status=~"error-.*"}[1h])) by (plugin,kubernetes_namespace)
+            instant: true
+            intervalMs: 1000
+            legendFormat: __auto
+            maxDataPoints: 43200
+            range: false
+            refId: D
+        - refId: B
+          relativeTimeRange:
+            from: 10800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: A
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: B
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: C
+          relativeTimeRange:
+            from: 10800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0.80
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: B
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: C
+            type: threshold
+        - refId: Errors
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params: []
+                reducer:
+                  params: []
+                  type: avg
+                type: query
+            datasource:
+              name: Expression
+              type: __expr__
+              uid: __expr__
+            expression: D
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: Errors
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: E
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params: []
+                reducer:
+                  params: []
+                  type: avg
+                type: query
+            datasource:
+              name: Expression
+              type: __expr__
+              uid: __expr__
+            expression: ceil($Errors)
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: E
+            type: math
+      dashboardUid: DispatcherMessaging
+      panelId: 45
+      noDataState: OK
+      execErrState: Error
+      for: 0
+      annotations:
+        __dashboardUid__: DispatcherMessaging
+        __panelId__: "45"
+        description: In the last hour, ratio of errors to successes is high for these plugins
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "plugin" }} - {{ humanize (index $values "E").Value }} errors ({{ humanizePercentage (index $values "B").Value }})'
+      labels:
+        receiver: badplugin
+      isPaused: false
+    - uid: cdu2dd4gugydcf
+      title: dispatcher restapi errors
+      condition: C
+      data:
+        - refId: A
+          queryType: range
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: loki
+          model:
+            datasource:
+              type: loki
+              uid: loki
+            editorMode: builder
+            expr: count_over_time({component="dispatcher", category="restapi", subset="err"} | json status="status", user_agent="user_agent" | status != `404` | __error__=`` [1h])
+            intervalMs: 1000
+            maxDataPoints: 43200
+            queryType: range
+            refId: A
+        - refId: B
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: A
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: B
+            type: reduce
+        - refId: C
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: B
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: C
+            type: threshold
+      noDataState: OK
+      execErrState: Error
+      for: 0s
+      annotations:
+        description: Clients of dispatcher encountered errors when hitting restapi.
+        runbook_url: ""
+        summary: '{{ index $labels "namespace" }} - {{ index $labels "user_agent" }} - {{ humanize (index $values "B").Value }} errors'
+      labels:
+        "": ""
+        receiver: badplugin
+      isPaused: false
+    - uid: edu2g8numebk0e
+      title: dispatcher pipeline errors
+      condition: C
+      data:
+        - refId: A
+          queryType: range
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: loki
+          model:
+            datasource:
+              type: loki
+              uid: loki
+            editorMode: builder
+            expr: count_over_time({component="dispatcher", category=~"(consumer|producer)", subset="err"} | json pipeline="pipeline" | __error__=`` [1h])
+            intervalMs: 1000
+            maxDataPoints: 43200
+            queryType: range
+            refId: A
+        - refId: B
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: A
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: B
+            type: reduce
+        - refId: C
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: B
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: C
+            type: threshold
+      noDataState: OK
+      execErrState: Error
+      for: 0s
+      annotations:
+        description: Dispatcher consume/produce pipelines encountered errors.
+        summary: '{{ index $labels "namespace" }} - {{ index $labels "pipeline" }} - {{ humanize (index $values "B").Value }} times'
+      labels:
+        receiver: badplugin
+      isPaused: false
+    - uid: bdwn8z6k038xse
+      title: k8s pods in crash loop
+      condition: C
+      data:
+        - refId: A
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: prometheus
+          model:
+            editorMode: code
+            expr: sum(kube_pod_container_status_waiting_reason{reason="CrashLoopBackOff"}> 0) by (pod, namespace)
+            instant: true
+            intervalMs: 1000
+            legendFormat: __auto
+            maxDataPoints: 43200
+            range: false
+            refId: A
+        - refId: C
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: A
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: C
+            type: threshold
+      noDataState: OK
+      execErrState: Error
+      for: 60s
+      annotations:
+        description: Pods in crash loop
+        runbook_url: ""
+        summary: '{{ index $labels "namespace" }} - {{ index $labels "pod" }}'
+      labels:
+        receiver: badplugin
+      isPaused: false
+    - uid: cdyqkdzgrubcwe
+      title: Retrohunt deleted index folders
+      condition: condition
+      data:
+        - refId: Query
+          relativeTimeRange:
+            from: 43200
+            to: 0
+          datasourceUid: prometheus
+          model:
+            datasource:
+              type: prometheus
+              uid: prometheus
+            disableTextWrap: false
+            editorMode: code
+            exemplar: false
+            expr: sum by(index, kubernetes_namespace) (increase(retrohunt_index_fails_total{type="delete"}[62m]))
+            fullMetaSearch: false
+            includeNullMetadata: true
+            instant: false
+            interval: ""
+            intervalMs: 15000
+            legendFormat: "{{plugin}}"
+            maxDataPoints: 43200
+            range: true
+            refId: Query
+            useBackend: false
+        - refId: reducedValues
+          relativeTimeRange:
+            from: 43200
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: Query
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: reducedValues
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: condition
+          relativeTimeRange:
+            from: 43200
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params: []
+                reducer:
+                  params: []
+                  type: avg
+                type: query
+            datasource:
+              name: Expression
+              type: __expr__
+              uid: __expr__
+            expression: reducedValues
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: condition
+            type: threshold
+      dashboardUid: retrohunt-stats
+      panelId: 19
+      noDataState: OK
+      execErrState: Error
+      for: 10s
+      annotations:
+        __dashboardUid__: retrohunt-stats
+        __panelId__: "19"
+        description: In the last hour, Retrohunt failed to index files and deleted them instead
+        summary: '{{ index $labels "kubernetes_namespace" }} - Retrohunt indexer {{ index $labels "index" }} - Deleted ({{ printf "%.0f" (index $values "reducedValues").Value }}) folders in the last hour'
+      labels:
+        receiver: badplugin
+      isPaused: false
+    - uid: ddzpubuetzpc0f
+      title: Assemblyline Dropped Submissions
+      condition: condition
+      data:
+        - refId: Query
+          relativeTimeRange:
+            from: 7200
+            to: 0
+          datasourceUid: prometheus
+          model:
+            datasource:
+              type: prometheus
+              uid: prometheus
+            disableTextWrap: false
+            editorMode: code
+            exemplar: false
+            expr: sum by(classification, kubernetes_namespace) (increase(azul_plugin_assemblyline_dropped_classifications_total[62m]))
+            fullMetaSearch: false
+            includeNullMetadata: true
+            instant: false
+            interval: ""
+            intervalMs: 15000
+            legendFormat: "{{plugin}}"
+            maxDataPoints: 43200
+            range: true
+            refId: Query
+            useBackend: false
+        - refId: reducedValues
+          relativeTimeRange:
+            from: 7200
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: Query
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: reducedValues
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: condition
+          relativeTimeRange:
+            from: 7200
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params: []
+                reducer:
+                  params: []
+                  type: avg
+                type: query
+            datasource:
+              name: Expression
+              type: __expr__
+              uid: __expr__
+            expression: reducedValues
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: condition
+            type: threshold
+      dashboardUid: assemblyline-plugin
+      panelId: 4
+      noDataState: OK
+      execErrState: Error
+      for: 10s
+      annotations:
+        __dashboardUid__: assemblyline-plugin
+        __panelId__: "4"
+        description: "In the last hour, Assemblyline-Plugin has dropped submissions due to un-mappable classifications:"
+        summary: '{{ index $labels "kubernetes_namespace" }} - Classification that couldn''t be mapped ''{{ index $labels "classification" }}'' - Dropped submissions {{ printf "%.0f" (index $values "reducedValues").Value }}) in the last hour'
+      labels:
+        receiver: badplugin
+      isPaused: false
+    - uid: cf2gpmu5551j4f
+      title: Maco any errors alert
+      condition: CheckForAlerts
+      data:
+        - refId: MacoErrorsInLastHour
+          relativeTimeRange:
+            from: 3600
+            to: 0
+          datasourceUid: prometheus
+          model:
+            datasource:
+              type: prometheus
+              uid: prometheus
+            editorMode: code
+            expr: ceil(sum(increase(dispatcher_events_status_published{status=~"error-.*", plugin=~"Maco.*"}[1h]))by (plugin, kubernetes_namespace))
+            instant: true
+            intervalMs: 1000
+            legendFormat: __auto
+            maxDataPoints: 43200
+            range: false
+            refId: MacoErrorsInLastHour
+        - refId: EnsureAllValuesSetToZero
+          relativeTimeRange:
+            from: 10800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: MacoErrorsInLastHour
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: EnsureAllValuesSetToZero
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: CheckForAlerts
+          relativeTimeRange:
+            from: 10800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: EnsureAllValuesSetToZero
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: CheckForAlerts
+            type: threshold
+      dashboardUid: DispatcherMessaging
+      panelId: 45
+      noDataState: OK
+      execErrState: Error
+      annotations:
+        __dashboardUid__: DispatcherMessaging
+        __panelId__: "45"
+        description: In the last hour total errors for a maco plugin.
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "plugin" }} - {{ humanize (index $values "MacoErrorsInLastHour").Value }} errors in the last hour'
+      labels:
+        receiver: macoerrors
+      isPaused: false

@@ -1,0 +1,99 @@
+{{- if .Values.pluginsEnabled -}}
+{{- if (index .Values.plugins "report-feeds").enabled}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: plugin-report-feeds
+  labels:
+    part-of: azul
+    section: plugins
+    component: report-feeds
+spec:
+  schedule: "0 */4 * * *"
+  concurrencyPolicy: "Forbid"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 6
+      template:
+        metadata:
+          labels:
+            app: report-feeds
+            allow-egress-dispatcher: "true"
+            allow-egress-https-http: "true"
+            allow-egress-prometheus-push-gateway: "true"
+            part-of: azul
+            section: plugins
+            component: report-feeds
+          annotations:
+            {{- with .Values.podAnnotations }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- include "harden.deployment" . | nindent 10 }}
+          restartPolicy: OnFailure
+          containers:
+          - name: main
+            image: {{ include "image.custom" (dict "images" .Values.images "name" "plugin-report-feeds")}}
+            imagePullPolicy: {{ .Values.images.pullPolicy }}
+            {{- include "harden.container" . | nindent 12 }}
+            resources:
+              requests:
+                memory: "1Gi"
+              limits:
+                memory: "3Gi"
+                cpu: "1500m"
+            env:
+            - name: PLUGIN_FEED_CONFIG_PATH
+              value: "/config/report-feeds.yaml"
+            - name: PLUGIN_STATE_DIRECTORY
+              value: "/state"
+            - name: PLUGIN_PROMETHEUS_PUSH_GATEWAY
+              value: "{{ (index .Values.plugins "report-feeds").prometheusPushGateway | required "Required parameter .Values.plugins.report-feeds.prometheusPushGateway not provided" }}"
+            {{- if (index .Values.plugins "report-feeds").env }}
+              {{- (index .Values.plugins "report-feeds").env | toYaml | nindent 12 }}
+            {{- end }}
+            - name: PLUGIN_DEPLOYMENT_KEY
+              value: plugin-report-feeds
+            envFrom:
+              - configMapRef:
+                  name: plugin-standard
+            command:
+            - "azul-plugin-report-feeds"
+            volumeMounts:
+            - mountPath: /tmp/
+              name: tmp
+            - name: state
+              mountPath: /state
+            - name: config
+              mountPath: /config
+          volumes:
+          - name: tmp
+            emptyDir:
+              sizeLimit: 200Mi
+          - name: state
+            persistentVolumeClaim:
+              claimName: plugin-report-feeds-state
+          - name: config
+            configMap:
+              name: report-feeds
+---
+{{- end }}
+{{- end }}

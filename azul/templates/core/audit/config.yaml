@@ -1,0 +1,18 @@
+{{if .Values.auditForwarder.enabled}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: audit-forwarder
+data:
+  audit_loki_host: "{{ .Values.external.loki.endpoint  | required "audit requires loki endpoint" }}"
+  audit_azul_namespace: "{{ .Release.Namespace }}"
+
+  audit_target_endpoint: "{{ .Values.auditForwarder.destination  | required "audit destination is required" }}"
+  audit_target_proxy: "{{ .Values.auditForwarder.proxy }}"
+  audit_static_headers: |-
+    {{- .Values.auditForwarder.headers | mustToJson | nindent 4 }}
+
+  audit_send_interval: "{{ .Values.auditForwarder.sendInterval }}"
+  audit_last_sent_file: "/state/last_sent.txt"
+  logger_log_file: "/logs/audit_fwd.log"
+{{- end }}

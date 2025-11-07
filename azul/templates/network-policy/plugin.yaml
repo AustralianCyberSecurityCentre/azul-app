@@ -1,0 +1,249 @@
+{{- if .Values.networkPolicy }}
+# Network policy for Azul
+# Naming convention for labels are:
+#   allow-ingress-<ingress-source>
+#   allow-egress-<egress-destination>
+#   allow-connect-<egress-ingress-to-from>
+
+# basic policy to allow a pod to communicate to dispatcher.
+{{ if not (has "allow-egress-dispatcher" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-dispatcher
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-dispatcher: "true"
+  policyTypes:
+    - Egress
+  egress:
+    # Explicitly list out each DP label as AWS CNI has an issue with not doing it this way.
+    - ports:
+        - port: 8111
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+      to:
+        - podSelector:
+            matchLabels:
+              app: dp-metastore-events
+    - ports:
+        - port: 8111
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+      to:
+        - podSelector:
+            matchLabels:
+              app: dp-metastore-streams
+    - ports:
+        - port: 8111
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+      to:
+        - podSelector:
+            matchLabels:
+              app: dp-plugin-events
+    - ports:
+        - port: 8111
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+      to:
+        - podSelector:
+            matchLabels:
+              app: dp-plugin-streams
+---
+{{ end }}
+{{ if not (has "allow-ingress-assemblyline-receiver" .Values.disableNetworkPolicies) }}
+# --------------------------- Assemblyline Server Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-assemblyline-receiver
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-assemblyline-receiver: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+        - port: 8850
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-assemblyline-receiver
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-assemblyline-receiver: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8850"]
+    when:
+    - key: destination.port
+      values: ["8850"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-ingress-retrohunt-server" .Values.disableNetworkPolicies) }}
+# --------------------------- Retrohunt Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-retrohunt-server
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-retrohunt-server: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+        - port: 8852
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-retrohunt-server
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-retrohunt-server: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8852"]
+    when:
+    - key: destination.port
+      values: ["8852"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-ingress-nsrl-lookup-server" .Values.disableNetworkPolicies) }}
+# --------------------------- NSRL Lookup Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-nsrl-lookup-server
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-nsrl-lookup-server: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    # From nsrl-lookup-server and the internet
+    - ports:
+        - port: 8853
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-nsrl-lookup-server
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-nsrl-lookup-server: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8853"]
+    when:
+    - key: destination.port
+      values: ["8853"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-nsrl-lookup-server" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-nsrl-lookup-server
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-nsrl-lookup-server: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app: plugin-nsrl-lookup
+      ports:
+        - port: 8853
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+---
+{{ end }}
+{{ if not (has "allow-ingress-virustotal-file-feed-server" .Values.disableNetworkPolicies) }}
+# --------------------------- Virustotal Server Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-virustotal-file-feed-server
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-virustotal-file-feed-server: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+        - port: 8854
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-virustotal-file-feed-server
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-virustotal-file-feed-server: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8854"]
+    when:
+    - key: destination.port
+      values: ["8854"]
+---
+{{ end }}
+{{ end }}
+{{ end }}

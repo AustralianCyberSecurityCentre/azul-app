@@ -1,0 +1,255 @@
+{{- if .Values.networkPolicy }}
+# Network policy for Azul
+# Naming convention for labels are:
+#   allow-ingress-<ingress-source>
+#   allow-egress-<egress-destination>
+#   allow-connect-<egress-ingress-to-from>
+
+# default deny policy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# allow all pods to use DNS as required.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-dns
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+---
+{{- if .Values.istioEnabled }}
+# Default deny for Istio policy
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: istio-default-deny
+spec:
+  {}
+---
+{{ end }}
+# policy to allow any traffic in and out of a pod when a more refined policy cannot be defined.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-anything
+spec:
+  podSelector:
+    matchLabels:
+      allow-connect-anything: "true"
+  ingress:
+    - {}
+  egress:
+    - {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-connect-anything
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-connect-anything: "true"
+  rules:
+  - {}
+---
+{{ end }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-anything
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-anything: "true"
+  egress:
+    - {}
+  policyTypes:
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-anything
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-anything: "true"
+  ingress:
+    - {}
+  policyTypes:
+    - Ingress
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-anything
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-anything: "true"
+  rules:
+  - {}
+---
+{{ end }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-https
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-https: "true"
+  egress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-https-ssh
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-https-ssh: "true"
+  egress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      - port: 22
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-https-http
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-https-http: "true"
+  egress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      - port: 80
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+    - Egress
+---
+{{ if not (has "allow-ingress-prometheus-scrape" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-prometheus-scrape
+spec:
+  podSelector: {}
+  podSelector:
+    matchLabels:
+      allow-ingress-prometheus-scrape: "true"
+  ingress:
+    - ports:
+      - port: 8900
+        endport: 8950
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+      - Ingress
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-prometheus-scrape
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-prometheus-scrape: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8900", "8901", "8902", "8903", "8904", "8905", "8906", "8907", "8908", "8909",
+        "8910", "8911", "8912", "8913", "8914", "8915", "8916", "8917", "8918", "8919",
+        "8920", "8921", "8922", "8923", "8924", "8925", "8926", "8927", "8928", "8929",
+        "8930", "8931", "8932", "8933", "8934", "8935", "8936", "8937", "8938", "8939",
+        "8940", "8941", "8942", "8943", "8944", "8945", "8946", "8947", "8948", "8949",
+        "8950"]
+    when:
+    - key: destination.port
+      values: ["8900", "8901", "8902", "8903", "8904", "8905", "8906", "8907", "8908", "8909",
+        "8910", "8911", "8912", "8913", "8914", "8915", "8916", "8917", "8918", "8919",
+        "8920", "8921", "8922", "8923", "8924", "8925", "8926", "8927", "8928", "8929",
+        "8930", "8931", "8932", "8933", "8934", "8935", "8936", "8937", "8938", "8939",
+        "8940", "8941", "8942", "8943", "8944", "8945", "8946", "8947", "8948", "8949",
+        "8950"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-prometheus-push-gateway" .Values.disableNetworkPolicies) }}
+# Allow traffic to the prometheus push gateway
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-prometheus-push-gateway
+spec:
+  podSelector: {}
+  podSelector:
+    matchLabels:
+      allow-egress-prometheus-push-gateway: "true"
+  egress:
+    - ports:
+      - port: 9091
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+      - Egress
+---
+{{ end }}
+{{ end }}
+---
+
+

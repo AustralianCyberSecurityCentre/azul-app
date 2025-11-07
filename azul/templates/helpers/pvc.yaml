@@ -1,0 +1,18 @@
+{{- define "pvc" -}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .name | required "pvc has no name" }}
+  annotations:
+    # if deployed via argocd and/or helm, prevent the pvc getting deleted
+    helm.sh/resource-policy: "keep"
+    argocd.argoproj.io/sync-options: "Prune=false"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: {{ .root.storageClassName | required (printf "missing storage class for %s" .name) }}
+  resources:
+    requests:
+      storage: {{ .size}}
+{{- end }}

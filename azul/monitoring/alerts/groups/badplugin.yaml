@@ -1,0 +1,280 @@
+- orgId: 1
+  name: ingestion
+  folder: azul-main
+  interval: 15m
+  rules:
+    - uid: adxbsp9llf4zkc
+      title: restapi-errors
+      condition: Alert
+      data:
+        - refId: errorsExcluding404-403-401
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: prometheus
+          model:
+            editorMode: code
+            expr: sum(rate(azulapi_requests_total{path=~"^/api/.*", status_code=~"^5..$|^40[^134]|^4[^0].$"}[$__rate_interval])) by (status_code, kubernetes_namespace)
+            instant: true
+            intervalMs: 1000
+            legendFormat: __auto
+            maxDataPoints: 43200
+            range: false
+            refId: errorsExcluding404-403-401
+        - refId: Reduced
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: errorsExcluding404-403-401
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: Reduced
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: Alert
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: Reduced
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: Alert
+            type: threshold
+      dashboardUid: AzulRESTAPI
+      panelId: 2
+      noDataState: OK
+      execErrState: Error
+      for: 15m
+      annotations:
+        __dashboardUid__: AzulRESTAPI
+        __panelId__: "2"
+        description: Restapi is getting regular errors
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "status_code" }} - {{ humanize (index $values "errorsExcluding404-403-401").Value }} req/s'
+      labels:
+        receiver: badplugin
+      isPaused: false
+    - uid: adx17j41e14owb
+      title: metastore-consumer-lag
+      condition: Alert
+      data:
+        - refId: Query
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: prometheus
+          model:
+            editorMode: code
+            exemplar: false
+            expr: sum by(consumer_group, kubernetes_namespace) (burrow_kafka_consumer_lag_total{consumer_group=~".*ingestor.*(status|binary).*"})  > 10000 or sum by(consumer_group, kubernetes_namespace) (burrow_kafka_consumer_lag_total{consumer_group=~".*ingestor.*plugin.*"})
+            format: time_series
+            instant: true
+            intervalMs: 1000
+            legendFormat: __auto
+            maxDataPoints: 43200
+            range: false
+            refId: Query
+        - refId: Reduce
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: Query
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: Reduce
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: Alert
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 100
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: Query
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: Alert
+            type: threshold
+      dashboardUid: metastore-ingest
+      panelId: 7
+      noDataState: NoData
+      execErrState: Error
+      for: 15m
+      annotations:
+        __dashboardUid__: metastore-ingest
+        __panelId__: "7"
+        description: Metastore Lag is too large for
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "consumer_group" }} - Lag is {{ humanize (index $values "Query").Value }}'
+      labels:
+        receiver: badplugin
+      isPaused: false
+    - uid: be1i4iakxca9sd
+      title: Plugin Feature Fail to Encode
+      condition: Alert
+      data:
+        - refId: Query
+          queryType: range
+          relativeTimeRange:
+            from: 900
+            to: 0
+          datasourceUid: loki
+          model:
+            datasource:
+              type: loki
+              uid: loki
+            editorMode: builder
+            expr: rate({app=~"ms-ingest-.*-error"} | json error_type="error_type", author="author" | error_type = `feature_encoding` [$__auto])
+            intervalMs: 1000
+            legendFormat: "{{author}}"
+            maxDataPoints: 43200
+            queryType: range
+            refId: Query
+        - refId: Reduce
+          relativeTimeRange:
+            from: 900
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: Query
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: Reduce
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: Alert
+          relativeTimeRange:
+            from: 900
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: Reduce
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: Alert
+            type: threshold
+      dashboardUid: metastore-ingest
+      panelId: 9
+      noDataState: OK
+      execErrState: OK
+      for: 0s
+      annotations:
+        __dashboardUid__: metastore-ingest
+        __panelId__: "9"
+        description: "Feature failed to encode for plugins:"
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "author" }}'
+      labels:
+        receiver: badplugin
+      isPaused: false

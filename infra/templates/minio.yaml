@@ -1,0 +1,174 @@
+{{- range $inst := .Values.minio }}
+
+{{- if .enable }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $inst.labels.app }}
+  labels:
+    app: {{ $inst.labels.app }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ $inst.labels.app }}
+  serviceName: {{ $inst.labels.app }}
+  replicas: {{ $inst.replicas }}
+  podManagementPolicy: "Parallel"
+  template:
+    metadata:
+      labels:
+        {{- if $inst.labels }}
+          {{- range $key, $value := $inst.labels }}
+        {{ $key }}: {{ $value | quote }}
+          {{- end }}
+        {{- end }}
+      {{- with $.Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $.Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $.Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: minio
+        image: {{ $inst.image }}
+        volumeMounts:
+        - name: data
+          mountPath: "/data"
+        args:
+        - server
+        {{- if eq ( $inst.replicas | int ) 1 }}
+        - /data
+        {{- else }}
+        {{- range until ( $inst.replicas | int ) }}
+        - http://{{ $inst.labels.app }}-{{ . }}.{{ $inst.labels.app }}.{{ $.Release.Namespace }}.svc.cluster.local/data
+        {{- end }}
+        {{- end }}
+        - --console-address
+        - ":9001"
+        resources:
+          {{- $inst.resources | toYaml | nindent 10 }}
+        env:
+        # MinIO access key and secret key
+        - name: MINIO_ROOT_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ $inst.secretName }}
+              key:  accesskey
+        - name: MINIO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ $inst.secretName }}
+              key: secretkey
+        ports:
+        - containerPort: 9000
+          name: http
+        # Readiness probe detects situations when MinIO server instance
+        # is not ready to accept traffic. Kubernetes doesn't forward
+        # traffic to the pod while readiness checks fail.
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 20
+        # Liveness probe detects situations where MinIO server instance
+        # is not working properly and needs restart. Kubernetes automatically
+        # restarts the pods if liveness checks fail.
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 20
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        annotations:
+          # if deployed via argocd and/or helm, prevent the pvc getting deleted
+          helm.sh/resource-policy: "keep"
+          argocd.argoproj.io/sync-options: Prune=false
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: {{ $inst.storageClass | required "minio storage class missing"}}
+        resources:
+          requests:
+            storage: {{ $inst.requests.storage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $inst.labels.app }}
+spec:
+  ports:
+  - port: 9000
+    targetPort: 9000
+    protocol: TCP
+    name: http-api
+  - port: 9001
+    targetPort: 9001
+    protocol: TCP
+    name: http-console
+  selector:
+    app: {{ $inst.labels.app }}
+
+{{- if or $inst.ingress.api.enable $inst.ingress.console.enable }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $inst.labels.app }}
+  annotations:
+{{ $inst.ingress.annotations | toYaml | indent 4 }}
+spec:
+  ingressClassName: {{ $inst.ingress.ingressClassName }}
+  tls:
+  - hosts:
+    {{- if $inst.ingress.api.enable }}
+    - {{ $inst.ingress.api.host }}
+    {{- end }}
+    {{- if $inst.ingress.console.enable }}
+    - {{ $inst.ingress.console.host }}
+    {{- end }}
+    secretName: {{ $inst.ingress.secretName }}
+  rules:
+  {{- if $inst.ingress.console.enable }}
+  - host: {{ $inst.ingress.console.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ $inst.labels.app }}
+            port:
+              number: 9001
+  {{- end }}
+  {{- if $inst.ingress.api.enable }}
+  - host: {{ $inst.ingress.api.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ $inst.labels.app }}
+            port:
+              number: 9000
+  {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- end }}

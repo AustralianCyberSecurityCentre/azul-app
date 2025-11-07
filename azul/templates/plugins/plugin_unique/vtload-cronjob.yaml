@@ -1,0 +1,100 @@
+{{- if .Values.pluginsEnabled -}}
+{{- if .Values.plugins.virustotal.pullFromApi }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: plugin-vtfilefeed
+  labels:
+    part-of: azul
+    section: plugins
+    component: virustotal
+spec:
+  concurrencyPolicy: Forbid
+  schedule: "*/5 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 6
+      template:
+        metadata:
+          labels:
+            app: plugin-vtfilefeed
+            allow-egress-dispatcher: "true"
+            allow-egress-https: "true"
+            part-of: azul
+            section: plugins
+            component: virustotal
+          annotations:
+            {{- with .Values.podAnnotations }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        spec:
+          restartPolicy: OnFailure
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- include "harden.deployment" . | nindent 10 }}
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: plugin-vtfilefeed
+          - name: rules
+            configMap:
+              name: vtselect-rules
+              optional: true
+          containers:
+          - name: main
+            volumeMounts:
+            - name: data
+              mountPath: "/data"
+            - name: rules
+              mountPath: /rules
+            image: {{ include "image.custom" (dict "images" .Values.images "name" "plugin-virustotal")}}
+            imagePullPolicy: {{ .Values.images.pullPolicy }}
+            {{- include "harden.container" . | nindent 12 }}
+            resources:
+              requests:
+                memory: "50Mi"
+                cpu: "100m"
+              limits:
+                memory: "2Gi"
+                cpu: "1000m"
+            env:
+            - name: VIRUSTOTAL_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.virustotalCreds }}
+                  key: apikey
+            {{- if .Values.external.services.virustotal }}
+            - name: VIRUSTOTAL_APISERVER
+              value: {{ .Values.external.services.virustotal }}
+            {{- end }}
+            - name: STATEDIR
+              value: "/data"
+            - name: RULES_ROOT
+              value: /rules
+            - name: PLUGIN_DEPLOYMENT_KEY
+              value: plugin-vtfilefeed
+            envFrom:
+              - configMapRef:
+                  name: plugin-standard
+              - configMapRef:
+                  name: plugin-virustotal
+            args:
+            - "filefeed"
+{{- end }}
+{{- end }}

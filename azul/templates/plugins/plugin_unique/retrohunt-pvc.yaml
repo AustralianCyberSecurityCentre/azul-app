@@ -1,0 +1,3 @@
+{{- if ((.Values.plugins).retrohunt).enabled }}
+{{- include "pvc" (dict "root" .Values "name" "plugin-retrohunt" "size" .Values.plugins.retrohunt.pvc.size) | nindent 0 }}
+{{- end}}

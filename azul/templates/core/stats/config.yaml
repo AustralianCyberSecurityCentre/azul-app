@@ -1,0 +1,98 @@
+{{- if .Values.stats.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stats
+data:
+  REQUESTS_CA_BUNDLE: "/cafile/ca.crt"
+  SSL_CERT_FILE: "/cafile/ca.crt"
+  PYTHONUNBUFFERED: "yes"
+  STATS_MAX_SCRAPE_TIME: "{{ .Values.stats.config.maxScrapeTime }}"
+  STATS_AZUL: "{{ .Values.stats.config.azulProbe.enabled }}"
+  STATS_OPENSEARCH: "{{ .Values.stats.config.opensearch.enabled }}"
+  STATS_KAFKA: "{{ .Values.stats.config.kafka }}"
+  STATS_REDIS: "true"
+  STATS_AUTH: "{{ .Values.stats.config.auth }}"
+  {{- if .Values.stats.config.filestore }}
+    {{- if eq "s3" (.Values.external.filestore.backend | lower) }}
+  STATS_MINIO: "true"
+  STATS_AZURE_BLOB: "false"
+    {{- else if eq "azure" (.Values.external.filestore.backend | lower) }}
+  STATS_MINIO: "false"
+  STATS_AZURE_BLOB: "true"
+    {{- end }}
+  {{- else }}
+  STATS_MINIO: "false"
+  STATS_AZURE_BLOB: "false"
+  {{- end }}
+
+  {{- if .Values.stats.config.backupFilestore }}
+  STATS_BACKUP_MINIO: "true"
+  {{- else }}
+  STATS_BACKUP_MINIO: "false"
+  {{- end }}
+  # Opensearch settings
+  {{- if .Values.stats.config.opensearch.enabled }}
+  OPENSEARCH_SCRAPE_STATUS: "{{ .Values.stats.config.opensearch.scrapeStatsEnabled }}"
+  OPENSEARCH_SCRAPE_INDEX_PATTERN: "{{ .Values.stats.config.opensearch.scrapeIndexPattern }}"
+  OPENSEARCH_USERNAME: "{{ .Values.external.opensearch.username }}"
+  OPENSEARCH_HOST: "{{ .Values.external.opensearch.endpoint | required "external.opensearch.endpoint not set" }}"
+  OPENSEARCH_TEST_ALIAS: "{{ .Values.stats.config.opensearch.testAlias }}"
+  OPENSEARCH_TEST_INDEX: "{{ .Values.stats.config.opensearch.testIndex }}"
+  OPENSEARCH_TEST_INDEX_PATTERN: "{{ .Values.stats.config.opensearch.testIndexPattern }}"
+  OPENSEARCH_CERTIFICATE_VERIFICATION: "{{ .Values.stats.config.opensearch.verifyCerts }}"
+  {{- end }}
+
+  # Kafka settings
+  {{- if .Values.stats.config.kafka }}
+  KAFKA_BOOTSTRAP_SERVER: "{{ .Values.external.kafka.endpoint }}"
+  KAFKA_TEST_TOPIC: "{{ .Values.stats.config.kafkaTestTopic }}"
+  {{- end }}
+
+  # Redis Settings
+  REDIS_HOST: "{{ (split ":" .Values.external.redis.endpoint)._0 }}" # Take just the hostname not the port.
+  REDIS_DB: "0" # No need to configure this currently.
+  
+  # Azure blob storage settings
+  {{- if .Values.stats.config.filestore }}
+  AZURE_HOST: "{{ .Values.external.filestore.endpoint }}"
+  AZURE_CONTAINER_NAME: "{{ .Values.external.filestore.location }}"
+  AZURE_TEST_BLOB: "{{ .Values.stats.config.testBlob }}"
+
+  # Minio storage settings
+  MINIO_HOST: "{{ .Values.external.filestore.endpoint }}"
+  MINIO_BUCKET_NAME: "{{ .Values.external.filestore.location }}"
+  MINIO_TEST_BLOB: "{{ .Values.stats.config.testBlob }}"
+  MINIO_CERTIFICATE_VERIFICATION: "{{ .Values.external.filestore.secure }}"
+  {{- end }}
+  # Minio Backup storage settings
+  {{- if .Values.stats.config.backupFilestore }}
+  MINIO_BKUP_HOST: "{{ .Values.recovery.externalS3Endpoint }}"
+  # Use the backup stream bucket as the test bucket.
+  MINIO_BKUP_BUCKET_NAME: "azul-backup-{{ .Values.recovery.label }}-streams"
+  MINIO_BKUP_TEST_BLOB: "{{ .Values.stats.config.backupTestBlob }}"
+  MINIO_BKUP_CERTIFICATE_VERIFICATION: "{{ .Values.recovery.externalS3Secure }}"
+  {{- end }}
+
+  # Auth
+  {{- if .Values.stats.config.auth }}
+  AUTH_WELL_KNOWN_ENDPOINT: "{{ .Values.security.oidc.authority_url }}/.well-known/openid-configuration"
+  AUTH_CLIENT_ID: "{{ .Values.security.oidc.client_id }}"
+  AUTH_OAUTH_METHOD: "{{ .Values.stats.config.authOauthMethod }}"
+  AUTH_SCOPES: "{{ .Values.stats.config.authScopes | default .Values.security.oidc.scopes }}"
+
+  AUTH_EXPECTED_AUDIENCE: "{{ .Values.stats.config.authExpectedAudience | default "" }}"
+  AUTH_EXPECTED_ROLES: |-
+    {{- .Values.stats.config.authExpectedRoles | mustToJson | nindent 4 }}
+
+  {{- end }}
+
+  {{- if .Values.stats.config.azulProbe.enabled }}
+  # Azul Prober
+  AZUL_URL: {{  .Values.stats.config.azulProbe.url | default (printf "https://%s" (index .Values.web.ingress.hosts 0) ) }}
+  AZUL_TIMEOUT: "{{ .Values.stats.config.azulProbe.timeoutSeconds }}"
+  AZUL_DOCS_PATH: "{{ .Values.stats.config.azulProbe.restapiPath }}"
+  AZUL_DOCS_PATH: "{{ .Values.stats.config.azulProbe.docsPath }}"
+  AZUL_UI_PATH: "{{ .Values.stats.config.azulProbe.webuiPath }}"
+  {{- end }}
+{{- end }}

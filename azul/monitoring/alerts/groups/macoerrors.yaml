@@ -1,0 +1,97 @@
+- orgId: 1
+  name: macoerrors
+  folder: azul
+  interval: 1h
+  rules:
+    - uid: cf2gpmu5551j4f
+      title: Maco any errors alert
+      condition: CheckForAlerts
+      data:
+        - refId: MacoErrorsInLastHour
+          relativeTimeRange:
+            from: 3600
+            to: 0
+          datasourceUid: prometheus
+          model:
+            datasource:
+              type: prometheus
+              uid: prometheus
+            editorMode: code
+            expr: ceil(sum(increase(dispatcher_events_status_published{status=~"error-.*", plugin=~"Maco.*"}[1h]))by (plugin, kubernetes_namespace))
+            instant: true
+            intervalMs: 1000
+            legendFormat: __auto
+            maxDataPoints: 43200
+            range: false
+            refId: MacoErrorsInLastHour
+        - refId: EnsureAllValuesSetToZero
+          relativeTimeRange:
+            from: 10800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: MacoErrorsInLastHour
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: EnsureAllValuesSetToZero
+            settings:
+              mode: replaceNN
+              replaceWithValue: 0
+            type: reduce
+        - refId: CheckForAlerts
+          relativeTimeRange:
+            from: 10800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: EnsureAllValuesSetToZero
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: CheckForAlerts
+            type: threshold
+      dashboardUid: DispatcherMessaging
+      panelId: 45
+      noDataState: OK
+      execErrState: Error
+      annotations:
+        __dashboardUid__: DispatcherMessaging
+        __panelId__: "45"
+        description: In the last hour total errors for a maco plugin.
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "plugin" }} - {{ humanize (index $values "MacoErrorsInLastHour").Value }} errors in the last hour'
+      labels:
+        receiver: macoerrors
+      isPaused: false

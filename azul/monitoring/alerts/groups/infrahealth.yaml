@@ -1,0 +1,203 @@
+- orgId: 1
+  name: infra-health
+  folder: infra-health
+  interval: 10m
+  rules:
+    - uid: bdwcvhmqk8z5se
+      title: Infra Health Status
+      condition: C
+      data:
+        - refId: A
+          relativeTimeRange:
+            from: 86400
+            to: 0
+          datasourceUid: prometheus
+          model:
+            datasource:
+              type: prometheus
+              uid: prometheus
+            disableTextWrap: false
+            editorMode: code
+            exemplar: false
+            expr: sum by(system, action, kubernetes_namespace) (azul_health_check_status)
+            fullMetaSearch: false
+            includeNullMetadata: true
+            instant: false
+            interval: ""
+            intervalMs: 15000
+            legendFormat: "{{system}}"
+            maxDataPoints: 43200
+            range: true
+            refId: A
+            useBackend: false
+        - refId: B
+          relativeTimeRange:
+            from: 86400
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: A
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: B
+            settings:
+              mode: replaceNN
+              replaceWithValue: 100
+            type: reduce
+        - refId: C
+          relativeTimeRange:
+            from: 86400
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: B
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: C
+            type: threshold
+      dashboardUid: infra-health
+      panelId: 1
+      noDataState: OK
+      execErrState: Error
+      for: 10m
+      annotations:
+        __dashboardUid__: infra-health
+        __panelId__: "1"
+        description: One of the actions Azul expects to be able to take against infrastructure cannot be done.
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "system" }} - {{ index $labels "action" }}'
+      labels:
+        receiver: infrahealth
+      isPaused: false
+    - uid: edxjtlnb3aps0d
+      title: Infra Stats Gathering Health
+      condition: C
+      data:
+        - refId: A
+          relativeTimeRange:
+            from: 86400
+            to: 0
+          datasourceUid: prometheus
+          model:
+            datasource:
+              type: prometheus
+              uid: prometheus
+            disableTextWrap: false
+            editorMode: code
+            exemplar: false
+            expr: sum by(reason, kubernetes_namespace) (status_status)
+            fullMetaSearch: false
+            includeNullMetadata: true
+            instant: false
+            interval: ""
+            intervalMs: 15000
+            legendFormat: "{{system}}"
+            maxDataPoints: 43200
+            range: true
+            refId: A
+            useBackend: false
+        - refId: B
+          relativeTimeRange:
+            from: 86400
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: A
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: B
+            settings:
+              mode: replaceNN
+              replaceWithValue: 100
+            type: reduce
+        - refId: C
+          relativeTimeRange:
+            from: 86400
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: B
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: C
+            type: threshold
+      dashboardUid: infra-health
+      panelId: 1
+      noDataState: OK
+      execErrState: Error
+      for: 0s
+      annotations:
+        __dashboardUid__: infra-health
+        __panelId__: "1"
+        description: "Azul stats monitoring is failing to gather stats for the reason:"
+        summary: '{{ index $labels "kubernetes_namespace" }} - {{ index $labels "reason" }}'
+      labels:
+        receiver: infrahealth
+      isPaused: false

@@ -1,0 +1,11 @@
+{{- define "soften.deployment" -}}
+# prevent environment spam from services
+# env vars from services clash with our config
+enableServiceLinks: false
+# disable security hardening
+securityContext:
+  fsGroup: 0
+  runAsUser: 0
+  runAsGroup: 0
+  runAsNonRoot: false
+{{- end }}

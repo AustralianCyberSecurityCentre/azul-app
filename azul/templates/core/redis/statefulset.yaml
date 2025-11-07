@@ -1,0 +1,185 @@
+{{- if .Values.redis.enabled -}}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+  {{- with .Values.redis.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    section: core
+    component: redis
+    app: redis
+  name: azul-redis-master
+spec:
+  persistentVolumeClaimRetentionPolicy:
+  {{- with .Values.persistentVolumeClaimRetentionPolicy }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+    whenDeleted: Retain
+    whenScaled: Retain
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  serviceName: azul-redis-master
+  template:
+    metadata:
+      annotations:
+      {{- with .Values.redis.annotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: master
+        app.kubernetes.io/name: redis
+        section: core
+        component: redis
+        app: redis
+        allow-ingress-redis: "true"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: master
+                  app.kubernetes.io/name: redis
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      automountServiceAccountToken: false
+      containers:
+      - args:
+        - -c
+        - /opt/redis/scripts/start-scripts/start-master.sh
+        command:
+        - /bin/bash
+        env:
+        - name: REDIS_REPLICATION_MODE
+          value: master
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "no"
+        - name: REDIS_PASSWORD_FILE
+          value: /opt/redis/secrets/redis-password
+        - name: REDIS_TLS_ENABLED
+          value: "no"
+        - name: REDIS_PORT
+          value: "6379"
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "redis")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - /health/ping_liveness_local.sh 5
+          failureThreshold: 5
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 6
+        name: redis
+        ports:
+        - containerPort: 6379
+          name: redis
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - /health/ping_readiness_local.sh 1
+          failureThreshold: 5
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 2
+        resources:
+          {{- .Values.redis.resources | toYaml | nindent 10 }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 21000
+          runAsNonRoot: true
+          runAsUser: 21000
+          seccompProfile:
+            type: RuntimeDefault
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/redis/scripts/start-scripts
+          name: azul-redis-scripts
+        - mountPath: /health
+          name: azul-redis-health
+        - mountPath: /opt/redis/secrets/
+          name: redis-password
+        - mountPath: /data
+          name: redis-data
+        - mountPath: /opt/redis/mounted-etc
+          name: azul-redis-configuration
+        - mountPath: /opt/redis/etc/
+          name: empty-dir
+          subPath: app-conf-dir
+        - mountPath: /tmp
+          name: empty-dir
+          subPath: tmp-dir
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 21000
+        fsGroupChangePolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 493
+          name: azul-redis-scripts
+        name: azul-redis-scripts
+      - configMap:
+          defaultMode: 493
+          name: azul-redis-health
+        name: azul-redis-health
+      - name: redis-password
+        secret:
+          defaultMode: 420
+          items:
+          - key: redis-password
+            path: redis-password
+          secretName: {{ .Values.secrets.redis }}
+      - configMap:
+          defaultMode: 420
+          name: azul-redis-configuration
+        name: azul-redis-configuration
+      - emptyDir: {}
+        name: empty-dir
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      annotations:
+      {{- with .Values.redis.annotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: master
+        app.kubernetes.io/name: redis
+        section: core
+        component: redis
+        app: redis
+      name: redis-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ .Values.redis.pvcSize }}
+      storageClassName: {{ .Values.storageClassName }}
+{{ end }}

@@ -1,0 +1,30 @@
+trigger: none
+
+pool:
+  name: AppTest Debian
+  demands: Agent.OS -equals Linux
+
+resources:
+  repositories:
+    - repository: PipelineTemplates
+      type: git
+      name: CyberLab-Services/pipeline-templates
+      trigger: none
+      ref: refs/heads/main
+
+stages:
+  - stage: Validate
+    jobs:
+      - job: "ValidateHelmChart"
+        steps:
+          - checkout: self
+            path: s/self
+            fetchDepth: 0
+            persistCredentials: true
+            clean: true
+            workspaceRepo: true
+          - script: |
+              set -e
+              ls -lha
+              helm template azul --values azul/values.yaml --values azul/example-values.yaml > built.yaml
+            displayName: Validate chart

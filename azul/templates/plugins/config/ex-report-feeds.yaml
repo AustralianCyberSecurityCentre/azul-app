@@ -1,0 +1,38 @@
+{{- if (index .Values.plugins "report-feeds").feedConfig -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: report-feeds
+data:
+  {{- with (index .Values.plugins "report-feeds").feedConfig }}
+  report-feeds.yaml: 
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- else if (index .Values.plugins "report-feeds").demoConfig}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: report-feeds
+data:
+  report-feeds.yaml: |
+    feeds:
+      - publisher: Microsoft
+        source: reporting
+        module: reportcollector.feeds.rss.RSSFeed
+        distribution: public
+        site: "https://www.microsoft.com/security/"
+        feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
+
+    pdfconversion:
+        command: wkhtmltopdf
+        options:
+          - "--proxy-hostname-lookup"
+          - "--disable-javascript"
+          - "--disable-external-links"
+          - "--disable-internal-links"
+          - "--disable-forms"
+          - "--zoom"
+          - "0.8"
+          - "--image-dpi"
+          - "120"
+{{- end }}

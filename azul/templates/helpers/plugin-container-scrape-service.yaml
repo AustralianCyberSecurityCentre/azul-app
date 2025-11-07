@@ -1,0 +1,15 @@
+{{- define "plugin.container.scrape.service" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: prom-scraper-{{ .plugin_name }}-{{ .container_name }}
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: {{ quote .container.promPort | default "\"8900\"" }}
+spec:
+  selector:
+    app: {{ .plugin_name }}
+  ports:
+  - port: {{ .container.promPort | default "\"8900\"" }}
+    name: prom-scrape-port
+{{- end }}

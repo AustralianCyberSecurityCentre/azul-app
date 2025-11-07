@@ -1,0 +1,104 @@
+{{- if eq .Values.recovery.mode "backup" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recovery-backup-{{ .Values.recovery.label }}
+  labels:
+    part-of: azul
+    section: core
+    component: recovery
+spec:
+  revisionHistoryLimit: 1
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: backup
+  template:
+    metadata:
+      name: recovery-backup-{{ .Values.recovery.label }}
+      labels:
+        app: backup
+        part-of: azul
+        section: core
+        component: recovery
+        allow-egress-s3: "true"
+        allow-egress-dispatcher: "true"
+        allow-ingress-prometheus-scrape: "true"
+      annotations:
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8900"
+        prometheus.io/scrape: "true"
+        # ensure deployment restarts if config is changed
+        checksum/config: {{ include (print $.Template.BasePath "/core/recovery/recovery.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "backup")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        {{- if .Values.recovery.backup.resources }}
+        resources:
+        {{- .Values.recovery.backup.resources | toYaml | nindent 10 }}
+        {{- end }}
+        args:
+        - "backup"
+        envFrom:
+          - configMapRef:
+              name: recovery
+        env:
+          - name: BK.EXTERNAL_BACKUP.ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.backupS3Keys }}
+                key: access_key
+          - name: BK.EXTERNAL_BACKUP.SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.backupS3Keys }}
+                key: secret_key
+        volumeMounts:
+          - name: tmp
+            mountPath: /tmp/
+          - name: fcache
+            mountPath: "/fcache"
+          {{- if .Values.CACertificateConfigMap }}
+          - mountPath: /etc/ssl/certs/ca-certificates.crt
+            name: ca-cert
+            subPath: ca.crt
+          {{- end }}
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 200Mi
+      - name: fcache
+        persistentVolumeClaim:
+          claimName: azul-backup-{{ .Values.recovery.label }}
+      {{- if .Values.CACertificateConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ .Values.CACertificateConfigMap }}
+      {{- end }}
+---
+{{- end }}

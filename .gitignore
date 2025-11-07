@@ -1,0 +1,10 @@
+*.secret
+*.crt
+*.key
+*.iml
+*.csr
+*.pem
+*.srl
+*.tmp
+*.p12
+built.yaml

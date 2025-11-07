@@ -1,0 +1,200 @@
+{{- if .Values.keycloak.enable }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  revisionHistoryLimit: 1
+  replicas: 2
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        allow-ingress-keycloak: "true"
+        allow-egress-postgres-keycloak: "true"
+      {{- with $.Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      automountServiceAccountToken: false
+      containers:
+      - name: main
+        image: {{ .Values.keycloak.image }}
+        args:
+          - start
+          - --hostname={{ .Values.keycloak.ingress.hostname }}
+          - --proxy-headers={{ .Values.keycloak.proxyHeaderArg }}
+          - --http-enabled=true
+          - --vault-dir=/vault
+          - --cache-stack=kubernetes
+          # - --log-level=DEBUG
+        env:
+        - name: jgroups.dns.query
+          value: "keycloak-ha"
+        - name: KC_DB
+          value: "postgres"
+        - name: KC_DB_URL
+          value: "jdbc:postgresql://postgres:5432/keycloak"
+        - name: KC_DB_USERNAME
+          value: "keycloak"
+        - name: KC_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keycloak
+              key: DB_PASSWORD
+        - name: KC_HEALTH_ENABLED
+          value: "true"
+        - name: KC_METRICS_ENABLED
+          value: "true"
+        - name: KEYCLOAK_ADMIN
+          value: "admin"
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keycloak
+              key: KEYCLOAK_ADMIN_PASSWORD
+        # - name: JAVA_OPTS_APPEND
+        #   value: >
+        #     -Dkeycloak.migration.action=import
+        #     -Dkeycloak.migration.provider=dir
+        #     -Dkeycloak.migration.dir=/tmp/cfg/
+        #     -Dkeycloak.migration.strategy=IGNORE_EXISTING
+        ports:
+        - name: https
+          containerPort: 8443
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        volumeMounts:
+        - name: vault
+          mountPath: /vault
+        # - name: keycloak-data
+        #   mountPath: /etc/krb5.conf
+        #   subPath: krb5.conf
+        # - name: keycloak-data
+        #   mountPath: /opt/jboss/keycloak/standalone/configuration/profile.properties
+        #   subPath: profile.properties
+        # - name: scripts
+        #   mountPath: /opt/jboss/startup-scripts/z-enable-vault.cli
+        #   subPath: enable-vault.cli
+        # - name: scripts
+        #   mountPath: /opt/jboss/startup-scripts/z-enable-vault-ha.cli
+        #   subPath: enable-vault-ha.cli
+          # mount all keycloak data in another directory as well
+        # - name: keycloak-data
+        #   mountPath: /keycloak-data
+        # - name: tls
+        #   mountPath: /etc/x509/https
+        # - name: keytab
+        #   mountPath: /keytab
+        # - name: tmp
+        #   mountPath: /tmp/cfg
+      volumes:
+      - name: vault
+        secret:
+          secretName: keycloak
+      # - name: tmp
+      #   emptyDir: {}
+      # - name: keycloak-data
+      #   configMap:
+      #     name: keycloak-data
+      # - name: scripts
+      #   configMap:
+      #     name: keycloak-scripts
+      # - name: tls
+      #   secret:
+      #     secretName: keycloak-tls
+      # - name: keytab
+      #   secret:
+      #     secretName: keycloak-keytab
+      #     defaultMode: 0644
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  # - name: https
+  #   port: 443
+  #   targetPort: 8443
+  selector:
+    app: keycloak
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-ha
+  labels:
+    app: keycloak
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: keycloak
+  type: ClusterIP
+  clusterIP: None
+
+---
+{{- with .Values.keycloak.ingress }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak
+  annotations:
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .ingressClassName | default "nginx" }}
+  tls:
+    - hosts:
+        - "{{ .hostname }}"
+      secretName: {{ .secretName }}
+  rules:
+    - host: "{{ .hostname }}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 80
+{{- end }}
+
+{{- end }}

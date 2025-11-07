@@ -1,0 +1,402 @@
+namespace:
+  labels:
+    istio.io/dataplane-mode: ambient
+
+networkPolicy: true
+
+# List any of the existing network policies by name that shouldn't be created.
+# This is useful for replacing policies or if there is a policy that isn't applicable to your environment.
+disableNetworkPolicies:
+  - allow-ingress-retrohunt-server
+  - allow-ingress-nsrl-lookup-server
+  - allow-egress-nsrl-lookup-server
+# Define any custom network policy here
+# This will be a list of kubernetes network policies
+customNetworkPolicies:
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: allow-egress-custom1
+    spec:
+      podSelector:
+        matchLabels:
+          allow-egress-custom1: "true"
+      policyTypes:
+        - Egress
+      egress:
+        - to:
+            - podSelector:
+                matchLabels:
+                  part-of: azul
+        - ports:
+            - port: 80
+              protocol: TCP
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: allow-egress-custom2
+    spec:
+      podSelector:
+        matchLabels:
+          allow-egress-custom2: "true"
+      policyTypes:
+        - Egress
+      egress:
+        - to:
+            - podSelector:
+                matchLabels:
+                  part-of: azul
+        - ports:
+            - port: 80
+              protocol: TCP
+
+# repeat for 'pluginSyncHPA'
+pluginHPA:
+  maxReplicas: 5
+  minReplicas: 1
+  # EXPERIMENTAL FEATURE - BE VERY CAREFUL
+  # THIS MAY CAUSE ADVERSE SCALING IN YOUR CLUSTER, DEPENDING ON THE DISTRIBUTION OF YOUR
+  # FILES
+  # MONITOR HPAs CAREFULLY IF YOU DECIDE TO ENABLE THIS
+  # If Azul's internal scaler should be used as the source of scaling
+  # This requires KEDA in the environment
+  useSmartScaler: false
+  # If using the internal scaler, if historical entities should be considered
+  includeHistoric: false
+  # If using the internal scaler, the maximum backlog for a plugin before scaling occurs
+  maxQueueLength: 50
+
+scaler:
+  # Use in conjunction with useSmartScaler - see above
+  enabled: true
+
+# This file is used to set fields required by the azul helm chart. This file is used to ensure checks pass during development.
+external:
+  opensearch:
+    endpoint: "http://opensearch.example.internal:9200"
+  filestore:
+    endpoint: "s3-store.example.internal:9000"
+  kafka:
+    endpoint: "events-kafka.example.internal:9092"
+  services:
+    virustotal: httpx://viruslocal.com
+
+web:
+  config:
+    banner_message: The system will be going down for patching at 00:00 UTC.
+    banner_severity: info
+    banner_dismissable: true
+
+    # External links enable the linking to external systems on the binary page
+    # - useful for simplifying various enduser processes.
+    binary_external_links:
+      - if: features.name
+        operator: eq
+        match: file_type_vt
+        # If the "file_type_vt" feature exists...
+        display_name: VirusLocal
+        url: "https://viruslocal/{}"
+        url_args:
+          - summary.sha256
+      - if: summary.sources.references.task_id
+        operator: regex
+        match: "^TASK-[0-9]+$"
+        # If a source field matches the specified regex...
+        display_name: Task Management System
+        url: "https://tickets/{}"
+        url_args:
+          - summary.sources.references.task_id
+      - if: summary.sources.references.task_id
+        operator: exists
+        display_name: Task Search
+        # If the task_id source field exists for any submission for this file...
+        url: "https://search/{}"
+        url_args:
+          - summary.sources.references.task_id
+  ingress:
+    enabled: true
+    hosts:
+      - dummy.host
+    security:
+      enableHarden: true
+      csp:
+        webui:
+          script-src-attr: "'unsafe-inline'"
+        api:
+          script-src-attr: "'unsafe-inline'"
+        docs:
+          script-src-attr: "'unsafe-inline'"
+metastore:
+  # Note after updating these settings you need to re-index or wait for the old index to age off to take affect.
+  status_index:
+    number_of_shards: 15
+    number_of_replicas: 3
+
+  # Note after updating these settings you will need to re-index for it to take affect.
+  plugin_index:
+    number_of_shards: 10
+    number_of_replicas: 1
+
+sources:
+  # a source called 'testing'
+  testing:
+    # how indexes are divided in opensearch by timestamp - year | month | week | day
+    partition_unit: all
+    # Delete kafka and opensearch events after this amount of time.
+    # Values can be <number> days | weeks | months | years
+    expire_events_after: 7 days
+    # description used in user interface for the source
+    description: Files submitted during testing of Azul
+    # controls if the recovery module will exclude this source (default false)
+    exclude_from_backup: true
+    # settings for OpenSearch indices
+    elastic:
+      number_of_replicas: 2
+      number_of_shards: 3
+    # Font Awesome icon name to display in web interface.
+    icon_class: trash-alt
+    # Descriptive fields to group entries in this source.
+    # define available keys for key-value pairs attached to each submissions to the source
+    references:
+      # A brief description of this field name.
+      - description: Local submitter or point of contact for samples
+        # The name of this field
+        name: user
+        # Is this field require to be provided on all samples submitted into this source.
+        required: true
+        # Highlight this field.
+        highlight: true
+    # configure kafka settings for topics related to the source
+    kafka:
+      # number of independent partitions available (max dispatcher concurrency)
+      # numpartitions: 3
+      # number of copies of each event within the kafka cluster
+      # replicationfactor: 1
+      # generic topic options, check kafka documentation for more information
+
+      config:
+        # size of the working set before being created as a segment
+        segment.bytes: "1073741824"
+
+  incidents:
+    partition_unit: all
+    description: Incident response and samples collected during investigations
+    elastic:
+      number_of_replicas: 2
+      number_of_shards: 3
+    icon_class: ambulance
+    references:
+      - description: Task tracking identifier for incident or request
+        name: task_id
+        required: true
+        highlight: true
+      - description: Short description of what/why samples collected
+        name: description
+        required: true
+      - description: Investigation/operation name the samples were collected under
+        name: operation
+        required: false
+      - description: Local submitter or point of contact for samples
+        name: user
+        required: false
+  reporting:
+    partition_unit: all
+    description: Malware reports and blogs from public, partner and commercial sources
+    elastic:
+      number_of_replicas: 2
+      number_of_shards: 3
+    icon_class: book
+    references:
+      - description: How widely the report was distributed, eg. public, commercial, partner
+        name: distribution
+        required: true
+      - description: The company or agency that authored the report
+        name: publisher
+        required: true
+      - description: The report's title
+        name: title
+        required: true
+      - description: Website the report was published to if applicable
+        name: site
+        required: false
+  samples:
+    partition_unit: all
+    description: Generic source for miscellaneous or uncategorised samples
+    elastic:
+      number_of_replicas: 2
+      number_of_shards: 3
+    icon_class: bug
+    references:
+      - description: Short description of what/why samples collected
+        name: description
+        required: true
+      - description: Submitter or point of contact for samples
+        name: user
+        required: false
+        highlight: true
+      - description: Internal team who are the data owners of the samples
+        name: team
+        required: false
+      - description: Any investigation/operation name the samples are collected under
+        name: operation
+        required: false
+  tasking:
+    partition_unit: all
+    description: Malware Analysis tasking and activities
+    elastic:
+      number_of_replicas: 2
+      number_of_shards: 3
+    icon_class: search
+    references:
+      - description: Malware analysis task tracking identifier
+        name: task_id
+        required: true
+        highlight: true
+      - description: Short description of the task or samples
+        name: description
+        required: true
+      - description: Local submitter or point of contact for samples
+        name: user
+        required: false
+  virustotal:
+    partition_unit: month
+    expire_events_after: 3 months
+    description: Recent full take metadata and selected content from virustotal.com
+    elastic:
+      number_of_replicas: 2
+      number_of_shards: 30
+    icon_class: cloud-download-alt
+    references:
+      - description: Anonymised id of VirusTotal submitter
+        name: submitter_id
+        required: false
+      - description: Submission interface used to submit to VirusTotal
+        name: interface
+        required: false
+      - description: Region within country the submission originated from
+        name: submitter_region
+        required: false
+      - description: Country the submission originated from
+        name: submitter_country
+        required: false
+      - description: City within region the submission originated from
+        name: submitter_city
+        required: false
+  watch:
+    partition_unit: all
+    description: 24/7 Operations Watch Tasking
+    elastic:
+      number_of_replicas: 2
+      number_of_shards: 3
+    icon_class: heartbeat
+    references:
+      - description: Task tracking identifier for samples/activity
+        name: task_id
+        required: true
+        highlight: true
+      - description: Short description of why samples were obtained
+        name: description
+        required: true
+      - description: Local submitter or point of contact for task
+        name: user
+        required: false
+
+# Example configurations for plugins which require repositories or additional configuration
+plugins:
+  virustotal:
+    # Ensure that virustotal source named "virustotal" is setup.
+    # Ensure that virustotal api key is set.
+    # Ensure the virustotal URL is set.
+    # not enabling vtdownload or vtfilelookup (not currently used in production deployments)
+    enabled: true
+    pullFromApi: true
+  assemblyline:
+    # Ensure source named assemblyline exists.
+    # Add a Security MAP unless your assemblyline and azul mappings are one for one.
+    # Ensure the assemblyline-receiver secret is set to enable communication with assemblyline.
+    enabled: true
+  # Example plugin group:
+  docs_reference: # new group named 'docs_reference'
+    # see 'generic' group for more practical and simple examples
+    type: standard # unless you are sure, keep this as 'standard'
+    enabled: false # toggles whole group from being created
+    config: {} # config map values to be mapped into 'main' containers and possibly server
+    server:
+      enabled: false # toggles a server component (needs to be defined in base chart)
+      minReplicas: 2 # override default hpa min scale
+      maxReplicas: 5 # override default hpa max scale
+      averageUtilization: 200 # override default hpa average cpu utilisation
+      resources: # 'main' container resource requests
+        limits:
+          memory: "1Mi"
+        requests:
+          cpu: "1m"
+    plugins: # define generic plugin entries for 'standard' type
+      spam: # a plugin named 'spam'
+        allowAllTraffic: false # true to allow contacting more than just dispatcher via network policy
+        # default image would be mapped via 'images.spam' map below, however it is overriden to 'images.greeneggs' here
+        image: plugin-greeneggs
+        config: {} # config map values to be mapped into 'main' container
+        env: [] # environment for container
+        command: [] # override entrypoint of 'main' container
+        args: [] # override args of 'main' container
+        volumeMounts: [] # custom volume mounts for 'main' container
+        volumes: [] # custom volumes for deployment
+        tmp: "1Mi" # configure /tmp size limit
+        minReplicas: 2 # override default hpa min scale
+        maxReplicas: 5 # override default hpa max scale
+        averageUtilization: 200 # override default hpa average cpu utilisation
+        resources: # 'main' container resource requests
+          limits:
+            memory: "1Mi"
+          requests:
+            cpu: "1m"
+        maxFileSize: "" # configure file size limit for plugin
+        # enable debugging of the plugin by running the container as root.
+        # WARNING - NOT FOR PRODUCTION
+        # debug: true
+
+  # Built-in plugins that need sources:
+  maco:
+    sources:
+      example:
+        enabled: true
+        repo: pass
+        branch: pass
+        secretEnv: pass # Secret containing HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD)
+        secretSSH: blah # if using ssh auth, this is the name of the secret containing the 'id_rsa' key
+        sslVerify: true # sslverify default to true
+        path: lion # Path to save the downloaded package to.
+        includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
+        env:
+          - name: PLUGIN_CUSTOM_FEATURES
+            value: >
+              {
+                "cool_feature": "a custom feature for your particular extractors|string"
+              }
+
+  suricata:
+    sources:
+      example:
+        enabled: true
+        repo: pass
+        branch: pass
+        secretEnv: pass # HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD)
+        secretSSH: blah # if using ssh auth, this is the secret containing the 'id_rsa' key
+        sslVerify: true # sslverify default to true
+        path: lion # Path to save the downloaded package to.
+        includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
+
+  yara-x:
+    image: plugin-yara
+    sources:
+      example:
+        enabled: true
+        repo: pass
+        branch: pass
+        secretEnv: pass # HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD)
+        secretSSH: blah # if using ssh auth, this is the secret containing the 'id_rsa' key
+        sslVerify: true # sslverify default to true
+        path: lion # Path to save the downloaded package to.
+        includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
+

@@ -1,0 +1,42 @@
+{{- if .Values.burrow.enabled -}}
+# Configuration for the pod used to scrape kafka consumer group lag for configuration refer to:
+# https://github.com/linkedin/Burrow/wiki
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: burrow-config
+data:
+  burrow.toml: |
+    [general]
+    pidfile="/tmp/burrow.pid"
+    # Write to log file if needed.
+    # stdout-logfile="/burrow-logs/burrow.log"
+
+    [client-profile.default]
+    kafka-version="2.0.1"
+    client-id="borrow-client"
+
+    [cluster.local]
+    client-profile="default"
+    class-name="kafka"
+    servers=[ "{{ .Values.external.kafka.endpoint | required "external.kafka.endpoint not set" }}" ]
+    # Seconds between topic and offset refreshes.
+    topic-refresh=120
+    offset-refresh=60
+    # Seconds a consumer group can be inactive before it's stats are dropped (24hours)
+    groups-reaper-refresh=86400
+
+    [consumer.myconsumers]
+    class-name="kafka"
+    cluster="local"
+    servers=[ "{{ .Values.external.kafka.endpoint | required "external.kafka.endpoint not set" }}" ]
+
+    [httpserver.default]
+    address=":8900"
+
+    [storage.mystorage]
+    class-name="inmemory"
+    # Number of seconds before the group should be removed if there is no committed offsets.
+    # default 7 days = 604800, currently 1hour.
+    expire-group=3600
+{{- end }}

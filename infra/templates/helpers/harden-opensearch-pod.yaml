@@ -1,0 +1,6 @@
+{{- define "harden.opensearch.pod" -}}
+runAsNonRoot: true
+seccompProfile:
+  type: RuntimeDefault
+fsGroup: 1000
+{{- end }}

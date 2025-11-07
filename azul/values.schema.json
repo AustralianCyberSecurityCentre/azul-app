@@ -1,0 +1,2595 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "azul-schema",
+  "title": "Azul Core",
+  "description": "Defines the schema for the Azul app core Helm values.",
+  "type": "object",
+  "properties": {
+    "namespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "secure": {
+          "type": "boolean"
+        },
+        "labels": {
+          "type": "object"
+        }
+      }
+    },
+    "imagePullSecrets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    "podAnnotations": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/label"
+        }
+      ]
+    },
+    "nodeSelector": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/label"
+        }
+      ]
+    },
+    "tolerations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string"
+          },
+          "tolerationSeconds": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["effect", "key"],
+        "additionalProperties": false
+      }
+    },
+    "affinity": {
+      "type": "object",
+      "properties": {
+        "nodeAffinity": {
+          "type": "object"
+        },
+        "nodeAntiAffinity": {
+          "type": "object"
+        },
+        "podAffinity": {
+          "type": "object"
+        },
+        "podAntiAffinity": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "storageClassName": {
+      "type": "string"
+    },
+    "CACertificateConfigMap": {
+      "type": "string"
+    },
+    "networkPolicy": {
+      "type": "boolean"
+    },
+    "istioEnabled": {
+      "type": "boolean"
+    },
+    "disableNetworkPolicies": {
+      "type": "array"
+    },
+    "customNetworkPolicies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$comment": "Expected value is an array full of network policies."
+      }
+    },
+    "limitRange": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "spec": {
+          "type": "object",
+          "properties": {
+            "limits": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "defaultRequest": {
+                    "type": "object",
+                    "properties": {
+                      "cpu": {
+                        "type": "string"
+                      },
+                      "memory": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "default": {
+                    "type": "object",
+                    "properties": {
+                      "cpu": {
+                        "type": "string"
+                      },
+                      "memory": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["limits"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["enabled"],
+      "additionalProperties": false
+    },
+    "coreHPA": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/hpa"
+        }
+      ],
+      "required": ["averageUtilization", "maxReplicas", "minReplicas"]
+    },
+    "pluginHPA": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/pluginHpa"
+        }
+      ],
+      "required": [
+        "averageUtilization",
+        "maxReplicas",
+        "minReplicas",
+        "useSmartScaler",
+        "includeHistoric",
+        "maxQueueLength"
+      ]
+    },
+    "pluginSyncHPA": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/pluginHpa"
+        }
+      ],
+      "required": [
+        "averageUtilization",
+        "maxReplicas",
+        "minReplicas",
+        "useSmartScaler",
+        "includeHistoric",
+        "maxQueueLength"
+      ]
+    },
+    "createExampleSecrets": {
+      "type": "boolean"
+    },
+    "secrets": {
+      "type": "object",
+      "properties": {
+        "filestore": {
+          "type": "string"
+        },
+        "redis": {
+          "type": "string"
+        },
+        "metastoreCreds": {
+          "type": "string"
+        },
+        "assemblylineReceiver": {
+          "type": "string"
+        },
+        "virustotalCreds": {
+          "type": "string"
+        },
+        "backupS3Keys": {
+          "type": "string"
+        },
+        "azulStats": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "filestore",
+        "redis",
+        "metastoreCreds",
+        "assemblylineReceiver",
+        "virustotalCreds",
+        "backupS3Keys"
+      ],
+      "additionalProperties": false
+    },
+    "external": {
+      "type": "object",
+      "properties": {
+        "opensearch": {
+          "type": "object",
+          "properties": {
+            "endpoint": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "partition": {
+              "type": "string"
+            },
+            "versionSuffix": {
+              "type": "string"
+            }
+          },
+          "required": ["endpoint", "partition", "username"],
+          "additionalProperties": false
+        },
+        "filestore": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "enum": ["s3", "azure"]
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "secure": {
+              "type": "boolean"
+            },
+            "region": {
+              "type": "string"
+            },
+            "serviceAccountName": {
+              "type": "string"
+            },
+            "xorEncoding": {
+              "type": "boolean"
+            }
+          },
+          "required": ["backend", "endpoint", "location", "xorEncoding"],
+          "additionalProperties": false
+        },
+        "redis": {
+          "type": "object",
+          "properties": {
+            "endpoint": {
+              "type": "string"
+            }
+          },
+          "required": ["endpoint"],
+          "additionalProperties": false
+        },
+        "loki": {
+          "type": "object",
+          "properties": {
+            "endpoint": {
+              "type": "string"
+            }
+          },
+          "required": ["endpoint"],
+          "additionalProperties": false
+        },
+        "services": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "kafka": {
+          "type": "object",
+          "properties": {
+            "endpoint": {
+              "type": "string"
+            },
+            "topicPrefix": {
+              "type": "string"
+            },
+            "topicDefaultReplicas": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "topicDefaultPartitions": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "topic": {
+                    "type": "string"
+                  },
+                  "numpartitions": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "replicationfactor": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "config": {
+                    "type": "object",
+                    "properties": {
+                      "retention.ms": {
+                        "type": "integer",
+                        "minimum": -1
+                      },
+                      "segment.bytes": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "cleanup.policy": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": ["topic"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "endpoint",
+            "topicDefaultPartitions",
+            "topicDefaultReplicas"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": ["filestore", "kafka", "opensearch"],
+      "additionalProperties": false
+    },
+    "redis": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled":{
+          "type": "boolean"
+        },
+        "resources": {
+          "type": "object"
+        },
+        "pvcSize": {
+          "type":"string"
+        },
+        "annotations": {
+          "$ref": "#/definitions/label"
+        },
+        "persistentVolumeClaimRetentionPolicy":{
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/resources"
+        }
+      ]
+    },
+    "docs": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "resources": {
+          "type": "object"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/resources"
+        }
+      ]
+    },
+    "global": {
+      "additionalProperties": true,
+      "type": "object",
+      "properties": {}
+    },
+    "web": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": false,
+        "ingress": {
+          "$ref": "#/definitions/coreIngress"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "deployment_title": {
+              "type": "string"
+            },
+            "deployment_alticon": {
+              "type": "boolean"
+            },
+            "deployment_back_colour": {
+              "type": "string"
+            },
+            "deployment_colour": {
+              "type": "string"
+            },
+            "deployment_text": {
+              "type": "string"
+            },
+            "motd_body": {
+              "type": "string"
+            },
+            "motd_footer": {
+              "type": "string"
+            },
+            "motd_header": {
+              "type": "string"
+            },
+            "motd_hours": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unauthorized_help": {
+              "type": "string"
+            },
+            "banner_message": {
+              "type": "string"
+            },
+            "banner_severity": {
+              "enum": ["info", "warning", "error"]
+            },
+            "banner_dismissable": {
+              "type": "boolean"
+            },
+            "binary_external_links": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "if": {
+                    "type": "string"
+                  },
+                  "operator": { "enum": ["eq", "exists", "regex"] },
+                  "display_name": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "url_args": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": ["if", "operator", "display_name", "url"],
+                "unevaluatedProperties": false,
+                "if": {
+                  "properties": {
+                    "operator": { "enum": ["eq", "regex"] }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "match": { "type": "string" }
+                  },
+                  "required": ["if", "operator", "match", "display_name", "url"]
+                }
+              }
+            }
+          },
+          "dependentRequired": {
+            "banner_message": ["banner_severity", "banner_dismissable"]
+          },
+          "required": [
+            "deployment_text",
+            "deployment_title",
+            "motd_body",
+            "motd_footer",
+            "motd_header",
+            "motd_hours",
+            "unauthorized_help"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": ["config"]
+    },
+    "dispatcher": {
+      "type": "object",
+      "properties": {
+        "additionalProperties": false,
+        "ingress": {
+          "$ref": "#/definitions/coreIngress"
+        },
+        "sessionAffinity": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "metastore": {
+              "type": "object",
+              "properties": {
+                "events": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/dispatcherWorkload"
+                    }
+                  ]
+                },
+                "streams": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/dispatcherWorkload"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "plugin": {
+              "type": "object",
+              "properties": {
+                "events": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/dispatcherWorkload"
+                    }
+                  ]
+                },
+                "streams": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/dispatcherWorkload"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["config"],
+      "additionalProperties": false
+    },
+    "lostTasks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "replicas": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "env": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dispatcherEnv"
+            }
+          ]
+        },
+        "resources": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/resources"
+            }
+          ]
+        }
+      }
+    },
+    "migration": {
+      "type": "object",
+      "properties": {
+        "kafka": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "previousTopicPrefix": {
+              "type": "string"
+            },
+            "legacyJson": {
+              "type": "boolean"
+            },
+            "MaxNumberOfEmptyPolls": {
+              "type": "integer"
+            },
+            "logLevel": {
+              "type": "string"
+            },
+            "config": {
+              "type": "object",
+              "properties": {
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "replicas": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "resources": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/resources"
+                    }
+                  ]
+                }
+              },
+              "required": ["args"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["config"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["kafka"],
+      "additionalProperties": false
+    },
+    "metastore": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status_index": { "$ref": "#/definitions/opensearchConfig" },
+        "plugin_index": { "$ref": "#/definitions/opensearchConfig" },
+        "env": {
+          "type": "object"
+        },
+        "eventsUrl": {
+          "type": "string"
+        },
+        "dataUrl": {
+          "type": "string"
+        },
+        "instances": {
+          "type": "object",
+          "$comment": "Define explict metastore instance properties to provide doco about each `standard` configuration. Technically validation can just be handled by the additionalProperties definition.",
+          "properties": {
+            "ageoff": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/metastoreInstance"
+                }
+              ]
+            },
+            "ingest-binary": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/metastoreInstance"
+                }
+              ]
+            },
+            "ingest-plugin": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/metastoreInstance"
+                }
+              ]
+            },
+            "ingest-status": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/metastoreInstance"
+                }
+              ]
+            },
+            "purge": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/metastoreInstance"
+                }
+              ]
+            },
+            "retry": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/definitions/metastoreInstance"
+                }
+              ]
+            }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/definitions/metastoreInstance"
+              }
+            ]
+          }
+        }
+      },
+      "required": ["instances"],
+      "allOf": [
+        {
+          "$ref": "#/definitions/metastoreEnv"
+        }
+      ]
+    },
+    "restapi": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "type": "object",
+          "patternProperties": {
+            "^RESTAPI_[A-Z_]+$": {
+              "type": "string"
+            },
+            "^CORS_[A-Z_]+$": {
+              "type": "string"
+            },
+            "^OIDC_[A-Z_]+$": {
+              "type": "string"
+            },
+            "^LOGGER_[A-Z_]+$": {
+              "type": "string"
+            }
+          }
+        },
+        "logPvcSize": {
+          "type": "string"
+        },
+        "purgePvcSize": {
+          "type": "string"
+        },
+        "cors": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "allowOrigins": {
+              "type": "string"
+            },
+            "allowCredentials": {
+              "type": "string"
+            },
+            "allowMethods": {
+              "type": "string"
+            },
+            "allowHeaders": {
+              "type": "string"
+            }
+          }
+        },
+        "oidc": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "rolesKey": {
+              "type": "string"
+            },
+            "usernameKey": {
+              "type": "string"
+            },
+            "cacheTTL": {
+              "type": "string"
+            },
+            "swaggerRedirectUrl": {
+              "type": "string"
+            }
+          }
+        },
+        "config": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "ca_bundle": {
+              "type": "string"
+            },
+            "host": {
+              "type": "string"
+            },
+            "port": {
+              "type": "string"
+            },
+            "processWorkers": {
+              "type": "integer"
+            },
+            "asyncioWorkers": {
+              "type": "integer"
+            },
+            "logLevel": {
+              "type": "string"
+            }
+          }
+        },
+        "minReplicas": {
+          "type": "integer"
+        },
+        "maxReplicas": {
+          "type": "integer"
+        },
+        "resources": {
+          "type": "object"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/resources"
+        },
+        {
+          "$ref": "#/definitions/hpa"
+        }
+      ]
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "admin_roles": {
+          "type": "array"
+        },
+        "oidc": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "authority_url": {
+              "type": "string"
+            },
+            "client_id": {
+              "type": "string"
+            },
+            "scopes": {
+              "type": "string"
+            }
+          },
+          "required": ["enabled"],
+          "additionalProperties": false
+        },
+        "default": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/securityLabel"
+            }
+          ]
+        },
+        "presets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "minimumRequiredAccess": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/definitions/securityLabel"
+              }
+            ]
+          }
+        },
+        "allow_releasability_priority_gte": {
+          "type": "string",
+          "description": "Priority at which releasability classifications begin (equal to this classification is rel) everything below allows TLPs.",
+          "pattern": "^[0-9]+$"
+        },
+        "labels": {
+          "type": "object",
+          "properties": {
+            "classification": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "allOf": [
+                          {
+                            "$ref": "#/definitions/securityLabel"
+                          }
+                        ]
+                      },
+                      "priority": {
+                        "description": "A stringified number of priority of classification (higher is more secure).",
+                        "type": "string",
+                        "pattern": "^[0-9]+$"
+                      }
+                    },
+                    "required": ["name", "priority"],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": ["options", "title"],
+              "additionalProperties": false
+            },
+            "caveat": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "allOf": [
+                          {
+                            "$ref": "#/definitions/securityLabel"
+                          }
+                        ]
+                      }
+                    },
+                    "required": ["name"],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "releasability": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "prefix": {
+                  "type": "string"
+                },
+                "origin": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "allOf": [
+                          {
+                            "$ref": "#/definitions/securityLabel"
+                          }
+                        ]
+                      }
+                    },
+                    "required": ["name"],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            },
+            "tlp": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "allOf": [
+                          {
+                            "$ref": "#/definitions/securityLabel"
+                          }
+                        ]
+                      },
+                      "enforce_security": {
+                        "description": "Enforce security for TLP's.",
+                        "type": "boolean"
+                      }
+                    },
+                    "required": ["name"],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": ["caveat", "classification", "releasability", "tlp"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "default",
+        "labels",
+        "minimumRequiredAccess",
+        "oidc",
+        "presets"
+      ],
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z0-9][-a-zA-Z0-9_./]*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "partition_unit": {
+            "enum": ["all", "year", "month", "week", "day"]
+          },
+          "expire_events_after": {
+            "type": "string",
+            "$comment": "Limit users to '0' or '<0000> <unit> (even 9999 years can't overflow a long which is what this is converted into for kafka)'",
+            "pattern": "^0|[1-9][0-9]{0,3}(\\sdays|\\sweeks|\\smonths|\\syears)$"
+          },
+          "description": {
+            "type": "string"
+          },
+          "exclude_from_backup": {
+            "type": "boolean"
+          },
+          "elastic": { "$ref": "#/definitions/opensearchConfig" },
+          "icon_class": {
+            "type": "string"
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "highlight": {
+                  "type": "boolean"
+                }
+              },
+              "required": ["description", "name", "required"],
+              "additionalProperties": false
+            }
+          },
+          "kafka": {
+            "type": "object",
+            "properties": {
+              "numpartitions": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "replicationfactor": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "config": {
+                "type": "object",
+                "properties": {
+                  "segment.bytes": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "description",
+          "elastic",
+          "icon_class",
+          "partition_unit",
+          "references"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "pluginConfig": {
+      "type": "object",
+      "additionalProperties": {
+        "type": ["string"]
+      },
+      "required": [],
+      "allOf": [
+        {
+          "$ref": "#/definitions/pluginConfig"
+        }
+      ]
+    },
+    "pluginsEnabled": {
+      "type": "boolean"
+    },
+    "plugins": {
+      "type": "object",
+      "properties": {
+        "assemblyline": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "dynamic": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "maco": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "nsrl": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "office": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "report-feeds": {
+          "type": "object",
+          "properties": {
+            "demoConfig": {
+              "type": "boolean"
+            },
+            "feedConfig": {
+              "type": "string"
+            }
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "retrohunt": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "tika": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "virustotal": {
+          "type": "object",
+          "properties": {
+            "demoConfig": {
+              "type": "boolean"
+            },
+            "pullFromApi": {
+              "type": "boolean"
+            },
+            "plugins": {
+              "$comment": "Force definition of vtfilefeedserver as it's a special case referenced by name.",
+              "type": "object",
+              "properties": {
+                "vtfilefeedserver": {
+                  "properties": {
+                    "ingress": {
+                      "$ref": "#/definitions/pluginIngress"
+                    }
+                  },
+                  "required": ["ingress"],
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/pluginGeneric"
+                    }
+                  ]
+                }
+              },
+              "required": ["vtfilefeedserver"]
+            }
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "yara-x": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "suricata": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        },
+        "generic": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginGroup"
+            }
+          ]
+        }
+      },
+      "$comment": "Allow new plugins to be specified as long as they conform to the plugin spec.",
+      "additionalProperties": {
+        "$ref": "#/definitions/pluginGroup"
+      },
+      "required": [
+        "assemblyline",
+        "dynamic",
+        "maco",
+        "nsrl",
+        "office",
+        "report-feeds",
+        "retrohunt",
+        "tika",
+        "virustotal",
+        "yara-x",
+        "suricata",
+        "generic"
+      ]
+    },
+    "monitoring": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "alerting": {
+          "type": "boolean"
+        },
+        "alertWebhookType": {
+          "type": "string"
+        },
+        "alertWebhookGeneric": {
+          "type": "string"
+        },
+        "alertWebhookPlugin": {
+          "type": "string"
+        },
+        "alertWebhookMacoErrors": {
+          "type": "string"
+        },
+        "alertWebhookInfraHealth": {
+          "type": "string"
+        },
+        "alertWebhookTitleKey": {
+          "type": "string"
+        },
+        "alertWebhookMessageKey": {
+          "type": "string"
+        }
+      },
+      "required": ["enabled"],
+      "additionalProperties": false
+    },
+    "auditForwarder": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "destination": {
+          "type": "string"
+        },
+        "proxy": {
+          "type": "string"
+        },
+        "sendInterval": {
+          "type": "number"
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string"]
+          }
+        }
+      },
+      "required": ["enabled"],
+      "additionalProperties": false
+    },
+    "apiServices": {
+      "type": "object",
+      "properties": {
+        "smartStringFilter": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "replicas": {
+              "type": "integer"
+            }
+          },
+          "allOf": [
+            {
+              "$ref": "#/definitions/resources"
+            }
+          ]
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "restoreType": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "maxScrapeTime": {
+              "type": "string"
+            },
+            "opensearch": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "scrapeStatsEnabled": {
+                  "type": "boolean"
+                },
+                "scrapeIndexPattern": {
+                  "type": "string"
+                },
+                "testAlias": {
+                  "type": "string"
+                },
+                "testIndex": {
+                  "type": "string"
+                },
+                "testIndexPattern": {
+                  "type": "string"
+                },
+                "verifyCerts": {
+                  "type": "string"
+                }
+              }
+            },
+            "kafka": {
+              "type": "boolean"
+            },
+            "kafkaTestTopic": {
+              "type": "string"
+            },
+            "redis": {
+              "type": "boolean"
+            },
+            "auth": {
+              "type": "boolean"
+            },
+            "authScopes": {
+              "type": "string"
+            },
+            "authOauthMethod": {
+              "type": "string"
+            },
+            "authExpectedAudience": {
+              "type": "string"
+            },
+            "authExpectedRoles": {
+              "type": "array"
+            },
+            "filestore": {
+              "type": "boolean"
+            },
+            "testBlob": {
+              "type": "string"
+            },
+            "backupFilestore": {
+              "type": "boolean"
+            },
+            "backupTestBlob": {
+              "type": "string"
+            },
+            "azulProbe": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "timeoutSeconds": {
+                  "type": "integer"
+                },
+                "restapiPath": {
+                  "type": "string"
+                },
+                "docsPath": {
+                  "type": "string"
+                },
+                "webuiPath": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/resources"
+        }
+      ]
+    },
+    "burrow": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/resources"
+        }
+      ]
+    },
+    "scaler": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/resources"
+        }
+      ]
+    },
+    "recovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string"
+        },
+        "restoreType": {
+          "type": "string"
+        },
+        "externalS3Endpoint": {
+          "type": "string"
+        },
+        "externalS3Secure": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "bucketNamePrefix": {
+          "type": "string"
+        },
+        "enableAutomaticAgeoff": {
+          "type": "boolean"
+        },
+        "backup": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/resources"
+            }
+          ]
+        },
+        "restore": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/resources"
+            }
+          ]
+        }
+      }
+    },
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "pullPolicy": {
+          "type": "string"
+        },
+        "external": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "required": ["alloy"]
+        },
+        "customRegistry": {
+          "type": "string"
+        },
+        "custom": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "required": ["dispatcher", "docs", "restapi-server", "webui"]
+        }
+      }
+    }
+  },
+  "required": [
+    "coreHPA",
+    "dispatcher",
+    "docs",
+    "external",
+    "images",
+    "limitRange",
+    "metastore",
+    "migration",
+    "restapi",
+    "security",
+    "sources",
+    "storageClassName",
+    "web"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "label": {
+      "description": "A label or annotation to apply to a K8s object.",
+      "type": "object",
+      "patternProperties": {
+        "^[A-Za-z0-9]([-a-zA-Z0-9_.]*/)?[-a-zA-Z0-9_.]*$": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "hpa": {
+      "description": "Set scaling parameters for core components",
+      "type": "object",
+      "properties": {
+        "maxReplicas": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minReplicas": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "averageUtilization": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "pluginHpa": {
+      "description": "Set scaling parameters for plugins",
+      "type": "object",
+      "properties": {
+        "maxReplicas": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minReplicas": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "averageUtilization": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "useSmartScaler": {
+          "type": "boolean"
+        },
+        "includeHistoric": {
+          "type": "boolean"
+        },
+        "maxQueueLength": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "resources": {
+      "description": "Define CPU and Memory requests and limits.",
+      "type": "object",
+      "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "memory": {
+              "type": "string"
+            },
+            "cpu": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "requests": {
+          "type": "object",
+          "properties": {
+            "memory": {
+              "type": "string"
+            },
+            "cpu": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "coreIngress": {
+      "description": "Defines an ingress for a service.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "hosts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "ingressClassName": {
+          "type": "string"
+        },
+        "secretName": {
+          "type": "string"
+        },
+        "annotations": {
+          "$ref": "#/definitions/label"
+        },
+        "security": {
+          "$ref": "#/definitions/ingressSecurity"
+        }
+      },
+      "required": ["enabled"],
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": ["hosts", "secretName", "security"]
+      },
+      "else": {}
+    },
+    "securityLabel": {
+      "description": "A human readable security marking.",
+      "type": "string",
+      "pattern": "^[-A-Z0-9_.+:]+([-A-Z0-9_.+:]*( )?[-A-Z0-9_.+:]+)*$"
+    },
+    "ingressSecurity": {
+      "description": "Security properties for this ingress.",
+      "type": "object",
+      "properties": {
+        "enableHarden": {
+          "type": "boolean"
+        },
+        "csp": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/csp"
+            },
+            {
+              "$ref": "#/definitions/complexCsp"
+            }
+          ]
+        }
+      },
+      "required": ["csp"]
+    },
+    "csp": {
+      "description": "Key:Value pairs used to build a Content Security Policy (CSP).",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "complexCsp": {
+      "description": "Per-route Key:Value pairs used to build a Content Security Policy (CSP).",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/csp"
+      }
+    },
+    "metastoreEnv": {
+      "description": "Key:Value configuration for metastore.",
+      "type": "object",
+      "patternProperties": {
+        "^METASTORE_[A-Z_]+$": {
+          "type": "string"
+        }
+      }
+    },
+    "metastoreInstance": {
+      "description": "Handle processing for a type or group of metastore events.",
+      "type": "object",
+      "properties": {
+        "command": {
+          "description": "List of the azul-metastore commands to run in the instance. You need to run: `ingest-binary`, `ingest-plugin`, `ingest-status`, `process-lost-tasks`, `age-off` and a `sleep infinity` to enable purge.",
+          "type": "array",
+          "items": {
+            "description": "The command to run in this instance, split as a list",
+            "type": "string"
+          }
+        },
+        "pvc": {
+          "description": "Setup persistant storage.",
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": ["size", "path"],
+          "additionalProperties": false
+        },
+        "error_log": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/resources"
+        },
+        {
+          "$ref": "#/definitions/hpa"
+        }
+      ],
+      "required": ["command"]
+    },
+    "dispatcherEnv": {
+      "description": "Key:Value configuration for Dispatcher.",
+      "type": "object",
+      "properties": {
+        "DP.EVENTS.GLOBAL_REPLICA_COUNT": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "DP.EVENTS.GLOBAL_PARTITION_COUNT": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "DP.STREAMS.CACHE.SHARDS": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": {
+        "type": ["string", "number", "boolean"]
+      }
+    },
+    "dispatcherWorkload": {
+      "description": "Dispatcher instance dedicated to processing a single content type.",
+      "type": "object",
+      "properties": {
+        "replicas": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resources": {
+          "$ref": "#/definitions/resources"
+        },
+        "env": {
+          "$ref": "#/definitions/dispatcherEnv"
+        }
+      }
+    },
+    "migrationProfile": {
+      "description": "Configuration for migrating Prefixless topics to prefixed topics.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "env": {
+              "description": "Environment config for dispatcher.",
+              "type": "object",
+              "properties": {
+                "DP.EVENTS.KAFKA.TOPIC_PREFIX": {
+                  "type": "string"
+                },
+                "DP.EVENTS.REPROCESS.CONSUMER_GROUP": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": {
+                "type": "string"
+              },
+              "required": [
+                "DP.EVENTS.KAFKA.TOPIC_PREFIX",
+                "DP.EVENTS.REPROCESS.CONSUMER_GROUP"
+              ],
+              "allOf": [
+                {
+                  "$ref": "#/definitions/dispatcherEnv"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["enabled"]
+    },
+    "volumeMounts": {
+      "description": "K8s volumeMounts definition.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "mountPath": {
+            "type": "string"
+          },
+          "subPath": {
+            "type": "string"
+          },
+          "readOnly": {
+            "type": "boolean"
+          }
+        },
+        "required": ["mountPath", "name"],
+        "additionalProperties": false
+      }
+    },
+    "pluginConfig": {
+      "description": "Key:Value configuration for the plugin.",
+      "type": "object",
+      "patternProperties": {
+        "^PLUGIN_.+$": {
+          "type": ["string", "object"]
+        }
+      },
+      "additionalProperties": {
+        "type": ["string", "object"]
+      }
+    },
+    "pluginEnv": {
+      "description": "Environment variables defined in - name/value/valeFrom format.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": ["string", "number", "boolean"]
+          },
+          "valueFrom": {
+            "type": "object",
+            "properties": {
+              "secretKeyRef": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                },
+                "required": ["key", "name"],
+                "additionalProperties": false
+              },
+              "configMapKeyRef": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                },
+                "required": ["key", "name"],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "anyOf": [
+          {
+            "required": ["name", "value"]
+          },
+          {
+            "required": ["name", "valueFrom"]
+          }
+        ]
+      }
+    },
+    "server": {
+      "description": "Defines a server component the plugin requires to run. (Must be defined in the base chart).",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Toggles the server component incase this portion is deployed externally elsewhere.",
+          "type": "boolean"
+        },
+        "ingress": {
+          "$ref": "#/definitions/pluginIngress"
+        }
+      },
+      "required": ["enabled"],
+      "allOf": [
+        {
+          "$ref": "#/definitions/resources"
+        },
+        {
+          "$ref": "#/definitions/hpa"
+        }
+      ]
+    },
+    "pluginIngress": {
+      "description": "Enables ingress (external access) for the server component.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ingressClassName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "serviceName": {
+          "type": "string"
+        },
+        "servicePort": {
+          "type": "integer"
+        },
+        "host": {
+          "type": "string"
+        },
+        "secretName": {
+          "type": "string"
+        },
+        "annotations": {
+          "$ref": "#/definitions/label"
+        },
+        "security": {
+          "$ref": "#/definitions/ingressSecurity"
+        }
+      },
+      "required": [
+        "name",
+        "serviceName",
+        "servicePort",
+        "host",
+        "secretName",
+        "security"
+      ]
+    },
+    "containerCore": {
+      "description": "Core properties of all plugin containers.",
+      "type": "object",
+      "properties": {
+        "allowAllTraffic": {
+          "description": "Set to allow contacting more than just dispatcher via network policy",
+          "type": "boolean"
+        },
+        "image": {
+          "description": "Use this name (instead of [pluginName]) as the key to lookup the full image name under `.Values.images`.",
+          "type": "string"
+        },
+        "resources": {
+          "$ref": "#/definitions/resources"
+        },
+        "cacert": {
+          "description": "Set to mount the configured CA cert into the container.",
+          "type": "boolean"
+        },
+        "volumeMounts": {
+          "$ref": "#/definitions/volumeMounts"
+        },
+        "config": {
+          "$ref": "#/definitions/pluginConfig"
+        },
+        "baseEnv": {
+          "description": "Environment for the container.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginEnv"
+            }
+          ]
+        },
+        "env": {
+          "description": "Additional environment variables to merge into the `baseEnv` for the container.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginEnv"
+            }
+          ]
+        },
+        "envFrom": {
+          "description": "Another way to specify the environment for the container.",
+          "type": "array"
+        },
+        "runTimeout": {
+          "description": "Set the run timeout for the plugin.",
+          "type": "string"
+        },
+        "maxFileSize": {
+          "description": "Set the maximum filesize the plugin will accept.",
+          "type": "string"
+        },
+        "command": {
+          "description": "Override the entrypoint of the `main` container.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "args": {
+          "description": "Override the args of the `main` container.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "extraContainer": {
+      "description": "Additional worker/support containers to deploy within the Plugin's pod.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/containerCore"
+        },
+        {
+          "properties": {
+            "template": {
+              "description": "Internal Azul plugin template to use as base.",
+              "type": "string"
+            },
+            "promMetricsEnabled": {
+              "description": "Enable prometheus to scrape this extra container with a service.",
+              "type": "boolean"
+            },
+            "promPort": {
+              "description": "Port for prometheus to scrape this container on via a service.",
+              "type": "string"
+            }
+          },
+          "required": ["template"]
+        }
+      ]
+    },
+    "pluginGeneric": {
+      "additionalProperties": false,
+      "description": "Defines the default generic plugin for a `standard` type.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "debug": {
+          "description": "DO NOT USE IN PRODUCTION. Runs container as root to support debugging.",
+          "type": "boolean"
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "env": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginEnv"
+            }
+          ]
+        },
+        "envFrom": {
+          "description": "Another way to specify the environment for the container.",
+          "type": "array"
+        },
+        "baseEnv": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/pluginEnv"
+            }
+          ]
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "image": {
+          "type": "string"
+        },
+        "allowAllTraffic": {
+          "type": "boolean"
+        },
+        "additionalLabels": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/label"
+            }
+          ]
+        },
+        "additionalAnnotations": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/label"
+            }
+          ]
+        },
+        "maxFileSize": {
+          "type": "string"
+        },
+        "resources": {
+          "$ref": "#/definitions/resources"
+        },
+        "maxReplicas": {
+          "type": "integer"
+        },
+        "volumeMounts": {
+          "$ref": "#/definitions/volumeMounts"
+        },
+        "averageUtilization": {
+          "type": "integer"
+        },
+        "config": {
+          "$ref": "#/definitions/pluginConfig"
+        },
+        "minReplicas": {
+          "type": "integer"
+        },
+        "useSmartScaler": {
+          "type": "boolean"
+        },
+        "includeHistoric": {
+          "type": "boolean"
+        },
+        "maxQueueLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runTimeout": {
+          "type": "string"
+        },
+        "ingress": {
+          "$ref": "#/definitions/pluginIngress"
+        },
+        "promMetricsEnabled": {
+          "description": "Enable prometheus to scrape this pod.",
+          "type": "boolean"
+        },
+        "promPort": {
+          "description": "Port for prometheus to scrape this pod on.",
+          "type": "string"
+        },
+        "strategy": {
+          "description": "K8s update strategy.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": ["Recreate", "RollingUpdate"]
+            },
+            "rollingUpdate": {
+              "type": "object",
+              "properties": {
+                "maxSurge": {
+                  "type": "integer"
+                },
+                "maxUnavailable": {
+                  "type": "integer"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        "volumes": {
+          "description": "K8s volumes definitions.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "configMap": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": ["name"]
+              },
+              "emptyDir": {
+                "type": "object"
+              },
+              "persistentVolumeClaim": {
+                "type": "object"
+              }
+            },
+            "required": ["name"],
+            "additionalProperties": false
+          }
+        },
+        "tmp": {
+          "description": "Specifies the /tmp size limit.",
+          "type": "string"
+        },
+        "extraContainers": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/extraContainer"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/containerCore"
+        },
+        {
+          "$ref": "#/definitions/pluginHpa"
+        }
+      ],
+      "dependencies": {
+        "volumeMounts": ["volumes"]
+      }
+    },
+    "source": {
+      "description": "Definition for connecting to the external source.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "repo": {
+          "description": "The git remote url.",
+          "type": "string"
+        },
+        "branch": {
+          "description": "The branch to checkout, if not the default.",
+          "type": "string"
+        },
+        "secretEnv": {
+          "description": "HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD).",
+          "type": "string"
+        },
+        "secretSSH": {
+          "description": "The name of the secret containing the id_rsa private key for SSH clones.",
+          "type": "string"
+        },
+        "sslVerify": {
+          "description": "sslverify is a boolean variable that indicates whether SSL certificate verification should be performed.",
+          "type": "boolean"
+        },
+        "path": {
+          "description": "The path in the remote repo to where the plugin data is located.",
+          "type": "string"
+        },
+        "includeSubmodules": {
+          "description": "The type of clone to perform and if it should include submodules as well.",
+          "enum": ["off", "shallow", "recursive"]
+        },
+        "security": {
+          "description": "The human readable security marking of the source content.",
+          "type": "string"
+        },
+        "wait": {
+          "description": "How often to poll the remote repo for new content.",
+          "type": "string"
+        },
+        "maxFileSize": {
+          "description": "The maximum file size this plugin will accept.",
+          "type": "string"
+        },
+        "tmp": {
+          "description": "The /tmp size limit.",
+          "type": "string"
+        },
+        "env": {
+          "$ref": "#/definitions/pluginEnv"
+        },
+        "blacklist": {
+          "description": "A comma separated string of files or filepaths to ignore.",
+          "type": "string"
+        }
+      },
+      "required": ["enabled"],
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": ["branch", "repo"]
+      },
+      "else": {}
+    },
+    "pluginStd": {
+      "description": "A `standard` plugin group.",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "type": {
+          "const": "standard"
+        },
+        "debug": { "type": "boolean" },
+        "env": {
+          "$ref": "#/definitions/pluginEnv"
+        },
+        "envFrom": {
+          "description": "Another way to specify the environment for the container...",
+          "type": "array"
+        },
+        "config": {
+          "$ref": "#/definitions/pluginConfig"
+        },
+        "hpa": {
+          "$ref": "#/definitions/hpa"
+        },
+        "server": {
+          "$ref": "#/definitions/server"
+        },
+        "plugins": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/pluginGeneric"
+          }
+        },
+        "pvc": { "type": "object" },
+        "demoConfig": { "type": "boolean" },
+        "pullFromApi": { "type": "boolean" }
+      },
+      "required": ["type"],
+      "$comment": "If `enabled` is not provided (ie `null`) it is considered `true`",
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": false
+          }
+        }
+      },
+      "then": {},
+      "else": {
+        "required": ["plugins"]
+      }
+    },
+    "pluginSrc": {
+      "additionalProperties": false,
+      "description": "A plugin group that keeps data in sync with an upstream git repository. (eg rules).",
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": ["maco", "yara-x", "suricata"]
+        },
+        "image": {
+          "type": "string"
+        },
+        "debug": { "type": "boolean" },
+        "enabled": {
+          "type": "boolean"
+        },
+        "resources": {
+          "$ref": "#/definitions/resources"
+        },
+        "config": {
+          "$ref": "#/definitions/pluginConfig"
+        },
+        "hpa": {
+          "$ref": "#/definitions/hpa"
+        },
+        "sources": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/source"
+          }
+        }
+      },
+      "required": ["enabled", "type"],
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": ["image", "sources"]
+      },
+      "else": {}
+    },
+    "pluginGroup": {
+      "description": "Definition for an Azul plugin group.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "toggles whole group from being created",
+          "type": "boolean"
+        },
+        "type": {
+          "description": "Unless you are sure, keep this as standard",
+          "enum": [
+            "standard",
+            "assemblyline",
+            "maco",
+            "yara-x",
+            "suricata",
+            "reportFeeds"
+          ]
+        }
+      },
+      "required": ["type"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "standard"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/pluginStd"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "maco"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/pluginSrc"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "yara-x"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/pluginSrc"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "suricata"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/pluginSrc"
+          }
+        }
+      ]
+    },
+    "opensearchConfig": {
+      "type": "object",
+      "properties": {
+        "number_of_shards": {
+          "type": "integer"
+        },
+        "number_of_replicas": {
+          "type": "integer"
+        },
+        "refresh_interval": {
+          "type": "string"
+        }
+      },
+      "required": ["number_of_replicas", "number_of_shards"],
+      "additionalProperties": false
+    }
+  }
+}

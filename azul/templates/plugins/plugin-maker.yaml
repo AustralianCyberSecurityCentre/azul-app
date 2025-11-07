@@ -1,0 +1,44 @@
+{{/* create needed entries for each plugin */}}
+{{- if .Values.pluginsEnabled -}}
+{{- $cmSHA256 := (include (print $.Template.BasePath "/plugins/config/plugin-standard.yaml") .  | sha256sum) }}
+{{- range $group_name, $group := .Values.plugins}}
+
+  {{/* janky bypass for unset=true */}}
+  {{- if or $group.enabled (not (hasKey $group "enabled")) }}
+  
+    {{/* ------------------------------------------------------- */}}
+    {{/* GROUP CONFIG MAP */}}
+    {{/* ------------------------------------------------------- */}}
+    {{- if $group.config }}
+      {{/* generate config common to the group "plugin-<group>" (automatically attached) */}}
+      {{- $configName := printf "plugin-%s" $group_name}}
+      {{- include "plugin.config" (dict "name" $configName "config" $group.config) | nindent 0 }}
+    {{- end}}
+    
+    {{- range $k, $plugin := $group.plugins }}
+      {{- $plugin_name := printf "plugin-%s" $k }}
+      {{/* janky bypass for unset=true */}}
+      {{- if or $plugin.enabled (not (hasKey $plugin "enabled")) }}
+
+        {{/* ------------------------------------------------------- */}}
+        {{/* PLUGIN CONFIG MAP */}}
+        {{/* ------------------------------------------------------- */}}
+
+        {{- if $plugin.config }}
+          {{/* config name can collide with group config, but not worth doing something else */}}
+          {{- include "plugin.config" (dict "name" $plugin_name "config" $plugin.config) | nindent 0 }}
+          {{- $cmSHA256 := (print $cmSHA256 (include "plugin.config" (dict "name" $plugin_name "config" $plugin.config) | nindent 0 ) | sha256sum) }}
+        {{- end }}
+        
+        {{/* ------------------------------------------------------- */}}
+        {{/* STANDARD PLUGIN */}}
+        {{/* ------------------------------------------------------- */}}
+        {{- if eq $group.type "standard"}}
+          {{- include "plugin.deployment" (dict "k" $k "root" $ "plugin" $plugin "plugin_name" $plugin_name "group" $group "group_name" $group_name "cmSHA256" $cmSHA256) | nindent 0 }}
+          {{- include "hpa" (dict "root" $ "name" $plugin_name "min" ($plugin.minReplicas | default $.Values.pluginHPA.minReplicas) "max" ($plugin.maxReplicas | default $.Values.pluginHPA.maxReplicas) "avgUtil" ($plugin.averageUtilization | default $.Values.pluginHPA.averageUtilization) "useSmartScaler" (hasKey $plugin "useSmartScaler" | ternary $plugin.useSmartScaler $.Values.pluginHPA.useSmartScaler) "includeHistoric" (hasKey $plugin "includeHistoric" | ternary $plugin.includeHistoric $.Values.pluginHPA.includeHistoric) "maxQueueLength" (hasKey $plugin "maxQueueLength" | ternary $plugin.maxQueueLength $.Values.pluginHPA.maxQueueLength)) | nindent 0 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}

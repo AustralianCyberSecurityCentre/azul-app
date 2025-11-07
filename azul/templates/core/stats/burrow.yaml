@@ -1,0 +1,127 @@
+{{- if .Values.burrow.enabled -}}
+{{- include "pvc" (dict "root" .Values "name" "burrow-logs" "size" "1Gi") | nindent 0 }}
+---
+# Pod used to scrape kafka consumer group lag for configuration refer to:
+# https://github.com/linkedin/Burrow/wiki
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: burrow
+  labels:
+    part-of: azul
+    section: core
+    component: burrow
+spec:
+  revisionHistoryLimit: 1
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: burrow
+  template:
+    metadata:
+      name: burrow
+      labels:
+        app: burrow
+        part-of: azul
+        section: core
+        component: burrow
+        allow-egress-kafka: "true"
+        allow-ingress-prometheus-scrape: "true"
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8900"
+        # ensure deployment restarts if config is changed
+        checksum/config: {{ include (print $.Template.BasePath "/core/stats/burrow-config.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: burrow
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "burrow")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        command:
+          - "/bin/sh"
+          - "-c"
+          - /app/burrow --config-dir /etc/burrow
+        ports:
+        - name: api
+          containerPort: 8900
+        readinessProbe:
+          initialDelaySeconds: 60
+          httpGet:
+            path: /burrow/admin
+            port: 8900
+        livenessProbe:
+          initialDelaySeconds: 60
+          httpGet:
+            path: /burrow/admin
+            port: 8900
+        {{- if .Values.burrow.resources }}
+        resources:
+        {{- .Values.burrow.resources | toYaml | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        - name: config
+          mountPath: /etc/burrow/
+        - name: tmp
+          mountPath: /tmp/
+        - name: burrow-logs
+          mountPath: /burrow-logs
+        {{- if .Values.CACertificateConfigMap }}
+        - mountPath: /cafile
+          name: ca-cert
+        {{- end }}
+
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: 200Mi
+      - name: config
+        configMap:
+          name: burrow-config
+      - name: burrow-logs
+        persistentVolumeClaim:
+          claimName: burrow-logs
+
+      {{- if .Values.CACertificateConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ .Values.CACertificateConfigMap }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: burrow
+  labels:
+    app: burrow
+spec:
+  selector:
+    app: burrow
+  ports:
+    - protocol: TCP
+      port: 8900
+      name: api
+{{- end }}

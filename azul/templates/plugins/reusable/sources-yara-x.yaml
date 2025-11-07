@@ -1,0 +1,127 @@
+{{- if .Values.pluginsEnabled -}}
+{{- $root := .Values}}
+{{- $groups := dict "yara-x" (index .Values.plugins "yara-x") }}
+{{- range $group_name, $group := $groups }}
+{{- range $k, $source := $group.sources }}
+  {{- if $source.enabled }}
+  {{- $plugin := printf "plugin-%s-%s" $group_name $k }}
+  {{- $image := $group.image }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $plugin }}
+  labels:
+    part-of: azul
+    section: plugins
+    component: {{ $group_name }}
+spec:
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: {{ $plugin }}
+      ruleset: {{ $k }}
+  template:
+    metadata:
+      name: {{ $plugin }}
+      labels:
+        app: {{ $plugin }}
+        part-of: azul
+        section: plugins
+        component: {{ $group_name }}
+        ruleset: {{ $k }}
+        allow-egress-dispatcher: "true"
+        allow-egress-https-ssh: "true"
+      {{- with $root.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with $root.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $root.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $root.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $root.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" $root.images "name" $image)}}
+        imagePullPolicy: {{ $root.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        {{- if $group.resources }}
+        resources:
+          {{- $group.resources | toYaml | nindent 10 }}
+        {{- end }}
+        envFrom:
+        - configMapRef:
+            name: plugin-standard
+        {{- if $group.config }}
+        - configMapRef:
+            name: {{ printf "plugin-%s" $group_name }}
+        {{- end }}
+        env:
+        {{- with $source.env }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
+        - name: PLUGIN_NAME_SUFFIX
+          value: {{ $k }}
+        - name: PLUGIN_SECURITY_OVERRIDE
+          value: {{ $source.security | default "OFFICIAL" }}
+        - name: PLUGIN_WATCH_PATH
+          value: /code/dest/{{ $source.path | default "" }}
+        - name: PLUGIN_WATCH_TYPE
+          value: git
+        - name: PLUGIN_WATCH_WAIT
+          value: "{{ $source.wait | default "30" }}"
+        {{- if $source.maxFileSize }}
+        - name: PLUGIN_FILTER_MAX_CONTENT_SIZE
+          value: "{{ $source.maxFileSize }}"
+        {{- end }}
+        - name: PLUGIN_YARA_RULES_PATH
+          value: /code/dest/{{ $source.path | default "" }}
+        {{- if $source.blacklist }}
+        - name: PLUGIN_YARA_NAMESPACE_BLACKLIST
+          value: "{{ $source.blacklist}}"
+        {{- end }}
+        - name: PLUGIN_DEPLOYMENT_KEY
+          value: "{{ $plugin }}"
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp/
+        - name: code
+          mountPath: /code
+        - name: plugin-gitconfig
+          mountPath: /home/azul/.gitconfig
+          subPath: .gitconfig
+      {{- include "plugin.container.source.loop" (dict "root" $ "source" $source ) | nindent 6 }}
+      volumes:
+      - name: tmp
+        emptyDir:
+          sizeLimit: {{ $source.tmp | default "200Mi" }}
+      - name: code
+        emptyDir: {}
+      - name: plugin-gitconfig
+        configMap:
+          name: plugin-gitconfig
+      {{- if $source.secretSSH}}
+      - name: ssh
+        secret:
+          defaultMode: 0400
+          secretName: {{ $source.secretSSH }}
+      {{- end }}
+  {{- include "hpa" (dict "root" $ "name" $plugin "min" $root.pluginSyncHPA.minReplicas "max" $root.pluginSyncHPA.maxReplicas "avgUtil" $root.pluginSyncHPA.averageUtilization "useSmartScaler" $.Values.pluginSyncHPA.useSmartScaler "includeHistoric" $.Values.pluginSyncHPA.includeHistoric "maxQueueLength" $.Values.pluginSyncHPA.maxQueueLength) | nindent 0 }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,5 @@
+# Dumping point for custom network policy.
+{{- range .Values.customNetworkPolicies }}
+{{ . | toYaml | indent 0 }}
+---
+{{- end }}

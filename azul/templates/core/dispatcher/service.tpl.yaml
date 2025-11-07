@@ -1,0 +1,17 @@
+{{- define "dispatcher.service"}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  labels:
+    name: {{ .name }}
+    component: dispatcher
+spec:
+  sessionAffinity: {{ .root.Values.dispatcher.sessionAffinity }}
+  selector:
+    app: {{ .app }}
+  ports:
+    - port: 8111
+      name: http
+{{- end }}

@@ -1,0 +1,3 @@
+{{- if (index .Values.plugins "report-feeds").enabled}}
+{{- include "pvc" (dict "root" .Values "name" "plugin-report-feeds-state" "size" (index .Values.plugins "report-feeds" "pvc" "size")) | nindent 0}}
+{{- end }}

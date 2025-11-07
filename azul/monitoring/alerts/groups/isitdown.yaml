@@ -1,0 +1,93 @@
+- orgId: 1
+  name: infra
+  folder: infra
+  interval: 5m
+  rules:
+    - uid: c2b97469-7bdf-4296-a011-971c8998e617
+      title: Is It Down
+      condition: C
+      data:
+        - refId: A
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: prometheus
+          model:
+            editorMode: code
+            expr: probe_success
+            hide: false
+            instant: true
+            intervalMs: 1000
+            legendFormat: "{{instance}}"
+            maxDataPoints: 43200
+            range: false
+            refId: A
+        - refId: B
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params: []
+                  type: gt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - B
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: A
+            hide: false
+            intervalMs: 1000
+            maxDataPoints: 43200
+            reducer: last
+            refId: B
+            type: reduce
+        - refId: C
+          relativeTimeRange:
+            from: 600
+            to: 0
+          datasourceUid: __expr__
+          model:
+            conditions:
+              - evaluator:
+                  params:
+                    - 1
+                  type: lt
+                operator:
+                  type: and
+                query:
+                  params:
+                    - C
+                reducer:
+                  params: []
+                  type: last
+                type: query
+            datasource:
+              type: __expr__
+              uid: __expr__
+            expression: B
+            hide: false
+            intervalMs: 1000
+            maxDataPoints: 43200
+            refId: C
+            type: threshold
+      dashboardUid: ae52e267-aa7a-4759-abcf-07ec37a1285a
+      panelId: 1
+      noDataState: Alerting
+      execErrState: Alerting
+      for: 15m
+      annotations:
+        __dashboardUid__: ae52e267-aa7a-4759-abcf-07ec37a1285a
+        __panelId__: "1"
+      labels:
+        receiver: isitdown
+      isPaused: false

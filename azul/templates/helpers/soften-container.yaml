@@ -1,0 +1,7 @@
+{{- define "soften.container" -}}
+securityContext:
+  allowPrivilegeEscalation: true
+  capabilities:
+    add:
+    - SYS_PTRACE
+{{- end }}

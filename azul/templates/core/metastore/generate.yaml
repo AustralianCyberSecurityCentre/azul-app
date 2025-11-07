@@ -1,0 +1,8 @@
+{{- $cmSHA256 := (include (print $.Template.BasePath "/core/metastore/config.yaml") . | sha256sum )}}
+{{- range $k, $instance := .Values.metastore.instances}}
+{{- $name := printf "ms-%s" $k}}
+{{- include "metastore.deployment" (dict "root" $ "name" $name "config" $instance "coreHPA" $.Values.coreHPA "cmSHA256" $cmSHA256)}}
+{{- if $instance.pvc }}
+{{- include "pvc" (dict "root" $.Values "name" $name "size" $instance.pvc.size)}}
+{{- end }}
+{{- end }}

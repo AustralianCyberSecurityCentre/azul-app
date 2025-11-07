@@ -1,0 +1,25 @@
+{{- if .Values.redis.enabled -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/name: redis
+    section: core
+    component: redis
+    app: redis
+  name: azul-redis-master
+spec:
+  ports:
+  - name: tcp-redis
+    port: 6379
+    protocol: TCP
+    targetPort: redis
+  selector:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/name: redis
+    section: core
+    component: redis
+    app: redis
+{{ end }}

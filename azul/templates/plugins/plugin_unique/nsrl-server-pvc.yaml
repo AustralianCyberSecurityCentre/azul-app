@@ -1,0 +1,3 @@
+{{- if (((.Values.plugins).nsrl).server).enabled }}
+{{- include "pvc" (dict "root" .Values "name" "plugin-nsrl-db" "size" .Values.plugins.nsrl.pvc.size) | nindent 0}}
+{{- end }}

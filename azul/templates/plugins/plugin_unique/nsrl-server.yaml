@@ -1,0 +1,148 @@
+{{- if .Values.pluginsEnabled -}}
+{{- if (((.Values.plugins).nsrl).server).enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plugin-nsrl-lookup
+  labels:
+    part-of: azul
+    section: plugins
+    component: nsrl
+spec:
+  revisionHistoryLimit: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: plugin-nsrl-lookup
+  template:
+    metadata:
+      name: plugin-nsrl-lookup
+      labels:
+        app: plugin-nsrl-lookup
+        part-of: azul
+        section: plugins
+        component: nsrl
+        allow-egress-dispatcher: "true"
+        allow-ingress-nsrl-lookup-server: "true"
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      initContainers:
+      - name: init-db
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "nsrl-lookup-server")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        command: 
+        - '/home/nsrl/download_database.bash'
+        envFrom:
+        - configMapRef:
+            name: plugin-nsrl
+        env:
+        - name: NSRL_DB_FILEPATH
+          value: "{{ .Values.plugins.nsrl.config.BASE_PATH }}RDS_{{ .Values.plugins.nsrl.config.RDS_RELEASE_VERSION }}_modern_minimal/RDS_{{ .Values.plugins.nsrl.config.RDS_RELEASE_VERSION }}_modern_minimal.db"  
+        volumeMounts:
+        - mountPath: "/data"
+          name: data
+      # Only have patch-db if their is a delta to patch onto the db.
+      {{- if .Values.plugins.nsrl.config.DELTA_RELEASE_VERSION }}
+      - name: patch-db
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "nsrl-lookup-server")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        command: 
+        - '/home/nsrl/update_database.bash'
+        envFrom:
+        - configMapRef:
+            name: plugin-nsrl
+        env:
+        - name: BASE_RELEASE_VERSION
+          value: {{ .Values.plugins.nsrl.config.RDS_RELEASE_VERSION }}
+        - name: NSRL_DB_FILEPATH
+          value: "{{ .Values.plugins.nsrl.config.BASE_PATH }}RDS_{{ .Values.plugins.nsrl.config.RDS_RELEASE_VERSION }}_modern_minimal/RDS_{{ .Values.plugins.nsrl.config.RDS_RELEASE_VERSION }}_modern_minimal.db"
+        volumeMounts:
+        - mountPath: "/data"
+          name: data
+      {{- end }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "nsrl-lookup-server")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+            add: ["NET_BIND_SERVICE"]
+        {{- with .Values.plugins.nsrl.server.resources }}
+        resources:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
+        args:
+        - --host
+        - 0.0.0.0
+        - --port
+        - "8853"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8853
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        envFrom:
+        - configMapRef:
+            name: plugin-nsrl
+        env:
+        - name: NSRL_DB_FILEPATH
+          value: "{{ .Values.plugins.nsrl.config.BASE_PATH }}RDS_{{ .Values.plugins.nsrl.config.RDS_RELEASE_VERSION }}_modern_minimal/RDS_{{ .Values.plugins.nsrl.config.RDS_RELEASE_VERSION }}_modern_minimal.db"
+        {{- if .Values.plugins.nsrl.server.ingress.security.enableHarden }}
+        - name: NSRL_SERVER_HEADERS
+          value: |-
+            {{- include "server.headers.envs" (dict "Values" .Values "inputCsp" .Values.plugins.nsrl.server.ingress.security.csp ) | nindent 12  }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: 8853
+        volumeMounts:
+        - name: data
+          mountPath: "/data"
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: plugin-nsrl-db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plugin-nsrl-lookup
+spec:
+  selector:
+    app: plugin-nsrl-lookup
+  ports:
+  - port: 8853
+    name: http-web
+{{- if .Values.plugins.nsrl.server.ingress.host }}
+{{- include "ingress" (dict "Values" .Values "ingress" .Values.plugins.nsrl.server.ingress) | nindent 0 }}
+{{- end }}
+{{- include "hpa" (dict "name" "plugin-nsrl-lookup" "min" (.Values.plugins.nsrl.server.minReplicas | default .Values.pluginHPA.minReplicas) "max" (.Values.plugins.nsrl.server.maxReplicas | default .Values.pluginHPA.maxReplicas) "avgUtil" (.Values.plugins.nsrl.server.averageUtilization | default .Values.pluginHPA.averageUtilization)) | nindent 0 }}
+{{- end }}
+{{- end }}

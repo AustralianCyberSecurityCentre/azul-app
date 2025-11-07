@@ -1,0 +1,50 @@
+{{- $values := .Values }}
+{{- with .Values.web.ingress }}
+{{- if .enabled }}
+{{- if .hosts -}}
+{{- else -}}
+{{- fail "hosts are required when web ingress is enabled" }}
+{{- end}}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web
+  annotations:
+    {{- if and .annotations (gt (len .annotations) 0) -}}
+    {{ toYaml .annotations | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .ingressClassName | default "nginx" }}
+  tls:
+  - hosts: {{ toYaml .hosts | required "ingress has no hosts" | nindent 4 }}
+    secretName: {{ .secretName | required "ingress has no https secret" }}
+  rules:
+    {{- range .hosts }}
+    - host: {{ . | required "ingress has no hosts" }}
+      http:
+        paths:
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: restapi
+              port:
+                number: 8000
+        - path: /docs
+          pathType: Prefix
+          backend:
+            service:
+              name: docs
+              port:
+                number: 8080
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: webui
+              port:
+                number: 8080
+      {{- end }}
+{{- end }}
+{{- end }}

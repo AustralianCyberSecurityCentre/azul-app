@@ -1,0 +1,442 @@
+{{- if .Values.networkPolicy }}
+# Network policy for Azul
+# Naming convention for labels are:
+#   allow-ingress-<ingress-source>
+#   allow-egress-<egress-destination>
+#   allow-connect-<egress-ingress-to-from>
+
+# --------------------------- Dispatcher Policies ---------------------------
+# Dispatcher allow ingress
+{{ if not (has "allow-ingress-dispatcher" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-dispatcher
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-dispatcher: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 8111
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+      from:
+        - podSelector:
+            matchLabels:
+              allow-egress-dispatcher: "true"
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-dispatcher
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-dispatcher: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8111"]
+    when:
+    - key: destination.port
+      values: ["8111"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-s3" .Values.disableNetworkPolicies) }}
+# Policy that allows connection to the S3 store.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-s3
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-s3: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      - port: 9000
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{ end }}
+{{ if not (has "allow-egress-kafka" .Values.disableNetworkPolicies) }}
+# Policy that allows communication to kafka
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-kafka
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-kafka: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: kafka
+    - ports:
+      - port: 9090
+        endPort: 9093
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{ end }}
+{{ if not (has "allow-egress-redis" .Values.disableNetworkPolicies) }}
+# Policy that allows communication to redis
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-redis
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-redis: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: redis
+    - ports:
+      - port: 6379
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{ end }}
+{{ if not (has "allow-ingress-redis" .Values.disableNetworkPolicies) }}
+# Policy that allows ingresses to redis
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-redis
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  policyTypes:
+    - Ingress
+  ingress:
+  - ports:
+    - port: 6379
+      protocol: TCP
+    {{- if .Values.istioEnabled }}
+    - port: 15008 
+    {{ end }}
+  from:
+    - podSelector:
+        matchLabels:
+          allow-egress-redis: "true"
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-redis
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-redis: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["6379"]
+    when:
+      - key: destination.port
+        values: ["6379"]
+---
+{{ end }}
+{{ end }}
+
+{{ if not (has "allow-ingress-restapi" .Values.disableNetworkPolicies) }}
+# --------------------------- Restapi Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-restapi
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-restapi: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 8000
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-restapi
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-restapi: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8000"]
+    when:
+    - key: destination.port
+      values: ["8000"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-opensearch" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-opensearch
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-opensearch: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+      - port: 9200
+        endport: 9700
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{ end }}
+{{ if not (has "allow-ingress-docs-webui" .Values.disableNetworkPolicies) }}
+# --------------------------- Frontend Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-docs-webui
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-docs-webui: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 8080
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-docs-webui
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-docs-webui: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8080"]
+    when:
+    - key: destination.port
+      values: ["8080"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-loki" .Values.disableNetworkPolicies) }}
+# --------------------------- Audit Forwarder/Loki Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-loki
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-loki: "true"
+  egress:
+    - ports:
+      - port: 3100
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+    - Egress
+---
+{{ end }}
+{{ if not (has "allow-ingress-audit-forwarder-health" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-audit-forwarder-health
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-audit-forwarder-health: "true"
+  ingress:
+    - ports:
+      - port: 8855
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+    - Ingress
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-audit-forwarder-health
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-audit-forwarder-health: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8855"]
+    when:
+    - key: destination.port
+      values: ["8855"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-ingress-scaler" .Values.disableNetworkPolicies) }}
+# --------------------------- Scaler Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-scaler
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-scaler: "true"
+  ingress:
+    - ports:
+      - port: 8090
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+    - Ingress
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-scaler
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-scaler: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8090"]
+    when:
+    - key: destination.port
+      values: ["8090"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-smart-string-finder" .Values.disableNetworkPolicies) }}
+# --------------------------- Smart String Finder Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-smart-string-finder
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-smart-string-finder: "true"
+  egress:
+    - ports:
+      - port: 8851
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+      to:
+        - podSelector:
+            matchLabels:
+              app: "allow-ingress-smart-string-finder"
+  policyTypes:
+    - Egress
+---
+{{ end }}
+{{ if not (has "allow-ingress-smart-string-finder" .Values.disableNetworkPolicies) }}
+# --------------------------- Smart String Finder Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-smart-string-finder
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-smart-string-finder: "true"
+  ingress:
+    - ports:
+      - port: 8851
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+      from:
+        - podSelector:
+            matchLabels:
+              app: "restapi"
+  policyTypes:
+    - Ingress
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-smart-string-finder
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-smart-string-finder: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8851"]
+    when:
+    - key: destination.port
+      values: ["8851"]
+---
+{{ end }}
+{{ end }}
+{{ end }}

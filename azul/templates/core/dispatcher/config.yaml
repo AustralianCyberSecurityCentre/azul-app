@@ -1,0 +1,32 @@
+{{ if gt 1 (keys .Values.sources | len) }}
+  {{- fail "must provide at least one source" }}
+{{ end }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dispatcher
+data:
+  DP.EVENTS.KAFKA.ENDPOINT: "{{ .Values.external.kafka.endpoint | required "external.kafka.endpoint not set" }}"
+  DP.EVENTS.SOURCES: |-
+    sources: 
+      {{- .Values.sources | toYaml | nindent 6 }}
+  DP.EVENTS.TOPICS: |-
+    {{- .Values.external.kafka.topics | toYaml | nindent 4 }}
+  DP.EVENTS.GLOBAL_REPLICA_COUNT: "{{ .Values.external.kafka.topicDefaultReplicas }}"
+  DP.EVENTS.GLOBAL_PARTITION_COUNT: "{{ .Values.external.kafka.topicDefaultPartitions }}"
+  DP.EVENTS.KAFKA.TOPIC_PREFIX: "{{ .Values.external.kafka.topicPrefix }}"
+  DP.STREAMS.BACKEND: "{{ .Values.external.filestore.backend | lower | required "external.filestore.backend not set" }}"
+  {{- if eq "s3" (.Values.external.filestore.backend | lower) }}
+  DP.STREAMS.S3.ENDPOINT: "{{ .Values.external.filestore.endpoint | required "external.filestore.endpoint not set" }}"
+  DP.STREAMS.S3.SECURE: "{{ .Values.external.filestore.secure }}"
+  DP.STREAMS.S3.REGION: "{{ .Values.external.filestore.region }}"
+  DP.STREAMS.S3.BUCKET: "{{ .Values.external.filestore.location | required "external.filestore.location not set" }}"
+  {{- else if eq "azure" (.Values.external.filestore.backend | lower) }}
+  DP.STREAMS.AZURE.ENDPOINT: "{{ .Values.external.filestore.endpoint | required "external.filestore.endpoint not set" }}"
+  DP.STREAMS.AZURE.CONTAINER: "{{ .Values.external.filestore.location | required "external.filestore.location not set" }}"
+  {{- end }}
+  DP.STREAMS.XOR_ENCODING: "{{ .Values.external.filestore.xorEncoding }}"
+  DP.EVENTS.REDIS.ENDPOINT: "{{ .Values.external.redis.endpoint | required "external.redis.endpoint not set" }}"
+  DP.LOG_PATH: "/logs/dispatcher/"

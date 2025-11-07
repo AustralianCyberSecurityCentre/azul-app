@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docs
+  labels:
+    part-of: azul
+    section: core
+    component: frontend
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: docs
+  template:
+    metadata:
+      labels:
+        app: docs
+        part-of: azul
+        section: core
+        component: frontend
+        allow-ingress-docs-webui: "true"
+      annotations:
+        # ensure deployment restarts if config is changed
+        checksum/config: {{ include (print $.Template.BasePath "/core/docs/nginx.conf.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "docs")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        {{- if .Values.docs.resources }}
+        resources:
+        {{- .Values.docs.resources | toYaml | nindent 10 }}
+        {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: docs-nginx-config
+          mountPath: "/etc/nginx/nginx.conf"
+          subPath: "nginx.conf"
+          readOnly: true
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 200Mi
+        - name: docs-nginx-config
+          configMap:
+            name: docs-nginx-config
+            items:
+            - key: nginx.conf
+              path: nginx.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docs
+  labels:
+    app: docs
+spec:
+  selector:
+    app: docs
+  ports:
+    - protocol: TCP
+      port: 8080
+      name: dist

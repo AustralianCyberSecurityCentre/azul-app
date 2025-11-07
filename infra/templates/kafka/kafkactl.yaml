@@ -1,0 +1,83 @@
+{{- if and .Values.kafka.enable .Values.kafka.kafkactl.enable }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.kafka.name }}-kafkactl-config
+data:
+  config.yml: |
+    contexts:
+      default:
+        kafkaVersion: {{ .Values.kafka.version }}
+        brokers:
+        - {{ .Values.kafka.name }}-kafka-brokers:9092
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.kafka.name }}-kafkactl
+  labels:
+    app: {{ .Values.kafka.name }}-kafkactl
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+
+  selector:
+    matchLabels:
+      app: {{ .Values.kafka.name }}-kafkactl
+  
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.kafka.name }}-kafkactl
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      automountServiceAccountToken: false
+      containers:
+        - name: kafkactl
+          image: {{ .Values.kafka.kafkactl.image }}
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1500m"
+          {{- include "harden.container" . | nindent 10 }}
+            runAsUser: 999 # kafkactl
+
+          # wait for admin exec
+          command:
+            - "/bin/sleep"
+            - "7d"
+          volumeMounts:
+            - name: config
+              mountPath: /home/kafkactl/.config/kafkactl/config.yml
+              subPath: config.yml
+            - name: tmp
+              mountPath: /home/kafkactl/.config/kafkactl
+          env:
+            # The base container sets a value for this, so we need to override it
+            - name: BROKERS
+              value: {{ .Values.kafka.name }}-kafka-brokers:9092
+
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Values.kafka.name }}-kafkactl-config
+        - name: tmp
+          emptyDir:
+            sizeLimit: 50Mi
+{{- end }}

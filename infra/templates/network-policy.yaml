@@ -1,0 +1,890 @@
+{{- if .Values.networkPolicy.enabled }}
+# Network policy for Azul
+# Naming convention for labels are:
+#   allow-ingress-<ingress-source>
+#   allow-egress-<egress-destination>
+#   allow-connect-<egress-ingress-to-from>
+
+# --------------------------- Common Policies ---------------------------
+# default deny policy
+---
+{{ if not (has "default-deny" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+{{ end }}
+{{ if not (has "allow-egress-dns" .Values.disableNetworkPolicies) }}
+# allow all pods to use DNS as required.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-dns
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+---
+{{ end }}
+
+{{- if .Values.istioEnabled }}
+# Default deny for Istio policy
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: istio-default-deny
+spec:
+  {}
+---
+# --------------------------- Kafka Policies ---------------------------
+# Kafka istio policies, regular network policies are handled by kafka strimzi operator.
+# Additional networkPolicy to allow access to the istio Z-Tunnel for all kafka components
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: strimzi-kafka-istio-ztunnel-ingress
+spec:
+  podSelector:
+    matchLabels:
+      strimzi.io/cluster: azul-kafka
+      strimzi.io/kind: Kafka
+  ingress:
+    - ports:
+      - port: 15008
+  policyTypes:
+    - Ingress
+---
+# Authorization policy for istio itself.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-kafka-operator
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      strimzi.io/cluster: azul-kafka
+      strimzi.io/kind: Kafka
+      strimzi.io/name: azul-kafka-entity-operator
+  rules:
+  - to:
+    - operation:
+        ports: ["8080", "8081"]
+    when:
+    - key: destination.port
+      values: ["8080", "8081"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-kafka-exporter
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      strimzi.io/cluster: azul-kafka
+      strimzi.io/kind: Kafka
+      strimzi.io/name: azul-kafka-kafka-exporter
+  rules:
+  - to:
+    - operation:
+        ports: ["9404"]
+    when:
+    - key: destination.port
+      values: ["9404"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-kafka-cluster
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      strimzi.io/cluster: azul-kafka
+      strimzi.io/kind: Kafka
+      strimzi.io/name: azul-kafka-kafka
+  rules:
+  - to:
+    - operation:
+        ports: ["9090", "9091", "8443", "9092", "9093", "9094"]
+    when:
+    - key: destination.port
+      values: ["9090", "9091", "8443", "9092", "9093", "9094"]
+---
+
+{{ end }}
+# --------------------------- Minio Policies ---------------------------
+# Minio ingress policy for API and HTTP interfaces.
+{{ if not (has "allow-ingress-minio" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-minio
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-minio: "true"
+  ingress:
+    - ports:
+      # Api interface
+      - port: 9000
+        protocol: TCP
+      # Web interface
+      - port: 9001
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+    - Ingress
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-minio
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-minio: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["9000", "9001"]
+    when:
+    - key: destination.port
+      values: ["9000", "9001"]
+---
+{{ end }}
+{{ end }}
+# --------------------------- Opensearch Policies ---------------------------
+# ------ Dashboards
+{{ if not (has "allow-ingress-opensearch-dashboard" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-opensearch-dashboard
+spec:
+  podSelector:
+    matchLabels:
+      opensearch.cluster.dashboards: "azul-opensearch"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 5601
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-opensearch-dashboard
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      opensearch.cluster.dashboards: "azul-opensearch"
+  rules:
+  - to:
+    - operation:
+        ports: ["5601"]
+    when:
+    - key: destination.port
+      values: ["5601"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-auth-for-opensearch-dashboard" .Values.disableNetworkPolicies) }}
+# Allow egress for accessing an OIDC server.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-auth-for-opensearch-dashboard
+spec:
+  podSelector:
+    matchLabels:
+      opensearch.cluster.dashboards: "azul-opensearch"
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{ end }}
+{{ if not (has "allow-connect-opensearch-internal" .Values.disableNetworkPolicies) }}
+# ------ Nodes
+# Allow egress to opensearch nodes.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-opensearch-internal
+spec:
+  podSelector:
+    matchLabels:
+      opster.io/opensearch-cluster: azul-opensearch
+  policyTypes:
+    - Egress
+    - Ingress
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            opster.io/opensearch-cluster: azul-opensearch
+    - ports:
+      - port: 9200
+        protocol: TCP
+      - port: 9300
+        protocol: TCP
+      - port: 9600
+        protocol: TCP
+      - port: 9650
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            opster.io/opensearch-cluster: azul-opensearch
+    - ports:
+      - port: 9200
+        protocol: TCP
+      - port: 9300
+        protocol: TCP
+      - port: 9600
+        protocol: TCP
+      - port: 9650
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-connect-opensearch-internal
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      opster.io/opensearch-cluster: azul-opensearch
+  rules:
+  - to:
+    - operation:
+        ports: ["9200", "9300", "9600", "9650"]
+    when:
+    - key: destination.port
+      values: ["9200", "9300", "9600", "9650"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-auth-for-opensearch-nodes" .Values.disableNetworkPolicies) }}
+# Allow egress for accessing an OIDC server.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-auth-for-opensearch-nodes
+spec:
+  podSelector:
+    matchLabels:
+      opster.io/opensearch-cluster: azul-opensearch
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{ end }}
+{{ if not (has "allow-ingress-opensearch" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-opensearch
+spec:
+  podSelector:
+    matchLabels:
+      opster.io/opensearch-cluster: azul-opensearch
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 9200
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-opensearch
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      opster.io/opensearch-cluster: azul-opensearch
+  rules:
+  - to:
+    - operation:
+        ports: ["9200"]
+    when:
+    - key: destination.port
+      values: ["9200"]
+---
+{{ end }}
+{{ end }}
+# --------------------------- Kafka Policies ---------------------------
+# Created by the strimzi kafka operator by default.
+# Recommended to use that policy.
+{{ if not (has "allow-ingress-keycloak" .Values.disableNetworkPolicies) }}
+# --------------------------- Keycloak Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-keycloak
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-keycloak: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 8443
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-keycloak
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-keycloak: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["8443"]
+    when:
+    - key: destination.port
+      values: ["8443"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-egress-postgres-keycloak" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-postgres-keycloak
+spec:
+  podSelector:
+    matchLabels:
+      allow-egress-postgres-keycloak: "true"
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+      - port: 5432
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{ end }}
+{{ if not (has "allow-ingress-postgres-keycloak" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-postgres-keycloak
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-postgres-keycloak: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 5432
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-postgres-keycloak
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      allow-ingress-postgres-keycloak: "true"
+  rules:
+  - to:
+    - operation:
+        ports: ["5432"]
+    when:
+    - key: destination.port
+      values: ["5432"]
+---
+{{ end }}
+{{ end }}
+
+# --------------------------- Prometheus Stack Policies ---------------------------
+{{ if not (has "allow-egress-anything-prometheus-operator-webhook" .Values.disableNetworkPolicies) }}
+# Add network policy for webhook to function.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-anything-prometheus-operator-webhook
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: "prometheus-operator-webhook"
+  policyTypes:
+    - Egress
+  egress:
+    - {}
+---
+{{ end }}
+{{ if not (has "allow-egress-anything-kube-prometheus-stack" .Values.disableNetworkPolicies) }}
+# Add network policy for webhook to function.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-anything-kube-prometheus-stack
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: "kube-prometheus-stack-prometheus-operator"
+  policyTypes:
+    - Egress
+  egress:
+    - {}
+---
+{{ end }}
+{{ if not (has "allow-connect-alertmanager" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-alertmanager
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: "alertmanager"
+  policyTypes:
+    - Egress
+    - Ingress
+  ingress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      - port: 8080
+        protocol: TCP
+      - port: 9090
+        protocol: TCP
+      - port: 9093
+        protocol: TCP
+      # Includes UDP/TCP
+      - port: 9094
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  egress:
+    - ports:
+      - port: 443
+        protocol: TCP
+      - port: 8080
+        protocol: TCP
+      - port: 9090
+        protocol: TCP
+      - port: 9093
+        protocol: TCP
+      # Includes UDP/TCP
+      - port: 9094
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-connect-alertmanager
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "alertmanager"
+  rules:
+  - to:
+    - operation:
+        ports: ["443","8080","9090","9093","9094"]
+    when:
+    - key: destination.port
+      values: ["443","8080","9090","9093","9094"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-connect-prometheus" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-prometheus
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: "prometheus"
+  policyTypes:
+    - Egress
+    - Ingress
+  egress:
+    - {}
+  ingress:
+    - ports:
+      - port: 8080
+        protocol: TCP
+      - port: 9090
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-connect-prometheus
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "prometheus"
+  rules:
+  - to:
+    - operation:
+        ports: ["8080", "9090"]
+    when:
+    - key: destination.port
+      values: ["8080","9090"]
+---
+{{ end }}
+{{ end }}
+{{ if not (has "allow-ingress-kube-state-metrics" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-kube-state-metrics
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: "kube-state-metrics"
+  policyTypes:
+    - Egress
+    - Ingress
+  egress:
+    - {}
+  ingress:
+    - ports:
+      - port: 8000
+        protocol: TCP
+      - port: 8080
+        protocol: TCP
+      - port: 8081
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-kube-state-metrics
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "kube-state-metrics"
+  rules:
+  - to:
+    - operation:
+        ports: ["8000", "8080","8081"]
+    when:
+    - key: destination.port
+      values: ["8000", "8080","8081"]
+---
+{{ end }}
+{{ end }}
+
+# --------------------------- Grafana Policies ---------------------------
+{{ if not (has "allow-connect-grafana" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-grafana
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: "grafana"
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+      - port: 3000
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  # Loki + Prometheus
+  egress:
+    - {}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-connect-grafana
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "grafana"
+  rules:
+  - to:
+    - operation:
+        ports: ["3000"]
+    when:
+    - key: destination.port
+      values: ["3000"]
+---
+{{ end }}
+{{ end }}
+
+# --------------------------- Loki Policies ---------------------------
+# Enabled via Loki helm chart
+# https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
+{{ if not (has "allow-all-to-loki" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all-to-loki
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+  policyTypes:
+    - Ingress
+  ingress:
+      # Allow traffic from everything to loki (as apps are in different namespaces)
+      - ports:
+        - protocol: TCP
+          port: 3100
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+---
+{{ end }}
+
+# --------------------------- Prometheus Blackbox Exporter Policies ---------------------------
+{{ if not (has "allow-ingress-blackbox-exporter" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-blackbox-exporter
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: "prometheus-blackbox-exporter"
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+      - port: 9115
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  egress:
+    - {}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-blackbox-exporter
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "prometheus-blackbox-exporter"
+  rules:
+  - to:
+    - operation:
+        ports: ["9115"]
+    when:
+    - key: destination.port
+      values: ["9115"]
+---
+{{ end }}
+{{ end }}
+# --------------------------- Prometheus Push Gateway Policies ---------------------------
+{{ if not (has "allow-connect-prometheus-push-gateway" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-prometheus-push-gateway
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-pushgateway
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+      - port: 9091
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  egress:
+    - {}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-connect-prometheus-push-gateway
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-pushgateway
+  rules:
+  - to:
+    - operation:
+        ports: ["9091"]
+    when:
+    - key: destination.port
+      values: ["9091"]
+---
+{{ end }}
+{{ end }}
+
+# Dumping point for custom network policy.
+{{- range .Values.customNetworkPolicies }}
+{{ . | toYaml | indent 0 }}
+---
+{{- end }}
+# Loki policies (istio only)
+{{- if .Values.istioEnabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-loki-alertmanager
+spec:
+  egress:
+    - ports:
+        - port: 15008
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: backend
+      app.kubernetes.io/name: loki
+  policyTypes:
+    - Egress
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-egress-loki-alertmanager
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "alertmanager"
+  rules:
+  - to:
+    - operation:
+        ports: ["9093"]
+    when:
+    - key: destination.port
+      values: ["9093"]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-loki
+spec:
+  ingress:
+    - ports:
+        - port: 15008
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+  policyTypes:
+    - Ingress
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-loki-metrics
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+  rules:
+  - to:
+    # Note this is just the http-metrics port which is 3100 by default.
+    - operation:
+        ports: ["3100"]
+    when:
+    - key: destination.port
+      values: ["3100"]
+{{ end }}
+{{ end }}

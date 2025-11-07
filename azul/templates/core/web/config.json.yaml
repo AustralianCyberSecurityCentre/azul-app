@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webui-config
+data:
+  config.json: |-
+    {{- include "config.web" . | fromYaml | mustToPrettyJson | nindent 4 }}

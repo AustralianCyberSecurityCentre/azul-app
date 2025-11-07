@@ -1,0 +1,21 @@
+{{- if .Values.pluginsEnabled -}}
+{{- if ((.Values.plugins).assemblyline).enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: plugin-assemblyline-receiver
+  # scrape basic metrics
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8850"
+spec:
+  selector:
+    app: plugin-assemblyline-receiver
+  ports:
+    - port: 8850
+      name: http
+{{- if (index .Values.plugins.assemblyline.plugins "assemblyline-receiver" "ingress" "host" ) }}
+{{- include "ingress" (dict "Values" .Values "ingress" (index .Values.plugins.assemblyline.plugins "assemblyline-receiver" "ingress")) | nindent 0 }}
+{{- end }}
+{{- end}}
+{{- end}}

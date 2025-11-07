@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restapi
+data:
+  # constants
+  LOGGER_AUDIT_FILE: "/logs/restapi-audit.log"
+  METASTORE_SPECIAL_LOG_FILE_PATH: "/logs/additional-audit.log"
+  # METASTORE_SPECIAL_LOG_MESSAGE_FORMAT: full_time="{time:%d/%b/%Y:%H:%M:%S.%f}" connection="{connection}" username="{username}" special_method="{method}" special_path="{path}" sha256="{sha256}"
+  RESTAPI_RELOAD: "false"
+  RESTAPI_PREFIX: "/api"
+  # oidc config
+
+  RESTAPI_RELOAD: "false"
+  RESTAPI_PREFIX: "/api"
+  # oidc config
+  {{- if .Values.security.oidc.enabled }}
+  RESTAPI_SECURITY: "oidc"
+  OIDC_AUTHORITY_URL: "{{ .Values.security.oidc.authority_url | required "oidc authority_url required" }}"
+  OIDC_CLIENT_ID: "{{ .Values.security.oidc.client_id | required "oidc client_id required" }}"
+  OIDC_SCOPES: "{{ .Values.security.oidc.scopes | required "oidc scopes required" }}"
+  {{- else }}
+  RESTAPI_SECURITY: "none"
+  {{- end }}
+  # certificates
+  SSL_CERT_FILE: "{{ .Values.restapi.config.ca_bundle }}"
+  REQUESTS_CA_BUNDLE: "{{ .Values.restapi.config.ca_bundle }}"
+  # nonstandard oidc config
+  OIDC_ROLES_KEY: "{{ .Values.restapi.oidc.rolesKey }}"
+  OIDC_USERNAME_KEY: "{{ .Values.restapi.oidc.usernameKey }}"
+  OIDC_CACHE_TTL: "{{ .Values.restapi.oidc.cacheTTL }}"
+  OIDC_SWAGGER_REDIRECT_URL: "{{ .Values.restapi.oidc.swaggerRedirectUrl }}"
+  # generic restapi config
+  RESTAPI_HOST: "{{ .Values.restapi.config.host }}"
+  RESTAPI_PORT: "{{ .Values.restapi.config.port }}"
+  RESTAPI_WORKERS: "{{ .Values.restapi.config.processWorkers }}"
+  # Temporary workaround restapi guvicorn inconsistent settings
+  RESTAPI_MAX_WORKERS: "{{ .Values.restapi.config.processWorkers }}"
+  RESTAPI_ASYNCIO_WORKERS: "{{ .Values.restapi.config.asyncioWorkers }}"
+  RESTAPI_LOG_LEVEL: "{{ .Values.restapi.config.logLevel }}"
+  # cross origin settings
+  CORS_ALLOW_ORIGINS: "{{ .Values.restapi.cors.allowOrigins }}"
+  CORS_ALLOW_CREDENTIALS: "{{ .Values.restapi.cors.allowCredentials }}"
+  CORS_ALLOW_METHODS: "{{ .Values.restapi.cors.allowMethods }}"
+  CORS_ALLOW_HEADERS: "{{ .Values.restapi.cors.allowHeaders }}"
+  # Headers
+  {{- if .Values.web.ingress.security.enableHarden }}
+  RESTAPI_HEADERS: |-
+    {{- include "server.headers.envs" (dict "Values" .Values "inputCsp" .Values.web.ingress.security.csp.api ) | nindent 4 }}  {{- range $k, $v := .Values.restapi.env }}
+  {{ $k }}: "{{ $v }}"
+  {{- end }}
+  {{- end }}

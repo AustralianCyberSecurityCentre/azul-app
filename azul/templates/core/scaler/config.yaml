@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scaler
+data:
+  PYTHONUNBUFFERED: "yes"
+  SCALER_BURROW_URL: "http://burrow:8900"
+  SCALER_TOPIC_PREFIX: "{{ .Values.external.kafka.topicPrefix }}"
+  SCALER_REDIS_URL: "{{ .Values.external.redis.endpoint | required "external.redis.endpoint not set" }}"
+  SCALER_DEBUG: "false"

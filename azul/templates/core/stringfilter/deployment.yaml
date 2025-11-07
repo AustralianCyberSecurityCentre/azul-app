@@ -1,0 +1,84 @@
+{{- if .Values.apiServices.smartStringFilter.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-string-filter
+  labels:
+    part-of: azul
+    section: core
+    component: smart-string-filter
+spec:
+  revisionHistoryLimit: 1
+  replicas: {{ .Values.apiServices.smartStringFilter.replicas | default 1 }} 
+  selector:
+    matchLabels:
+      app: smart-string-filter
+  template:
+    metadata:
+      name: smart-string-filter
+      labels:
+        app: smart-string-filter
+        part-of: azul
+        section: core
+        component: smart-string-filter
+        allow-ingress-smart-string-finder: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8851"
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "harden.deployment" . | nindent 6 }}
+      containers:
+      - name: main
+        image: {{ include "image.custom" (dict "images" .Values.images "name" "smart-string-filter")}}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        {{- include "harden.container" . | nindent 8 }}
+        {{- if .Values.apiServices.smartStringFilter.resources }}
+        resources:
+        {{- .Values.apiServices.smartStringFilter.resources | toYaml | nindent 10 }}
+        {{- end }}
+        env:
+        volumeMounts:
+          {{- if .Values.CACertificateConfigMap }}
+          - mountPath: /cafile
+            name: ca-cert
+          {{- end }}
+      volumes:
+      {{- if .Values.CACertificateConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ .Values.CACertificateConfigMap }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-string-filter
+  labels:
+    app: smart-string-filter
+spec:
+  selector:
+    app: smart-string-filter
+  ports:
+  - port: 8851
+    name: http
+    protocol: TCP
+{{- end }}

@@ -1,0 +1,3 @@
+{{if .Values.auditForwarder.enabled}}
+{{- include "pvc" (dict "root" .Values "name" "audit-forwarder" "size" "1Gi") | nindent 0}}
+{{- end }}

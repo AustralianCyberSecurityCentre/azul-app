@@ -1,0 +1,234 @@
+{{- if .Values.monitoring.enabled }}
+# These are split up due to the size limits of configmaps
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-developer1
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/azul-developer/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/developer1/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-developer2
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/azul-developer/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/developer2/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-dispatcher-events1
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/azul-dispatcher-events/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/dispatcher-events1/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-dispatcher-events2
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/azul-dispatcher-events/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/dispatcher-events2/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-infra1
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/infra/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/infra1/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-main1
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/azul-main/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/main1/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-main2
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/azul-main/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/main2/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-main3
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/azul-main/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/main3/*").AsConfig | indent 2 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-azul-plugins1
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    grafana_folder: "/tmp/dashboards/azul-plugins/"
+data:
+{{ (.Files.Glob "monitoring/dashboards/plugins/*").AsConfig | indent 2 }}
+
+{{ if .Values.monitoring.alerting }}
+{{- $webhookType := .Values.monitoring.alertWebhookType | required "A monitoring webhook type is required." -}}
+{{- $genericWebhook := .Values.monitoring.alertWebhookGeneric | default "" -}} # A monitoring generic webhook URL is required.
+{{- $pluginWebhook := .Values.monitoring.alertWebhookPlugin | default "" -}} # A monitoring plugin webhook URL is required (can be same as generic webhook).
+{{- $alertWebhookInfraHealth := .Values.monitoring.alertWebhookInfraHealth | default "" -}} # A monitoring infra-health webhook URL is required (can be same as generic webhook).
+{{- $macoErrorsWebhook := .Values.monitoring.alertWebhookMacoErrors | default "" -}} # A monitoring maco plugin webhook URL is required (can be same as generic webhook).
+{{- $webhookTitleKey := .Values.monitoring.alertWebhookTitleKey | required "A monitoring webhook title key is required." -}}
+{{- $webhookMessageKey := .Values.monitoring.alertWebhookMessageKey | required "A monitoring webhook message key is required (for teams this should be 'message' and for slack/mattermost 'text')." -}}
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerts-azul
+  labels:
+    grafana_alert: "1"
+data:
+  groups.yaml: |
+    apiVersion: 1
+    groups:
+      {{- if $pluginWebhook }}
+      {{- .Files.Get "monitoring/alerts/groups/badplugin-2.yaml" | nindent 6 }}
+      {{- end }}
+
+      {{- if $pluginWebhook }}
+      {{- .Files.Get "monitoring/alerts/groups/badplugin.yaml" | nindent 6 }}
+      {{- end }}
+
+      {{- if $alertWebhookInfraHealth }}
+      {{- .Files.Get "monitoring/alerts/groups/infrahealth.yaml" | nindent 6 }}
+      {{- end }}
+
+      {{- if $genericWebhook }}
+      {{- .Files.Get "monitoring/alerts/groups/isitdown.yaml" | nindent 6 }}
+      {{- end }}
+      
+      {{- if $macoErrorsWebhook }}
+      {{- .Files.Get "monitoring/alerts/groups/macoerrors.yaml" | nindent 6 }}
+      {{- end }}
+  notification.yaml: |
+    {{- .Files.Get "monitoring/alerts/notification.yaml" | nindent 4 }}
+
+  contact.yaml: |
+    # default template https://github.com/grafana/alerting/blob/main/templates/default_template.go
+    apiVersion: 1
+    contactPoints:
+    - orgId: 1
+      name: generic
+      receivers:
+      - uid: generic
+        type: {{ $webhookType }}
+        disableResolveMessage: false
+        settings:
+          url: {{ $genericWebhook }}
+          # use default message format
+          # {{ $webhookTitleKey }}: ""
+          # {{ $webhookMessageKey }}: ""
+    - orgId: 1
+      name: isitdown
+      receivers:
+      - uid: isitdown
+        type: {{ $webhookType }}
+        disableResolveMessage: false
+        settings:
+          url: {{ $genericWebhook }}
+          {{ $webhookTitleKey }}: "{{ "{{" }} len .Alerts.Firing {{ "}}" }} Services are Unavailable"
+          # show all failing urls
+          {{ $webhookMessageKey }}: |
+            {{ "{{" }} range .Alerts.Firing {{ "}}" }}
+              {{ "{{" }} .Labels.app}} - {{ "{{" }} .Labels.instance {{ "}}" }}
+            {{ "{{" }} end {{ "}}" }}
+    - orgId: 1
+      name: badplugin
+      receivers:
+      - uid: badplugin
+        type: {{ $webhookType }}
+        disableResolveMessage: false
+        settings:
+          url: {{ $pluginWebhook }}
+          {{ $webhookTitleKey }}: "{{ "{{" }} len .Alerts.Firing {{ "}}" }} {{ "{{" }} .CommonLabels.alertname {{ "}}" }}"
+          {{ $webhookMessageKey }}: |
+            {{ "{{" }} .CommonAnnotations.description {{ "}}" }}
+            {{ "{{" }} range .Alerts.Firing {{ "}}" }}
+              {{ "{{" }} .Annotations.summary {{ "}}" }}
+            {{ "{{" }} end {{ "}}" }}
+    - orgId: 1
+      name: simple
+      receivers:
+      - uid: simple
+        type: {{ $webhookType }}
+        disableResolveMessage: false
+        settings:
+          url: {{ $genericWebhook }}
+          {{ $webhookTitleKey }}: "{{ "{{" }} len .Alerts.Firing {{ "}}" }} Basic Alerts"
+          # show all failing urls
+          {{ $webhookMessageKey }}: |
+            {{ "{{" }} range .Alerts.Firing {{ "}}" }}
+              {{ "{{" }} .Labels.alertname {{ "}}" }}
+            {{ "{{" }} end {{ "}}" }}
+    - orgId: 1
+      name: infrahealth
+      receivers:
+      - uid: infrahealth
+        type: {{ $webhookType }}
+        disableResolveMessage: false
+        settings:
+          url: {{ $alertWebhookInfraHealth }}
+          {{ $webhookTitleKey }}: "{{ "{{" }} len .Alerts.Firing {{ "}}" }} {{ "{{" }} .CommonLabels.alertname {{ "}}" }}"
+          {{ $webhookMessageKey }}: |
+            {{ "{{" }} .CommonAnnotations.description {{ "}}" }}
+            {{ "{{" }} range .Alerts.Firing {{ "}}" }}
+              {{ "{{" }} .Annotations.summary {{ "}}" }}
+            {{ "{{" }} end {{ "}}" }}
+    - orgId: 1
+      name: macoerrors
+      receivers:
+      - uid: macoerrors
+        type: {{ $webhookType }}
+        disableResolveMessage: false
+        settings:
+          url: {{ $macoErrorsWebhook }}
+          {{ $webhookTitleKey }}: "{{ "{{" }} len .Alerts.Firing {{ "}}" }} {{ "{{" }} .CommonLabels.alertname {{ "}}" }}"
+          {{ $webhookMessageKey }}: |
+            {{ "{{" }} .CommonAnnotations.description {{ "}}" }}
+            {{ "{{" }} range .Alerts.Firing {{ "}}" }}
+              {{ "{{" }} .Annotations.summary {{ "}}" }}
+            {{ "{{" }} end {{ "}}" }}
+
+{{- end }}
+
+{{- end }}
