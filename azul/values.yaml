@@ -1800,6 +1800,6 @@ images:
     plugin-portex: plugin-portex:20251107T0416-unstable@sha256:5cb98f74915003c424f5730ec25ef25c313ed0ac3675b32ed1554e30ea15a1a4
     plugin-truncated: plugin-truncated:20251108T0003-unstable@sha256:bc6ec8e27d612f2010568b77bbcafd2bb658249cea72d6dee0f279365abe3860
     plugin-certificates: plugin-certificates:20251107T0422-unstable@sha256:c4e50ec0ca9f6c9ba95a4a41f8380ad76f8f0d419b6a41d6f6b62cd197db1b7e
-    plugin-qrcode: plugin-qrcode:20251107T0417-unstable@sha256:42c13dfd5a5f638875ec4ff5b531c807f4ad8a7607d9aaa45128983582363178
+    plugin-qrcode: plugin-qrcode:20251108T0016-unstable@sha256:6f777ea468d7265c2789156bd1d7bf34a28ae07ac8c5bb1dd342268de76bb172
     smart-string-filter: smart-string-filter:20251108T0002-unstable@sha256:eaf7d40a16284e2df83a3471ccd8ae1cad52b95a628b70a0323f9e701ae737e8
     plugin-ghidra: plugin-ghidra:20251107T0418-unstable@sha256:6908f54da162e7d2646212e43551245f96b6298b9fcc9a8cd629859c53f6c072
