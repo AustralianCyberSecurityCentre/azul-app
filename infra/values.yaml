@@ -85,6 +85,7 @@ minio:
       app: s3-store-minio
       storage: minio-disk
       allow-ingress-minio: "true"
+      allow-connect-minio-cluster: "true"
 
     storageClass: managed-csi
     requests:
@@ -123,6 +124,7 @@ minio:
       app: s3-store-minio-backup
       storage: minio-disk-backup
       allow-ingress-minio: "true"
+      allow-connect-minio-cluster: "true"
 
     storageClass: managed-csi
     requests:

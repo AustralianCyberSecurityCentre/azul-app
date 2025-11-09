@@ -133,6 +133,31 @@ spec:
 {{ end }}
 # --------------------------- Minio Policies ---------------------------
 # Minio ingress policy for API and HTTP interfaces.
+{{ if not (has "allow-connect-minio-cluster" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-minio-cluster
+spec:
+  podSelector:
+    matchLabels:
+      allow-connect-minio-cluster: "true"
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            allow-connect-minio-cluster: "true"
+      ports:
+      # Api interface
+      - port: 9000
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  policyTypes:
+    - Egress
+---
+{{ end }}
 {{ if not (has "allow-ingress-minio" .Values.disableNetworkPolicies) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
