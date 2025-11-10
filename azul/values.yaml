@@ -1279,26 +1279,13 @@ plugins:
     demoConfig: false
     # feedConfig allows you to provide a yaml config for the report feeds plugin to pull from various websites.
     # Refer to the docs for more details on how to configure.
-    # feedConfig: |
-    #   feeds:
-    #     - publisher: Microsoft
-    #       source: reporting
-    #       module: reportcollector.feeds.rss.RSSFeed
-    #       distribution: public
-    #       site: "https://www.microsoft.com/security/"
-    #       feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
-    #   pdfconversion:
-    #       command: wkhtmltopdf
-    #       options:
-    #         - "--proxy-hostname-lookup"
-    #         - "--disable-javascript"
-    #         - "--disable-external-links"
-    #         - "--disable-internal-links"
-    #         - "--disable-forms"
-    #         - "--zoom"
-    #         - "0.8"
-    #         - "--image-dpi"
-    #         - "120"
+    # feedConfig:
+    #   - publisher: Microsoft
+    #     source: reporting
+    #     module: reportcollector.feeds.rss.RSSFeed
+    #     distribution: public
+    #     site: "https://www.microsoft.com/security/"
+    #     feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
 
   # On demand historic yara rules scanning.
   retrohunt:
@@ -1803,3 +1790,4 @@ images:
     plugin-qrcode: plugin-qrcode:20251108T0016-unstable@sha256:6f777ea468d7265c2789156bd1d7bf34a28ae07ac8c5bb1dd342268de76bb172
     smart-string-filter: smart-string-filter:20251108T0002-unstable@sha256:eaf7d40a16284e2df83a3471ccd8ae1cad52b95a628b70a0323f9e701ae737e8
     plugin-ghidra: plugin-ghidra:20251108T0016-unstable@sha256:bdc00223e353a771f03222eda68cf883e5242634b047870fc13194f48be9f6c3
+    plugin-report-feeds: dummy
