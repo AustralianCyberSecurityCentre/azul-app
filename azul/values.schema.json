@@ -1210,7 +1210,7 @@
               "type": "boolean"
             },
             "feedConfig": {
-              "type": "string"
+              "type": "array"
             }
           },
           "allOf": [

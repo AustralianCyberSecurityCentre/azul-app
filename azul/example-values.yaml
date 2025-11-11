@@ -303,6 +303,18 @@ sources:
 
 # Example configurations for plugins which require repositories or additional configuration
 plugins:
+  report-feeds:
+    type: reportFeeds
+    enabled: true
+    demoConfig: true
+    # feedConfig:
+    #   - publisher: Microsoft
+    #     source: reporting
+    #     module: reportcollector.feeds.rss.RSSFeed
+    #     distribution: public
+    #     site: "https://www.microsoft.com/security/"
+    #     feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
+
   virustotal:
     # Ensure that virustotal source named "virustotal" is setup.
     # Ensure that virustotal api key is set.

@@ -61,8 +61,6 @@ spec:
                 memory: "3Gi"
                 cpu: "1500m"
             env:
-            - name: PLUGIN_FEED_CONFIG_PATH
-              value: "/config/report-feeds.yaml"
             - name: PLUGIN_STATE_DIRECTORY
               value: "/state"
             - name: PLUGIN_PROMETHEUS_PUSH_GATEWAY
@@ -75,6 +73,8 @@ spec:
             envFrom:
               - configMapRef:
                   name: plugin-standard
+              - configMapRef:
+                  name: report-feeds
             command:
             - "azul-plugin-report-feeds"
             volumeMounts:
@@ -82,8 +82,6 @@ spec:
               name: tmp
             - name: state
               mountPath: /state
-            - name: config
-              mountPath: /config
           volumes:
           - name: tmp
             emptyDir:
@@ -91,9 +89,6 @@ spec:
           - name: state
             persistentVolumeClaim:
               claimName: plugin-report-feeds-state
-          - name: config
-            configMap:
-              name: report-feeds
 ---
 {{- end }}
 {{- end }}
