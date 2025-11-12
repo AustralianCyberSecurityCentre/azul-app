@@ -28,3 +28,4 @@ stages:
               ls -lha
               helm template azul --values azul/values.yaml --values azul/example-values.yaml > built.yaml
             displayName: Validate chart
+
