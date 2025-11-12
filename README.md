@@ -115,3 +115,4 @@ This repository includes additional pre-packaged charts which are included for s
 - loki: AGPL 3.0
 - prometheus-blackbox-exporter: Apache 2.0
 - prometheus-pushgateway: Apache 2.0
+
