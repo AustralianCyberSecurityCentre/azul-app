@@ -1647,6 +1647,22 @@ plugins:
           limits:
             memory: "4Gi"
             cpu: "1000m"
+      ghidra:
+        tmp: "1Gi"
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
+        volumes:
+          - name: ghidra-config-cache
+            emptyDir:
+              sizeLimit: 10Mi
+        volumeMounts:
+          - name: ghidra-config-cache
+            mountPath: /home/azul/.config
       goinfo: {}
       image-convert: {}
       index-coincidence: {}
