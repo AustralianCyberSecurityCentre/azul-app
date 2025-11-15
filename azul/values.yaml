@@ -1752,7 +1752,7 @@ images:
   # images that form part of an azul release
   custom:
     audit-forwarder: audit-forwarder:20251115T0003-unstable@sha256:68df157f41ce00209872ea0b467cb3aac3f7f5cdfe2dbb97b9e6d87b5eac2f29
-    backup: backup:20251108T0009-unstable@sha256:38dae64ee8b2fd1b5854a1cf38c323d2bc7b8dcad99224af5ac5ddd37a1bf469
+    backup: backup:20251115T0011-unstable@sha256:bcb882d80b223196f09da69df4de6971871f7537f3d841e096d0f404c99d932e
     client: client:20251107T0420-unstable@sha256:0f5602956e82cac980d7c435343f995c846e59bd87fdc286b43251f71ead5bca
     dispatcher: dispatcher:20251108T0015-unstable@sha256:223e5d0290fcfe41afee47839925570f0d456fac68751025aaf87454569bbb65
     docs: docs:20251115T0000-unstable@sha256:58c5793f0d3d33dc51ca9ef093e4cd57ff75060b748c4d29a24f63fe52281a18
