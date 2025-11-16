@@ -1551,6 +1551,9 @@
         "enableAutomaticAgeoff": {
           "type": "boolean"
         },
+        "enableAutomaticAgeoffCleanup": {
+          "type": "boolean"
+        },
         "backup": {
           "type": "object",
           "allOf": [
