@@ -1803,7 +1803,7 @@ images:
     plugin-shortcut: plugin-shortcut:20251115T0021-unstable@sha256:4e7fa0eb40504ec0a981b6e14b61d4fcb3d0dd3dc0e5dd9eec241c81ed4fb46d
     plugin-tika: plugin-tika:20251115T0029-unstable@sha256:314f316da16c5cb3ce8c18e4b79487d754a302f015af2f664195ad8f139c0e69
     plugin-unbox: plugin-unbox:20251115T0018-unstable@sha256:c62da5019b8003bf0873a090f9930efaa20a60fc8a47012cbac771ae23c37279
-    plugin-virustotal: plugin-virustotal:20251115T0011-unstable@sha256:d8c18e3e74923fd4951fbbee2ba10793e705085afd250cb89be03f850a82a2fa
+    plugin-virustotal: plugin-virustotal:20251118T0304-unstable@sha256:ba893f5c83e5c351dbfbc144e5a5cad9f463a8560c77cf060890d4ab1f098222
     stats: stats:20251115T0005-unstable@sha256:596e5631f0c91e46c91da6b2ad4984090073701f2f16677150ffe789cbedc4ba
     nsrl-lookup-server: nsrl-lookup-server:20251115T0005-unstable@sha256:72537e9f9590dee7f89e4c66d663e248cb251ae78d4520f12057f32c98e651cd
     plugin-suricata: plugin-suricata:20251115T0025-unstable@sha256:3ed4756ea97857d249accc31aa6cee313fc8c6644ee9846169ea32469ab7b893
