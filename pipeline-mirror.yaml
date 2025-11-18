@@ -1,0 +1,24 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: AppTest Debian
+  demands: Agent.OS -equals Linux
+
+resources:
+  repositories:
+    - repository: PipelineTemplates
+      type: git
+      name: CyberLab-Services/pipeline-templates
+      trigger: none
+      ref: refs/heads/main
+
+stages:
+  - stage: Mirror
+    jobs:
+      - template: v2/jobs/mirror-main-branch-from-github.yaml@PipelineTemplates
+        parameters:
+          github_repo_resource_alias: "self"
+          azure_repo_name: "azul-app"
