@@ -1809,7 +1809,7 @@ images:
     plugin-suricata: plugin-suricata:20251118T0601-unstable@sha256:71659a73b5688088e3b8f04b65177cd9229974466a088afa77452556704c4b62
     scaler: scaler:20251118T0544-unstable@sha256:ae9149f2211cdfb2409105ac86c8f49dcb2ebc61d56398ca5745c4aa7cc1f68a
     plugin-debloat: plugin-debloat:20251118T0604-unstable@sha256:edd69ccc441fd31d09e9055b6902f11afa316ac0475866a1faa3d58864202d1a
-    plugin-yara: plugin-yara:20251118T0318-unstable@sha256:babc83fefc4023c1da45fb06ed51f45f1806f44103fdfa1f015ad68fcac58a0b
+    plugin-yara: plugin-yara:20251118T0608-unstable@sha256:c647200b139e3a57da7be1d05b44ddc462d6108635a5b37c89e529a0aa510e99
     plugin-portex: plugin-portex:20251118T0606-unstable@sha256:d7e0976b8f02bbb9806176d187aa5250fd97846e58c2574687b330102b3a9efb
     plugin-truncated: plugin-truncated:20251118T0605-unstable@sha256:e0fd7636d39b38507292b08467b8c74b0c7e755b49857a707f7f6c66d2dcafa5
     plugin-certificates: plugin-certificates:20251118T0608-unstable@sha256:83332acb0efd24879eb15f2a1b2b4546c4de03d7771a96ea8404f008c56bdfd0
