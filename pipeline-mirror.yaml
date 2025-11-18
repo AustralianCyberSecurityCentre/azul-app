@@ -3,6 +3,8 @@ trigger:
     include:
       - main
 
+# nothing
+
 pool:
   name: AppTest Debian
   demands: Agent.OS -equals Linux
