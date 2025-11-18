@@ -1806,7 +1806,7 @@ images:
     plugin-virustotal: plugin-virustotal:20251118T0554-unstable@sha256:7d836101473059934e6cd32d51d440f4e5b1fedfc602d9824ba51cbe96613e3e
     stats: stats:20251118T0541-unstable@sha256:315d7e9269829e6ae1b113f97266543f4483ea44004b210ed99d7a8e408f234b
     nsrl-lookup-server: nsrl-lookup-server:20251118T0546-unstable@sha256:d7e7be7e441b95d29dcd6c0d6e9a1a11ea45480b09abf2a6bbe12b893b890202
-    plugin-suricata: plugin-suricata:20251118T0310-unstable@sha256:f18d50651e7c9b0042a6eb139322a28209dcaf7d531b7794b7f9c5906547688d
+    plugin-suricata: plugin-suricata:20251118T0601-unstable@sha256:71659a73b5688088e3b8f04b65177cd9229974466a088afa77452556704c4b62
     scaler: scaler:20251118T0544-unstable@sha256:ae9149f2211cdfb2409105ac86c8f49dcb2ebc61d56398ca5745c4aa7cc1f68a
     plugin-debloat: plugin-debloat:20251118T0604-unstable@sha256:edd69ccc441fd31d09e9055b6902f11afa316ac0475866a1faa3d58864202d1a
     plugin-yara: plugin-yara:20251118T0318-unstable@sha256:babc83fefc4023c1da45fb06ed51f45f1806f44103fdfa1f015ad68fcac58a0b
