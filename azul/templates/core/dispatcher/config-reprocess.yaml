@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: dispatcher-reprocess
 data:
-  DP.LOG_LEVEL: "{{ .Values.migration.kafka.logLevel }}"
+  BED.LOG_LEVEL: "{{ .Values.migration.kafka.logLevel }}"
   # previous prefix
   # make sure it is different to current prefix in .external.kafka.topicPrefix
   DP.EVENTS.REPROCESS.PREVIOUS_PREFIX: "{{ .Values.migration.kafka.previousTopicPrefix }}"

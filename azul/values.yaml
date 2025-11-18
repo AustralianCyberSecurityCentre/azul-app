@@ -473,6 +473,9 @@ recovery:
   externalS3Secure: "true"
   # Automatically age-off events and streams that are older than the retention of the source they are backing
   enableAutomaticAgeoff: false
+  # Cleanup the automatic ageoff policy if enableAutomaticAgeoff is false,
+  # this is configurable in case the check breaks S3.
+  enableAutomaticAgeoffCleanup: true
   # backup unique identifier
   # If this label is changed, a full backup will be started into a new set of buckets.
   # Bucket names are `<recovery.bucketNamePrefix><recovery.label>-(streams|events)`.
@@ -704,6 +707,10 @@ dispatcher:
         env:
           # allow deletion of s3 items - for data purging operations
           DP.STREAMS.API_ALLOW_DELETE: "true"
+          # S3 stream specific settings that enable automatic age-off of old files in S3.
+          # DP.STREAMS.S3.ENABLE_AUTOMATIC_AGEOFF: "true"
+          # DP.STREAMS.S3.ENABLE_AUTOMATIC_AGEOFF_CLEANUP: "true"
+
     # Dispatcher instances dedicated to processing plugin related content.
     plugin:
       events:
@@ -745,6 +752,9 @@ dispatcher:
           DP.STREAMS.CACHE.SHARDS: 32
           # no plugin should be deleting from s3
           DP.STREAMS.API_ALLOW_DELETE: "false"
+          # S3 stream specific settings that enable automatic age-off of old files in S3.
+          # DP.STREAMS.S3.ENABLE_AUTOMATIC_AGEOFF: "true"
+          # DP.STREAMS.S3.ENABLE_AUTOMATIC_AGEOFF_CLEANUP: "true"
 
 # find processing tasks that were lost and generate event errors
 lostTasks:

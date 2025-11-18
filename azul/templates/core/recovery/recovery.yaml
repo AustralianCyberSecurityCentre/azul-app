@@ -46,4 +46,5 @@ data:
 
   # Enable automatic deletion of data that is older than what the source would keep.
   BK.ENABLE_AUTOMATIC_AGEOFF: "{{ toString .Values.recovery.enableAutomaticAgeoff }}"
+  BK.ENABLE_AUTOMATIC_AGEOFF_CLEANUP: "{{ toString .Values.recovery.enableAutomaticAgeoffCleanup }}"
   
