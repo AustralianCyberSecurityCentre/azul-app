@@ -1812,7 +1812,7 @@ images:
     plugin-yara: plugin-yara:20251118T0652-unstable@sha256:99c25b75ee6f8ad5cf5d24e4e135e9a0cc2f2173c0eaf5c41701eb530c94c06b
     plugin-portex: plugin-portex:20251118T0656-unstable@sha256:0ecd5f385e341a9143a438f45d0fd397feb61451f379cf80c169af4997ce7144
     plugin-truncated: plugin-truncated:20251118T0655-unstable@sha256:4bf55e4513dfa17030ada6137c08b63eb0eaa80ac59bf81a92732987c0fd349f
-    plugin-certificates: plugin-certificates:20251118T0608-unstable@sha256:83332acb0efd24879eb15f2a1b2b4546c4de03d7771a96ea8404f008c56bdfd0
+    plugin-certificates: plugin-certificates:20251118T0703-unstable@sha256:627232fc8aa80b3efda4be211457c2c146b3fba0efeab8fc9469195ed9cd1692
     plugin-qrcode: plugin-qrcode:20251118T0653-unstable@sha256:8f17bc8902fc4b4a6c07ddaa6f6b397610cc807feec678e83311a07e26cdd59f
     smart-string-filter: smart-string-filter:20251118T0554-unstable@sha256:ce7f97520579e9b703cc8d37bcec7636030561c27cd866e16e7208dd0f74e89d
     plugin-ghidra: plugin-ghidra:20251118T0605-unstable@sha256:59693caaf6783261a549b23a68568be70179c41c9c0a21d2f690c70386a71576
