@@ -730,28 +730,68 @@ spec:
 # --------------------------- Loki Policies ---------------------------
 # Enabled via Loki helm chart
 # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
-{{ if not (has "allow-all-to-loki" .Values.disableNetworkPolicies) }}
+{{ if not (has "allow-ingress-loki" .Values.disableNetworkPolicies) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-all-to-loki
+  name: allow-ingress-loki
 spec:
-  podSelector:
-    matchLabels:
-      app.kubernetes.io/name: loki
-  policyTypes:
-    - Ingress
   ingress:
-      # Allow traffic from everything to loki (as apps are in different namespaces)
-      - ports:
+    - ports:
         - protocol: TCP
           port: 3100
         {{- if .Values.istioEnabled }}
         - port: 15008
         {{- end }}
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+  policyTypes:
+    - Ingress
 ---
 {{ end }}
-
+{{ if not (has "allow-egress-loki-alertmanager" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-loki-alertmanager
+spec:
+  egress:
+    - ports:
+        - port: 9093
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: backend
+      app.kubernetes.io/name: loki
+  policyTypes:
+    - Egress
+---
+{{ end }}
+{{ if not (has "allow-egress-loki-chunk-cache" .Values.disableNetworkPolicies) }}
+# Allow loki's chunk cache to egress back to loki
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-loki-chunk-cache
+spec:
+  egress:
+    - ports:
+        - port: 3100
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+  podSelector:
+    matchLabels:
+      name: memcached-chunks-cache
+  policyTypes:
+    - Egress
+---
+{{ end }}
 # --------------------------- Prometheus Blackbox Exporter Policies ---------------------------
 {{ if not (has "allow-ingress-blackbox-exporter" .Values.disableNetworkPolicies) }}
 apiVersion: networking.k8s.io/v1
@@ -846,22 +886,6 @@ spec:
 {{- end }}
 # Loki policies (istio only)
 {{- if .Values.istioEnabled }}
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-egress-loki-alertmanager
-spec:
-  egress:
-    - ports:
-        - port: 15008
-          protocol: TCP
-  podSelector:
-    matchLabels:
-      app.kubernetes.io/component: backend
-      app.kubernetes.io/name: loki
-  policyTypes:
-    - Egress
----
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -878,21 +902,6 @@ spec:
     when:
     - key: destination.port
       values: ["9093"]
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-ingress-loki
-spec:
-  ingress:
-    - ports:
-        - port: 15008
-          protocol: TCP
-  podSelector:
-    matchLabels:
-      app.kubernetes.io/name: loki
-  policyTypes:
-    - Ingress
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
