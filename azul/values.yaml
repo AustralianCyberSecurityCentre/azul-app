@@ -1734,7 +1734,7 @@ plugins:
           - name: XDG_CACHE_HOME
             value: /var/cache/fontconfig
       qrcode: {}
-      python-decompiler: {}
+      python: {}
       repeated-bytes:
         tmp: "1Gi"
       richid: {}
@@ -1795,7 +1795,7 @@ images:
     plugin-nsrl: plugin-nsrl:20251118T0704-unstable@sha256:c84be7900cd40679c0b0fff55ae629ca597b46f2decb1dd4234b8935becd097c
     plugin-office: plugin-office:20251118T0714-unstable@sha256:9ac7eef722dd577d898124c3ecd5cc539678f7a66cedbcc2146af54194cae3b2
     plugin-pdftools: plugin-pdftools:20251118T0707-unstable@sha256:9c4ee3c6d68ed271073d83abd3043e30bcb3505ce569636eb78010ce847ddfde
-    plugin-python-decompiler: plugin-python-decompiler:20251118T0717-unstable@sha256:0c761514b702c85d0b17ab446defaccdc8cf0395dfaf94573a5c6630d3bbceb0
+    plugin-python: plugin-python-decompiler:20251118T0717-unstable@sha256:0c761514b702c85d0b17ab446defaccdc8cf0395dfaf94573a5c6630d3bbceb0
     plugin-repeated-bytes: plugin-repeated-bytes:20251118T0709-unstable@sha256:ba84f08589e1d5a92176a6136233c32eb7453bffbb46905bd66c429cd857dd02
     plugin-retrohunt: plugin-retrohunt:20251118T0718-unstable@sha256:ae48a32aa9b74ec3df5a82c4e05c93a58c7f3f98a06ee1f6b7f69e7e8e16a004
     plugin-richid: plugin-richid:20251118T0714-unstable@sha256:0dc19dec05560abd73b6fd96e76f51db09e026dc729d473636c9db17c9067246
