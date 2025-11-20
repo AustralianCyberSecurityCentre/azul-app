@@ -25,7 +25,7 @@ tolerations: []
 affinity: {}
 
 # Pip config applied to plugins that perform pip or uv based installations at runtime. (optional)
-pipconfig:
+pipconfig: null
 
 # K8s storage class name to use for all PVCs
 storageClassName: "default"
