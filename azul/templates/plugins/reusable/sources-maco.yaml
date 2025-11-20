@@ -119,9 +119,9 @@ spec:
           subPath: pip.conf
         {{- end }}
         {{- if $root.CACertificateConfigMap }}
-          - mountPath: /etc/ssl/certs/ca-certificates.crt
-            name: ca-cert
-            subPath: ca.crt
+        - mountPath: /etc/ssl/certs/ca-certificates.crt
+          name: ca-cert
+          subPath: ca.crt
         {{- end }}
       {{- include "plugin.container.source.loop" (dict "root" $ "source" $source ) | nindent 6 }}
       volumes:
