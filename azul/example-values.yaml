@@ -4,6 +4,12 @@ namespace:
 
 networkPolicy: true
 
+# Pip config applied to plugins that perform pip or uv based installations at runtime. (optional)
+pipconfig: |
+  [global]
+  timeout = 240
+  no-cache-dir = no
+
 # List any of the existing network policies by name that shouldn't be created.
 # This is useful for replacing policies or if there is a policy that isn't applicable to your environment.
 disableNetworkPolicies:

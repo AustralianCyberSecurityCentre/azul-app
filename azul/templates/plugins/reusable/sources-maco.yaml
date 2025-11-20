@@ -107,6 +107,11 @@ spec:
         - name: plugin-gitconfig
           mountPath: /home/azul/.gitconfig
           subPath: .gitconfig
+        {{- if $root.pipconfig }}
+        - name: plugin-pipconfig
+          mountPath: /etc/pip.conf
+          subPath: pip.conf
+        {{- end }}
       {{- include "plugin.container.source.loop" (dict "root" $ "source" $source ) | nindent 6 }}
       volumes:
       - name: tmp
@@ -122,6 +127,11 @@ spec:
       - name: plugin-gitconfig
         configMap:
           name: plugin-gitconfig
+      {{- if $root.pipconfig }}
+      - name: plugin-pipconfig
+        configMap:
+          name: plugin-pipconfig
+      {{- end }}
       {{- if $source.secretSSH}}
       - name: ssh
         secret:
