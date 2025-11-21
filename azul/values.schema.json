@@ -1359,6 +1359,9 @@
         "sendInterval": {
           "type": "number"
         },
+        "client_timeout": {
+          "type": "number"
+        },
         "headers": {
           "type": "object",
           "additionalProperties": {

@@ -336,6 +336,8 @@ auditForwarder:
     system: "Azul"
   # send to destination every x seconds
   sendInterval: 5
+  # Timeout for the http client that get logs from loki and forwards to the audit server.
+  client_timeout: 30.0
 
 # The apiServices key is used to define various stateless pods
 # that provide specific functionalities within the Kubernetes cluster.
