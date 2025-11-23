@@ -743,13 +743,50 @@ spec:
         {{- if .Values.istioEnabled }}
         - port: 15008
         {{- end }}
+  # Allow egress to two caches (results and chunks)
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: loki
   podSelector:
     matchLabels:
       app.kubernetes.io/name: loki
   policyTypes:
     - Ingress
+    - Egress
+---
+{{- if .Values.istioEnabled }}
+# Allow any ingress to cache
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-loki-result-cache
+spec:
+  action: ALLOW
+  selector:
+  podSelector:
+    matchLabels:
+      name: memcached-results-cache
+  rules:
+  - to: {}
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-loki-chunk-cache
+spec:
+  action: ALLOW
+  selector:
+  podSelector:
+    matchLabels:
+      name: memcached-chunks-cache
+  rules:
+  - to: {}
 ---
 {{ end }}
+{{ end }}
+
 {{ if not (has "allow-egress-loki-alertmanager" .Values.disableNetworkPolicies) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
