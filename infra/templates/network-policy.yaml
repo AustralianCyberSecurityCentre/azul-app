@@ -768,7 +768,7 @@ spec:
     matchLabels:
       name: memcached-results-cache
   rules:
-  - to: {}
+  - {}
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
@@ -780,7 +780,7 @@ spec:
     matchLabels:
       name: memcached-chunks-cache
   rules:
-  - to: {}
+  - {}
 ---
 {{ end }}
 {{ end }}
