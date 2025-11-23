@@ -765,7 +765,6 @@ metadata:
 spec:
   action: ALLOW
   selector:
-  podSelector:
     matchLabels:
       name: memcached-results-cache
   rules:
@@ -778,7 +777,6 @@ metadata:
 spec:
   action: ALLOW
   selector:
-  podSelector:
     matchLabels:
       name: memcached-chunks-cache
   rules:
