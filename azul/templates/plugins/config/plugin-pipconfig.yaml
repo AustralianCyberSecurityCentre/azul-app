@@ -1,0 +1,9 @@
+{{- if .Values.pipconfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: plugin-pipconfig
+data:
+  pip.conf: |
+    {{- .Values.pipconfig  | nindent 4 }}
+{{- end }}

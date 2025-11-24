@@ -24,6 +24,9 @@ tolerations: []
 # K8s node and pod affinity/anti-affinity definitions to apply to Azul.
 affinity: {}
 
+# Pip config applied to plugins that perform pip or uv based installations at runtime. (optional)
+pipconfig: null
+
 # K8s storage class name to use for all PVCs
 storageClassName: "default"
 

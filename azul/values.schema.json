@@ -91,6 +91,9 @@
       },
       "additionalProperties": false
     },
+    "pipconfig": {
+      "type": ["string", "null"]
+    },
     "storageClassName": {
       "type": "string"
     },

@@ -95,6 +95,12 @@ spec:
           value: /code/dest/{{ $source.path | default "" }}
         - name: PLUGIN_DEPLOYMENT_KEY
           value: "{{ $plugin }}"
+        {{- if $root.CACertificateConfigMap }}
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/certs/ca-certificates.crt
+        - name: REQUESTS_CA_BUNDLE
+          value: /etc/ssl/certs/ca-certificates.crt
+        {{- end }}
         volumeMounts:
         - name: tmp
           mountPath: /tmp/
@@ -107,6 +113,16 @@ spec:
         - name: plugin-gitconfig
           mountPath: /home/azul/.gitconfig
           subPath: .gitconfig
+        {{- if $root.pipconfig }}
+        - name: plugin-pipconfig
+          mountPath: /etc/pip.conf
+          subPath: pip.conf
+        {{- end }}
+        {{- if $root.CACertificateConfigMap }}
+        - mountPath: /etc/ssl/certs/ca-certificates.crt
+          name: ca-cert
+          subPath: ca.crt
+        {{- end }}
       {{- include "plugin.container.source.loop" (dict "root" $ "source" $source ) | nindent 6 }}
       volumes:
       - name: tmp
@@ -122,6 +138,16 @@ spec:
       - name: plugin-gitconfig
         configMap:
           name: plugin-gitconfig
+      {{- if $root.pipconfig }}
+      - name: plugin-pipconfig
+        configMap:
+          name: plugin-pipconfig
+      {{- end }}
+      {{- if $root.CACertificateConfigMap }}
+      - name: ca-cert
+        configMap:
+          name: {{ $root.CACertificateConfigMap }}
+      {{- end }}
       {{- if $source.secretSSH}}
       - name: ssh
         secret:

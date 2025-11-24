@@ -39,13 +39,14 @@ spec:
             value: /etc/ssl/certs/ca-certificates.crt
           {{- end }}
         ports:
-        - containerPort: 80
+        - containerPort: 8855
         livenessProbe:
           httpGet:
             path: /healthz
             port: 8855
           initialDelaySeconds: 3
           periodSeconds: 5
+          timeoutSeconds: 5
         resources:
           requests:
             memory: "512Mi"
