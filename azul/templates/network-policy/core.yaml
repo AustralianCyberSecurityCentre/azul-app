@@ -321,7 +321,12 @@ spec:
     matchLabels:
       allow-ingress-audit-forwarder-health: "true"
   rules:
-  - {}
+  - to:
+    - operation:
+        ports: ["8855"]
+    when:
+    - key: destination.port
+      values: ["8855"]
 ---
 {{ end }}
 {{ end }}
