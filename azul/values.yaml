@@ -1773,7 +1773,7 @@ images:
     docs: docs:20251122T0000-unstable@sha256:54b85da6800bd871ef1b587c6e8c7aef5afedaa6a412201f14a2336f18521780
     restapi-server: restapi-server:20251122T0047-unstable@sha256:8212fd334b4162e9571e55e68d448d5de4d0e87cd854681b5b5a0666b18206ed
     webui: webui:20251120T2110-unstable@sha256:565c7554daf71c26788ab9db7cd75761f70ae1d5a24f870a5e1b042558f05475
-    plugin-alphabets: plugin-alphabets:20251125T0012-unstable@sha256:b830589c08fba8705f0674a91cc082460a76ab693c420489e9c194e9478a98da
+    plugin-alphabets: plugin-alphabets:20251125T0415-unstable@sha256:5d86c0c4513638809d33195e1d873f0e1425c8fd5067ba578b07cc750702a4c1
     plugin-android-parser: plugin-android-parser:20251122T0024-unstable@sha256:a395db642e6cc7dd766f5ce7f0fa8790a0c1b0e5cbf4e67a47d38bdb4518724d
     plugin-assemblyline: plugin-assemblyline:20251122T0034-unstable@sha256:b92ffc3568db29f2d1b5e908351399b2853706aed6a3fce16eb210e336880794
     plugin-build-time-strings: plugin-build-time-strings:20251122T0025-unstable@sha256:3ac38335ec0aec4ca27f94bae2807fccc44c78ef5481e780856951ca8169682e
