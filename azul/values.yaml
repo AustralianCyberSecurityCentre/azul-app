@@ -1800,7 +1800,7 @@ images:
     plugin-js-deobf: plugin-js-deobf:20251126T2301-unstable@sha256:13ce6683355d8faf1957f8c02cfeb560cd2ec1a23611bb3ef7cd8cd7289c7214
     plugin-lief: plugin-lief:20251126T2307-unstable@sha256:127ca94bd26c9bd824b7c35ac13d613a12a7736e76596f01f678b83a28fc21f9
     plugin-lookback: plugin-lookback:20251122T0032-unstable@sha256:da7b2905178e86897e1ef3a0737920e79792aae28f93c3cc800941068414189b
-    plugin-malcarve: plugin-malcarve:20251122T0028-unstable@sha256:d415fcd77ef3b51ac88cab764ae7e19a597354b5150a0be9970049599a69d640
+    plugin-malcarve: plugin-malcarve:20251126T2302-unstable@sha256:9ddff5bb9d3bfdce44d6f5e5e9ee4a1370013e9c8124a4c6b677e775b7f31148
     plugin-netinfo: plugin-netinfo:20251126T2303-unstable@sha256:4d1587a88517fe02cf85e90bcca11d3fbd9b658ae8d7395ed8094897f4475826
     plugin-nsrl: plugin-nsrl:20251126T2303-unstable@sha256:e0fe79d8ba9740b416a1845b7395b80bbabba03e3dfd317596511ffa701faa80
     plugin-office: plugin-office:20251126T2304-unstable@sha256:3b7eda08e4c4ec2c7c66683d73a9cb431a8d4dd459daf775e03976fe90e9512b
