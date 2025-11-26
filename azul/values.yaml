@@ -775,9 +775,14 @@ lostTasks:
       cpu: "100m"
 
 # Migrations to new versions of Azul
+# Copies all of the existing kafka messages from one set of topics to a new one.
 migration:
   # Configuration for migrating Prefixless topics to prefixed topics.
   kafka:
+    # While reprocess is enabled plugins will not process anything.
+    # This is to prevent plugins reprocess events that already have results.
+    # Once reprocessing is finished plugins will skip their processing queues.
+    # This means any incomplete work before the reprocess will be skipped.
     enabled: false
     previousTopicPrefix: "default00"
     # setting this to true means you are migrating from a pre-6.0.0 topic in json format
