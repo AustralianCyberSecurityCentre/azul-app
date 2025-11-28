@@ -4,7 +4,6 @@
   imagePullPolicy: {{ .root.Values.images.pullPolicy }}
   # container not fully hardened due to need to edit /etc/passwd for ssh
   securityContext:
-    fsGroup: 21000
     runAsUser: 21000
     runAsGroup: 21000
     allowPrivilegeEscalation: false
