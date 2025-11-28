@@ -170,7 +170,7 @@ spec:
       target:
         type: Utilization
         averageUtilization: {{ .Values.restapi.averageUtilization | default .Values.coreHPA.averageUtilization }}
-{{- if .Values.restapi.pdb.enable }}
+{{- if .Values.restapi.pdb.enabled }}
 {{- if (lt $raMinReplicas 2) }}
 {{- fail "restapi needs more than one replica when running with a poddisruptionbudget"}}
 {{- end }}

@@ -101,7 +101,7 @@ spec:
             items:
             - key: config.json
               path: config.json
-{{- if .Values.web.hpa.enable }}
+{{- if .Values.web.hpa.enabled }}
 {{- if (lt .Values.web.replicas 2) }}
 {{- fail "web pod needs multiple replicas to enable poddisruptionbudgets" }}
 {{- end }}
