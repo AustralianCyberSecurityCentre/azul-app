@@ -663,7 +663,7 @@ web:
     # web UI, and information for the schema can be spotted via the "debug" tab.
     binary_external_links: []
   replicas: 2
-  pdb:
+  hpa:
     enabled: true
     minAvailable: 1
 
@@ -692,7 +692,7 @@ dispatcher:
       events:
         replicas: 1
         # requires >1 replica
-        pdb:
+        hpa:
           enabled: false
           minAvailable: 1
         resources:
@@ -711,7 +711,7 @@ dispatcher:
       streams:
         replicas: 1
         # requires >1 replica
-        pdb:
+        hpa:
           enabled: false
           minAvailable: 1
         resources:
@@ -733,7 +733,7 @@ dispatcher:
       events:
         replicas: 1
         # requires >1 replica
-        pdb:
+        hpa:
           enabled: false
           minAvailable: 1
         resources:
@@ -757,7 +757,7 @@ dispatcher:
       streams:
         replicas: 1
         # requires >1 replica
-        pdb:
+        hpa:
           enabled: false
           minAvailable: 1
         resources:
@@ -911,7 +911,7 @@ restapi:
   minReplicas: 1
   maxReplicas: 4
   # requires >1 replica
-  pdb:
+  hpa:
     enabled: false
     minAvailable: 1
   resources:
