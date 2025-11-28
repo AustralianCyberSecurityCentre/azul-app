@@ -102,7 +102,7 @@ spec:
             - key: config.json
               path: config.json
 {{- if .Values.web.pdb.enabled }}
-{{- if (lt .Values.web.replicas 2) }}
+{{- if (lt (int .Values.web.replicas) 2) }}
 {{- fail "web pod needs multiple replicas to enable poddisruptionbudgets" }}
 {{- end }}
 ---
@@ -111,7 +111,7 @@ kind: PodDisruptionBudget
 metadata:
   name: webui-pdb
 spec:
-  minAvailable: {{ .Values.web.hpa.minAvailable }}
+  minAvailable: {{ .Values.web.pdb.minAvailable }}
   selector:
     matchLabels:
       app: {{ .name }}

@@ -150,8 +150,8 @@ spec:
         requests:
           storage: {{ .Values.restapi.purgePvcSize }}
 ---
-{{- $raMinReplicas = .Values.restapi.minReplicas | default .Values.coreHPA.minReplicas }}
-{{- $raMaxReplicas = .Values.restapi.maxReplicas | default .Values.coreHPA.maxReplicas }}
+{{- $raMinReplicas := .Values.restapi.minReplicas | default .Values.coreHPA.minReplicas }}
+{{- $raMaxReplicas := .Values.restapi.maxReplicas | default .Values.coreHPA.maxReplicas }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -171,7 +171,7 @@ spec:
         type: Utilization
         averageUtilization: {{ .Values.restapi.averageUtilization | default .Values.coreHPA.averageUtilization }}
 {{- if .Values.restapi.pdb.enabled }}
-{{- if (lt $raMinReplicas 2) }}
+{{- if (lt (int $raMinReplicas) 2) }}
 {{- fail "restapi needs more than one replica when running with a poddisruptionbudget"}}
 {{- end }}
 ---

@@ -1,6 +1,6 @@
 {{- define "dispatcher.pdb" }}
 {{- if .config.pdb.enabled }}
-{{- if (lt .config.replicas 2) }}
+{{- if (lt (int .config.replicas) 2) }}
 {{- fail (printf "poddisruptionbudgets require at least 2 replicas for dispatcher instance: %s" .name) }}
 {{- end }}
 ---
