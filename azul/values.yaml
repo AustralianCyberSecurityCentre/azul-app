@@ -664,7 +664,7 @@ web:
     binary_external_links: []
   replicas: 2
   pdb:
-    enable: true
+    enabled: true
     minAvailable: 1
 
 # Message and event coordinator.
@@ -693,7 +693,7 @@ dispatcher:
         replicas: 1
         # requires >1 replica
         pdb:
-          enable: false
+          enabled: false
           minAvailable: 1
         resources:
           requests:
@@ -712,7 +712,7 @@ dispatcher:
         replicas: 1
         # requires >1 replica
         pdb:
-          enable: false
+          enabled: false
           minAvailable: 1
         resources:
           requests:
@@ -734,7 +734,7 @@ dispatcher:
         replicas: 1
         # requires >1 replica
         pdb:
-          enable: false
+          enabled: false
           minAvailable: 1
         resources:
           requests:
@@ -758,7 +758,7 @@ dispatcher:
         replicas: 1
         # requires >1 replica
         pdb:
-          enable: false
+          enabled: false
           minAvailable: 1
         resources:
           requests:
@@ -912,7 +912,7 @@ restapi:
   maxReplicas: 4
   # requires >1 replica
   pdb:
-    enable: false
+    enabled: false
     minAvailable: 1
   resources:
     requests:
