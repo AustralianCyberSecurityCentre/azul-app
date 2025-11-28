@@ -114,7 +114,7 @@ spec:
   minAvailable: {{ .Values.web.pdb.minAvailable }}
   selector:
     matchLabels:
-      app: {{ .name }}
+      app: webui
 {{- end }}
 ---
 apiVersion: v1
