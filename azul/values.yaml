@@ -663,7 +663,7 @@ web:
     # web UI, and information for the schema can be spotted via the "debug" tab.
     binary_external_links: []
   replicas: 2
-  hpa:
+  pdb:
     enable: true
     minAvailable: 1
 
