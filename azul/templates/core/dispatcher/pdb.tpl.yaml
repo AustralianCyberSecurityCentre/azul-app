@@ -9,7 +9,7 @@ kind: PodDisruptionBudget
 metadata:
   name: {{ .name }}-pdb
 spec:
-  minAvailable: {{ .minAvailable }}
+  minAvailable: {{ .config.pdb.minAvailable }}
   selector:
     matchLabels:
       app: {{ .name }}
