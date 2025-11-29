@@ -1806,7 +1806,7 @@ images:
     plugin-office: plugin-office:20251126T2331-unstable@sha256:4966a68afedff1290cd0b90ae9e3f95580991068377602121071a3070d82fd70
     plugin-pdftools: plugin-pdftools:20251129T0018-unstable@sha256:fe1ef09282dfae0af28aa6df9e89b8a626ac740291a0c3c7e286cd02c46336f0
     plugin-python: plugin-python:20251126T2323-unstable@sha256:693824a30f192ff77f25e2ec9f8aa90f9aa366c2f620898d29b1196c0fe5f678
-    plugin-repeated-bytes: plugin-repeated-bytes:20251126T2330-unstable@sha256:105fbb67182904451cd25b8d62c473aca8569a9ec9a56986d56fe2ecc9cd8218
+    plugin-repeated-bytes: plugin-repeated-bytes:20251129T0018-unstable@sha256:8ea84a3e3647bac44c3c5bc6ff3a8711fb5da39913a7097b42efd73b484a8729
     plugin-retrohunt: plugin-retrohunt:20251129T0011-unstable@sha256:110976c336365a112495a209efd5721e66a343da22fe3b1d6d84d2486c0e77b6
     plugin-richid: plugin-richid:20251129T0018-unstable@sha256:6e6e98029b8e3e3fcb7446a1f76599e034b9c3ea1f6df96dbb59983f435b970c
     plugin-script-decoder: plugin-script-decoder:20251126T2334-unstable@sha256:917e9f8775191a24b516bbf4702be3a027333dbdef1c450e97930362e8701fbc
