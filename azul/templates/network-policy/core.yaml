@@ -71,7 +71,7 @@ spec:
       {{- end }}
       from:
         - namespaceSelector: {}
-        - podSelector:
+          podSelector:
             matchLabels:
               app.kubernetes.io/name: prometheus
 ---
@@ -464,5 +464,32 @@ spec:
       values: ["8851"]
 ---
 {{ end }}
+{{ end }}
+
+{{ if not (has "allow-ingress-smart-string-finder-metrics" .Values.disableNetworkPolicies) }}
+# --------------------------- Smart String Finder Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-smart-string-finder-metrics
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-smart-string-finder: "true"
+  ingress:
+    - ports:
+      - port: 8851
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+      from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+  policyTypes:
+    - Ingress
+---
 {{ end }}
 {{ end }}
