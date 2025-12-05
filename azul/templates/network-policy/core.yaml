@@ -50,6 +50,32 @@ spec:
 ---
 {{ end }}
 {{ end }}
+# Dispatcher metrics ingress
+{{ if not (has "allow-ingress-dispatcher-metrics" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-dispatcher-metrics
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-dispatcher: "true"
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 8111
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+      from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+---
+{{ end }}
 {{ if not (has "allow-egress-s3" .Values.disableNetworkPolicies) }}
 # Policy that allows connection to the S3 store.
 apiVersion: networking.k8s.io/v1
@@ -438,5 +464,32 @@ spec:
       values: ["8851"]
 ---
 {{ end }}
+{{ end }}
+
+{{ if not (has "allow-ingress-smart-string-finder-metrics" .Values.disableNetworkPolicies) }}
+# --------------------------- Smart String Finder Policies ---------------------------
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-smart-string-finder-metrics
+spec:
+  podSelector:
+    matchLabels:
+      allow-ingress-smart-string-finder: "true"
+  ingress:
+    - ports:
+      - port: 8851
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+      from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+  policyTypes:
+    - Ingress
+---
 {{ end }}
 {{ end }}

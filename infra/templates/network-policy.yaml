@@ -129,7 +129,30 @@ spec:
     - key: destination.port
       values: ["9090", "9091", "8443", "9092", "9093", "9094"]
 ---
-
+{{ end }}
+{{ if not (has "allow-ingress-kafka-metrics" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-kafka-metrics
+spec:
+  podSelector:
+    matchLabels:
+      strimzi.io/cluster: azul-kafka
+      strimzi.io/kind: Kafka
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 9404
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+      from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
 {{ end }}
 # --------------------------- Minio Policies ---------------------------
 # Minio ingress policy for API and HTTP interfaces.

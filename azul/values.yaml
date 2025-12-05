@@ -1091,7 +1091,7 @@ plugins:
           # Allow egress to Assemblyline for pulling in files.
           allow-egress-https-http: "true"
         promMetricsEnabled: true
-        promPort: "8852"
+        promPort: "8850"
         ingress:
           name: assemblyline
           serviceName: plugin-assemblyline-receiver
