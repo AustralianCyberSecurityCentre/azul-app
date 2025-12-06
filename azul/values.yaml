@@ -1815,7 +1815,7 @@ images:
     plugin-entropy: plugin-entropy:20251206T0011-unstable@sha256:27f833d684255d7072a452ca61dca19327e4f67ab45eec1aa5278315fca10eab
     plugin-entrypointcheck: plugin-entrypointcheck:20251206T0027-unstable@sha256:b3fc3f5b66c35aceb80daaa7035e8b59949c0d86c7cc1cd0ecc00137570c86c3
     plugin-exiftool: plugin-exiftool:20251205T0030-unstable@sha256:e4bb31eda4832f114f31a580e050863d6117a1f4b61428eea18c2b0b725172b6
-    plugin-export-hashes: plugin-export-hashes:20251205T0042-unstable@sha256:6e09f17121c40ab2616e56c89e6533f717ec09d36052fe2f25576d54d5747f68
+    plugin-export-hashes: plugin-export-hashes:20251206T0026-unstable@sha256:adc9fbbccf23249974f444cee399f1c30943191560cccd8b7f6b922bef1a000e
     plugin-maco: plugin-maco:20251205T0030-unstable@sha256:d8288681b5a340d40184c2c68367d2911c16f2de300525fd8621a38acfd66d81
     plugin-floss: plugin-floss:20251206T0021-unstable@sha256:1eb7a4d627d2acd29a0387638246d057af1c63b2f0832153edd1beea58406f81
     plugin-goinfo: plugin-goinfo:20251206T0011-unstable@sha256:ef438ba075ec670e5002abb6aed48b8674f5ea14c967dfa01c136c38cbb14e0f
