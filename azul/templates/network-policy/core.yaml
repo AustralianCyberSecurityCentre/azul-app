@@ -169,10 +169,10 @@ spec:
     {{- if .Values.istioEnabled }}
     - port: 15008 
     {{ end }}
-  from:
-    - podSelector:
-        matchLabels:
-          allow-egress-redis: "true"
+    from:
+      - podSelector:
+          matchLabels:
+            allow-egress-redis: "true"
 ---
 {{- if .Values.istioEnabled }}
 apiVersion: security.istio.io/v1
