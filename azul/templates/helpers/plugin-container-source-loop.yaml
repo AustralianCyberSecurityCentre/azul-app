@@ -37,7 +37,7 @@
   - name: GITSYNC_LINK
     value: dest
   - name: GITSYNC_ONE_TIME
-    value: "false"
+    value: "{{ .gitsync_one_time | default "false" }}"
   - name: GITSYNC_DEPTH
     value: "1"
   - name: GITSYNC_SUBMODULES
