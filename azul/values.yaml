@@ -329,9 +329,10 @@ monitoring:
 # the audit forwarder will forward azul restapi logs to a remote service
 auditForwarder:
   enabled: false
-  # destination server such as https://my-audit-server.internal/audit/feed/7
   # set to 'LOG_ONLY' to log to stdout (for testing)
   audit_send_logs_to: "LOG_ONLY"
+  # destination server such as https://my-audit-server.internal/audit/feed/7
+  # server_target_endpoint: ""
   # optional proxy to use to contact destination
   proxy: ""
   # additional static http headers to send through
