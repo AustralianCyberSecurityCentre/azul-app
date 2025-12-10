@@ -1389,7 +1389,10 @@
         "enabled": {
           "type": "boolean"
         },
-        "destination": {
+        "send_logs_to": {
+          "type": "string"
+        },
+        "server_target_endpoint": {
           "type": "string"
         },
         "proxy": {
@@ -1400,6 +1403,24 @@
         },
         "client_timeout": {
           "type": "number"
+        },
+        "cloudwatch_log_group": {
+          "type": "string"
+        },
+        "cloudwatch_log_stream": {
+          "type": "string"
+        },
+        "cloudwatch_region": {
+          "type": "string"
+        },
+        "cloudwatch_aws_access_key_id": {
+          "type": "string"
+        },
+        "cloudwatch_aws_secret_access_key": {
+          "type": "string"
+        },
+        "custom_aws_endpoint": {
+          "type": "string"
         },
         "headers": {
           "type": "object",

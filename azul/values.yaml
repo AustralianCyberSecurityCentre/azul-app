@@ -329,16 +329,17 @@ monitoring:
 # the audit forwarder will forward azul restapi logs to a remote service
 auditForwarder:
   enabled: false
-  # destination server such as https://my-audit-server.internal/audit/feed/7
   # set to 'LOG_ONLY' to log to stdout (for testing)
-  destination: "LOG_ONLY"
+  send_logs_to: "LOG_ONLY"
+  # destination server such as https://my-audit-server.internal/audit/feed/7
+  # server_target_endpoint: ""
   # optional proxy to use to contact destination
   proxy: ""
   # additional static http headers to send through
   headers:
     system: "Azul"
   # send to destination every x seconds
-  sendInterval: 5
+  sendInterval: 30
   # Timeout for the http client that get logs from loki and forwards to the audit server.
   client_timeout: 30.0
 
@@ -1784,7 +1785,15 @@ plugins:
         tmp: "1Gi"
       unbox:
         maxFileSize: "1000000000" # 1gb
-        tmp: "2Gi"
+        tmp: "4Gi"
+        resources:
+          requests:
+            memory: "4Gi"
+          limits:
+            memory: "8Gi"
+        config:
+          # should handle larger files than most plugins to try and extract them.
+          PLUGIN_FILTER_MAX_CONTENT_SIZE: "4GiB"
 
 # Container registry image names
 images:
