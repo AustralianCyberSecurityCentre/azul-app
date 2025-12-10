@@ -80,6 +80,15 @@ spec:
           mountPath: "/usr/share/nginx/html/dist/browser/assets/config.json"
           subPath: "config.json"
           readOnly: true
+      {{- if .Values.web.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range .Values.web.topologySpreadConstraints }}
+        - labelSelector:
+            matchLabels:
+              app: web
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
       volumes:
         - name: tmp
           emptyDir:

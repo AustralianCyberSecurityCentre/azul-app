@@ -663,6 +663,7 @@ web:
     # web UI, and information for the schema can be spotted via the "debug" tab.
     binary_external_links: []
   replicas: 2
+  #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
   pdb:
     enabled: true
     minAvailable: 1
@@ -692,6 +693,7 @@ dispatcher:
       events:
         replicas: 1
         # requires >1 replica
+        #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
         pdb:
           enabled: false
           minAvailable: 1
@@ -711,6 +713,7 @@ dispatcher:
       streams:
         replicas: 1
         # requires >1 replica
+        #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
         pdb:
           enabled: false
           minAvailable: 1
@@ -733,6 +736,7 @@ dispatcher:
       events:
         replicas: 1
         # requires >1 replica
+        #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
         pdb:
           enabled: false
           minAvailable: 1
@@ -757,6 +761,7 @@ dispatcher:
       streams:
         replicas: 1
         # requires >1 replica
+        #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
         pdb:
           enabled: false
           minAvailable: 1
@@ -911,6 +916,7 @@ restapi:
   minReplicas: 1
   maxReplicas: 4
   # requires >1 replica
+  #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
   pdb:
     enabled: false
     minAvailable: 1
