@@ -7,11 +7,18 @@ data:
   audit_loki_host: "{{ .Values.external.loki.endpoint  | required "audit requires loki endpoint" }}"
   audit_azul_namespace: "{{ .Release.Namespace }}"
 
-  audit_target_endpoint: "{{ .Values.auditForwarder.destination  | required "audit destination is required" }}"
+  audit_send_logs_to: "{{ .Values.auditForwarder.audit_send_logs_to  | required "audit destination type is required" }}"
+  audit_server_target_endpoint: "{{ .Values.auditForwarder.destination }}"
   audit_target_proxy: "{{ .Values.auditForwarder.proxy }}"
   audit_static_headers: |-
     {{- .Values.auditForwarder.headers | mustToJson | nindent 4 }}
 
+  audit_cloudwatch_log_group: "{{ .Values.auditForwarder.cloudwatch_log_group }}"
+  audit_cloudwatch_log_stream: "{{ .Values.auditForwarder.cloudwatch_log_stream }}"
+  audit_cloudwatch_region: "{{ .Values.auditForwarder.cloudwatch_region }}"
+  audit_cloudwatch_aws_access_key_id: "{{ .Values.auditForwarder.cloudwatch_aws_access_key_id }}"
+  audit_cloudwatch_aws_secret_access_key: "{{ .Values.auditForwarder.cloudwatch_aws_secret_access_key }}"
+  audit_custom_aws_endpoint: "{{ .Values.auditForwarder.custom_aws_endpoint }}"
   audit_send_interval: "{{ .Values.auditForwarder.sendInterval }}"
   audit_last_sent_file: "/state/last_sent.txt"
   audit_http_client_timeout_seconds: "{{ .Values.auditForwarder.client_timeout }}"
