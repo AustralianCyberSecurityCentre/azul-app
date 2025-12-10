@@ -1373,7 +1373,10 @@
         "enabled": {
           "type": "boolean"
         },
-        "destination": {
+        "send_logs_to": {
+          "type": "string"
+        },
+        "server_target_endpoint": {
           "type": "string"
         },
         "proxy": {

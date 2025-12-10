@@ -7,8 +7,8 @@ data:
   audit_loki_host: "{{ .Values.external.loki.endpoint  | required "audit requires loki endpoint" }}"
   audit_azul_namespace: "{{ .Release.Namespace }}"
 
-  audit_send_logs_to: "{{ .Values.auditForwarder.audit_send_logs_to  | required "audit destination type is required" }}"
-  audit_server_target_endpoint: "{{ .Values.auditForwarder.destination }}"
+  audit_send_logs_to: "{{ .Values.auditForwarder.send_logs_to  | required "audit destination type is required" }}"
+  audit_server_target_endpoint: "{{ .Values.auditForwarder.server_target_endpoint }}"
   audit_target_proxy: "{{ .Values.auditForwarder.proxy }}"
   audit_static_headers: |-
     {{- .Values.auditForwarder.headers | mustToJson | nindent 4 }}

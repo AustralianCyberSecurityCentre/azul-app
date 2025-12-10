@@ -330,7 +330,7 @@ monitoring:
 auditForwarder:
   enabled: false
   # set to 'LOG_ONLY' to log to stdout (for testing)
-  audit_send_logs_to: "LOG_ONLY"
+  send_logs_to: "LOG_ONLY"
   # destination server such as https://my-audit-server.internal/audit/feed/7
   # server_target_endpoint: ""
   # optional proxy to use to contact destination
