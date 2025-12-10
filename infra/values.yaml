@@ -187,6 +187,11 @@ opensearch:
   # Dashboards user credential secret - this should match with internalUsers kibanaserver
   dashboardCredentialsSecret: azul-cluster-dashboardcredentials
 
+  # topologySpreadConstraints: # Optional (label selectors are pre-defined) e.g:
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: ScheduleAnyway
+
   additionalCerts: {}
 
   ingress:
@@ -730,6 +735,11 @@ kafka:
     # should probably be 1/2 of the ram
     -Xms: 2g
     -Xmx: 2g
+
+  # topologySpreadConstraints: # Optional (label selectors are pre-defined) e.g:
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: ScheduleAnyway
 
   # Helper pod to enable debugging in-cluster
   kafkactl:

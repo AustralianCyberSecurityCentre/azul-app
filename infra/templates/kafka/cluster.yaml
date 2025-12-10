@@ -34,6 +34,15 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.kafka.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range .Values.kafka.topologySpreadConstraints }}
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: kafka
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
       metadata:
         annotations:
           prometheus.io/port: "9404"
