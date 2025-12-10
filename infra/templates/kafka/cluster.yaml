@@ -68,6 +68,15 @@ spec:
   kafka:
     version: {{ .Values.kafka.version }}
     metadataVersion: {{ .Values.kafka.metadataVersion }}
+    {{- if .Values.kafka.rackTopologyOverride }}
+    rack:
+      topologyKey: {{ .Values.kafka.rackTopologyOverride }}
+    {{- else if .Values.kafka.topologySpreadConstraints }}
+    {{- with (first .Values.kafka.topologySpreadConstraints) }}
+    rack:
+      topologyKey: {{ .topologyKey }}
+    {{- end }}
+    {{- end }}
     listeners:
       - name: plain
         port: 9092
