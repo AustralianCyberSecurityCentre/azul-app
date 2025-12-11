@@ -24,6 +24,8 @@ spec:
         section: core
         component: stats
         allow-egress-anything: "true"
+        # Explicit or else won't allow ingress to occur.
+        allow-egress-redis: "true"
         allow-ingress-prometheus-scrape: "true"
       annotations:
         prometheus.io/scrape: "true"
