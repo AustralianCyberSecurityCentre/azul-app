@@ -1810,7 +1810,7 @@ images:
     dispatcher: dispatcher:20251206T0017-unstable@sha256:c50c92ac1a9d7471aa69a1036980aa4d7b730be61edf59e6c32dc820533fe803
     docs: docs:20251206T0001-unstable@sha256:e99259cc5efd53b8837eed2a679ff033e8b1b87483ceadb2bc6606c6116004a6
     restapi-server: restapi-server:20251211T0031-unstable@sha256:e0671d7ad569674d50117101b88f7988c11a3ace0fe60d4717e98243d02c3bc1
-    webui: webui:20251210T0411-unstable@sha256:cb4d9acad3f3fd5ea7dc9b6911dfd6b1fa31fdb7e08518861f06441bb4b17a76
+    webui: webui:20251211T0153-unstable@sha256:0a23a7504af5dfda440061459603acc5aba20cd594b11c16c85f368b9e513193
     plugin-alphabets: plugin-alphabets:20251208T2247-unstable@sha256:55427957ad3a9760b8c743f50115c22a051d6c9638abfea8f158b9eb8cf9b5cd
     plugin-android-parser: plugin-android-parser:20251208T2238-unstable@sha256:db2256ff5b7535d3198981ac063ce4e3554575490096873001010c751c43e50b
     plugin-assemblyline: plugin-assemblyline:20251208T2245-unstable@sha256:687aa9df7f2b538bdca1ac948a521cc5fb3a77d172036f31d4ad1b263400d11d
