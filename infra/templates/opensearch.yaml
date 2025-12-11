@@ -259,7 +259,6 @@ spec:
   nodePools:
     - component: nodes
       replicas: {{ .Values.opensearch.general.replicas }}
-      
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -274,7 +273,7 @@ spec:
         - labelSelector:
             matchLabels:
               opster.io/opensearch-nodepool: nodes
-          {{- . | toYaml | nindent 12 }}
+          {{- . | toYaml | nindent 10 }}
         {{- end }}
       {{- end }}
       {{- with .Values.tolerations }}
