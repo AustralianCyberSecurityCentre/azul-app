@@ -664,6 +664,7 @@ web:
     # web UI, and information for the schema can be spotted via the "debug" tab.
     binary_external_links: []
   replicas: 2
+  #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
   pdb:
     enabled: true
     minAvailable: 1
@@ -693,6 +694,7 @@ dispatcher:
       events:
         replicas: 1
         # requires >1 replica
+        #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
         pdb:
           enabled: false
           minAvailable: 1
@@ -712,6 +714,7 @@ dispatcher:
       streams:
         replicas: 1
         # requires >1 replica
+        #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
         pdb:
           enabled: false
           minAvailable: 1
@@ -734,6 +737,7 @@ dispatcher:
       events:
         replicas: 1
         # requires >1 replica
+        #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
         pdb:
           enabled: false
           minAvailable: 1
@@ -758,6 +762,7 @@ dispatcher:
       streams:
         replicas: 1
         # requires >1 replica
+        #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
         pdb:
           enabled: false
           minAvailable: 1
@@ -912,6 +917,7 @@ restapi:
   minReplicas: 1
   maxReplicas: 4
   # requires >1 replica
+  #topologySpreadConstraints: # Optional (labelSelector is pre-definied)
   pdb:
     enabled: false
     minAvailable: 1
@@ -1798,8 +1804,8 @@ images:
     tika_external: docker.io/apache/tika:3.2.3.0-full@sha256:21d8052de04e491ccf66e8680ade4da6f3d453a56d59f740b4167e54167219b7
     alloy: docker.io/grafana/alloy:v1.11.2@sha256:6ab34b8201f0e8b0c4346be4934c9965723af3f7f21dd9a65fd73f270f69b451
     # Pod to scrape kafka consumer lag statistics from Kafka.
-    burrow: ghcr.io/linkedin/burrow/burrow:v1.9.4@sha256:3a0bb0b5087bf01d7fdb4513bf84e42147235875fe355ca0cfa35aa46ce2ce02
-    redis: docker.io/redis:8.2.2-bookworm@sha256:f0957bcaa75fd58a9a1847c1f07caf370579196259d69ac07f2e27b5b389b021
+    burrow: ghcr.io/linkedin/burrow/burrow:v1.9.5@sha256:670c59255a339e14e241ca2d8f80085628d9295e6a46102b4730ace820e51952
+    redis: docker.io/redis:8.4.0-bookworm@sha256:3906b477e4b60250660573105110c28bfce93b01243eab37610a484daebceb04
   # custom registry to retrieve 'custom' images from (prepended)
   customRegistry: docker.io/asdazul/
   # images that form part of an azul release

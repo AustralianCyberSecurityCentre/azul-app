@@ -116,6 +116,16 @@ spec:
           - name: logs
             mountPath: "/logs"
       {{- end }}
+      {{- if .config.topologySpreadConstraints }}
+      {{- $name := .name }}
+      topologySpreadConstraints:
+        {{- range .config.topologySpreadConstraints }}
+        - labelSelector:
+            matchLabels:
+              app: {{ $name }}
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
       volumes:
       - name: tmp
         emptyDir:

@@ -541,6 +541,14 @@
           "type": "integer",
           "minimum": 1
         },
+        "topologySpreadConstraints": {
+          "type": "array",
+          "allOf": [
+            {
+              "$ref": "#/definitions/topologySpreadConstraints"
+            }
+          ]
+        },
         "pdb": {
           "type": "object",
           "allOf": [
@@ -882,6 +890,14 @@
         },
         "resources": {
           "type": "object"
+        },
+        "topologySpreadConstraints": {
+          "type": "array",
+          "allOf": [
+            {
+              "$ref": "#/definitions/topologySpreadConstraints"
+            }
+          ]
         },
         "pdb": {
           "type": "object",
@@ -1818,6 +1834,72 @@
       },
       "else": {}
     },
+    "labelSelector": {
+      "type": "object",
+      "properties": {    
+        "matchExpressions": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "operator":{
+              "type": "string",
+              "enum": ["In", "NotIn", "Exists", "DoesNotExist"]
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "description": "If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.",
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "matchLabels":{
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "topologySpreadConstraints": {
+      "type": "array",
+      "items":  {
+        "type": "object",
+        "properties": {
+          "matchLabelKeys": {
+            "type": "array",
+            "items": {
+              "description": "Set of pod label keys to select pods over which spreading will be calculated",
+              "type": "string"
+            }
+          },
+          "maxSkew": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minDomains":{
+            "type": "integer"
+          },
+          "nodeAffinityPolicy": {
+            "type": "string"
+          },
+          "nodeTaintsPolicy": {
+            "type": "string"
+          },
+          "topologyKey": {
+            "type": "string"
+          },
+          "whenUnsatisfiable": {
+            "type": "string",
+            "enum": ["DoNotSchedule", "ScheduleAnyway"]
+          }
+        },
+        "additionalProperties": false
+      }
+
+    },
     "securityLabel": {
       "description": "A human readable security marking.",
       "type": "string",
@@ -1934,6 +2016,14 @@
         "replicas": {
           "type": "integer",
           "minimum": 0
+        },
+        "topologySpreadConstraints": {
+          "type": "array",
+          "allOf": [
+            {
+              "$ref": "#/definitions/topologySpreadConstraints"
+            }
+          ]
         },
         "pdb": {
           "type": "object",

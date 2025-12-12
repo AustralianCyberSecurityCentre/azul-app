@@ -88,6 +88,13 @@ external:
     virustotal: httpx://viruslocal.com
 
 web:
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
+    - maxSkew: 2
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
   config:
     banner_message: The system will be going down for patching at 00:00 UTC.
     banner_severity: info
@@ -417,4 +424,25 @@ plugins:
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
+
+# TopologySpreadConstraints check
+dispatcher:
+  config:
+    metastore:
+      events:
+        topologySpreadConstraints:
+          - maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+      streams:
+        topologySpreadConstraints:
+          - maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: ScheduleAnyway
+
+restapi:
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: topology.kubernetes.io/zone
+      whenUnsatisfiable: ScheduleAnyway
 
