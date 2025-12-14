@@ -169,6 +169,27 @@ spec:
           podSelector:
             matchLabels:
               app.kubernetes.io/name: prometheus
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-kafka-metrics
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      strimzi.io/cluster: azul-kafka
+      strimzi.io/kind: Kafka
+  rules:
+  - to:
+    - operation:
+        ports: ["9404"]
+    when:
+    - key: destination.port
+      values: ["9404"]
+---
+{{ end }}
 {{ end }}
 # --------------------------- Minio Policies ---------------------------
 # Minio ingress policy for API and HTTP interfaces.
