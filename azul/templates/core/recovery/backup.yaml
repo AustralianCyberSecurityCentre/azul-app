@@ -63,8 +63,6 @@ spec:
         {{- .Values.recovery.backup.resources | toYaml | nindent 10 }}
         {{- end }}
         command:
-          - "/bin/sh"
-          - "-c"
           - /go/bin/backup backup
         envFrom:
           - configMapRef:
