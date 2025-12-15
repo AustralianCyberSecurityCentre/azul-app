@@ -491,20 +491,20 @@ recovery:
   backup:
     resources:
       requests:
-        memory: "4Gi"
+        memory: "8Gi"
         cpu: "1"
       limits:
-        memory: "8Gi"
+        memory: "16Gi"
         cpu: "1"
   # generally you'd want restore to have more 'capacity' than backup as you run it in emergencies,
   # however it'll mostly be limited by performance of dispatcher
   restore:
     resources:
       requests:
-        memory: "4Gi"
+        memory: "8Gi"
         cpu: "1"
       limits:
-        memory: "4Gi"
+        memory: "16Gi"
         cpu: "1"
 
 # Configuration of the Azul documentation container.
