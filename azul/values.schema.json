@@ -536,9 +536,29 @@
             "unauthorized_help"
           ],
           "additionalProperties": false
+        },
+        "replicas": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "topologySpreadConstraints": {
+          "type": "array",
+          "allOf": [
+            {
+              "$ref": "#/definitions/topologySpreadConstraints"
+            }
+          ]
+        },
+        "pdb": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/podDisruptionBudget"
+            }
+          ]
         }
       },
-      "required": ["config"]
+      "required": ["config", "replicas", "pdb"]
     },
     "dispatcher": {
       "type": "object",
@@ -870,6 +890,22 @@
         },
         "resources": {
           "type": "object"
+        },
+        "topologySpreadConstraints": {
+          "type": "array",
+          "allOf": [
+            {
+              "$ref": "#/definitions/topologySpreadConstraints"
+            }
+          ]
+        },
+        "pdb": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/podDisruptionBudget"
+            }
+          ]
         }
       },
       "allOf": [
@@ -1353,7 +1389,10 @@
         "enabled": {
           "type": "boolean"
         },
-        "destination": {
+        "send_logs_to": {
+          "type": "string"
+        },
+        "server_target_endpoint": {
           "type": "string"
         },
         "proxy": {
@@ -1364,6 +1403,24 @@
         },
         "client_timeout": {
           "type": "number"
+        },
+        "cloudwatch_log_group": {
+          "type": "string"
+        },
+        "cloudwatch_log_stream": {
+          "type": "string"
+        },
+        "cloudwatch_region": {
+          "type": "string"
+        },
+        "cloudwatch_aws_access_key_id": {
+          "type": "string"
+        },
+        "cloudwatch_aws_secret_access_key": {
+          "type": "string"
+        },
+        "custom_aws_endpoint": {
+          "type": "string"
         },
         "headers": {
           "type": "object",
@@ -1751,6 +1808,98 @@
       },
       "else": {}
     },
+    "podDisruptionBudget": {
+      "description": "A PodDisruptionBudget manager for a particular resource.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "minAvailable": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["enabled"],
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": ["minAvailable"]
+      },
+      "else": {}
+    },
+    "labelSelector": {
+      "type": "object",
+      "properties": {    
+        "matchExpressions": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "operator":{
+              "type": "string",
+              "enum": ["In", "NotIn", "Exists", "DoesNotExist"]
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "description": "If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.",
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "matchLabels":{
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "topologySpreadConstraints": {
+      "type": "array",
+      "items":  {
+        "type": "object",
+        "properties": {
+          "matchLabelKeys": {
+            "type": "array",
+            "items": {
+              "description": "Set of pod label keys to select pods over which spreading will be calculated",
+              "type": "string"
+            }
+          },
+          "maxSkew": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minDomains":{
+            "type": "integer"
+          },
+          "nodeAffinityPolicy": {
+            "type": "string"
+          },
+          "nodeTaintsPolicy": {
+            "type": "string"
+          },
+          "topologyKey": {
+            "type": "string"
+          },
+          "whenUnsatisfiable": {
+            "type": "string",
+            "enum": ["DoNotSchedule", "ScheduleAnyway"]
+          }
+        },
+        "additionalProperties": false
+      }
+
+    },
     "securityLabel": {
       "description": "A human readable security marking.",
       "type": "string",
@@ -1867,6 +2016,22 @@
         "replicas": {
           "type": "integer",
           "minimum": 0
+        },
+        "topologySpreadConstraints": {
+          "type": "array",
+          "allOf": [
+            {
+              "$ref": "#/definitions/topologySpreadConstraints"
+            }
+          ]
+        },
+        "pdb": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/podDisruptionBudget"
+            }
+          ]
         },
         "resources": {
           "$ref": "#/definitions/resources"

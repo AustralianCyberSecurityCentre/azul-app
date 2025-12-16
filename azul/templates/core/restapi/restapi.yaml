@@ -117,6 +117,15 @@ spec:
           - name: alloy-data
             mountPath: /data/alloy
       {{- end }}
+      {{- if .Values.restapi.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range .Values.restapi.topologySpreadConstraints }}
+        - labelSelector:
+            matchLabels:
+              app: restapi
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
       volumes:
       - name: tmp
         emptyDir:
@@ -150,6 +159,8 @@ spec:
         requests:
           storage: {{ .Values.restapi.purgePvcSize }}
 ---
+{{- $raMinReplicas := .Values.restapi.minReplicas | default .Values.coreHPA.minReplicas }}
+{{- $raMaxReplicas := .Values.restapi.maxReplicas | default .Values.coreHPA.maxReplicas }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -159,8 +170,8 @@ spec:
     apiVersion: apps/v1
     kind: StatefulSet
     name: restapi
-  minReplicas: {{ .Values.restapi.minReplicas | default .Values.coreHPA.minReplicas }}
-  maxReplicas: {{ .Values.restapi.maxReplicas | default .Values.coreHPA.maxReplicas }}
+  minReplicas: {{ $raMinReplicas }}
+  maxReplicas: {{ $raMaxReplicas }}
   metrics:
   - type: Resource
     resource:
@@ -168,6 +179,21 @@ spec:
       target:
         type: Utilization
         averageUtilization: {{ .Values.restapi.averageUtilization | default .Values.coreHPA.averageUtilization }}
+{{- if .Values.restapi.pdb.enabled }}
+{{- if (lt (int $raMinReplicas) 2) }}
+{{- fail "restapi needs more than one replica when running with a poddisruptionbudget"}}
+{{- end }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: restapi-pdb
+spec:
+  minAvailable: {{ .Values.restapi.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app: restapi
+{{- end }}
 ---
 apiVersion: v1
 kind: Service

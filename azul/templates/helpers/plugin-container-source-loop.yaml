@@ -1,10 +1,9 @@
 {{- define "plugin.container.source.loop" -}}
-- name: git-sync
+- name: {{ if eq (.gitsync_one_time | default "false" ) "true" }}git-sync{{ else }}git-sync-init{{ end }}
   image: {{ get .root.Values.images.external "git-sync" | required (printf "missing image for git-sync") }}
   imagePullPolicy: {{ .root.Values.images.pullPolicy }}
   # container not fully hardened due to need to edit /etc/passwd for ssh
   securityContext:
-    fsGroup: 21000
     runAsUser: 21000
     runAsGroup: 21000
     allowPrivilegeEscalation: false
@@ -38,7 +37,7 @@
   - name: GITSYNC_LINK
     value: dest
   - name: GITSYNC_ONE_TIME
-    value: "false"
+    value: "{{ .gitsync_one_time | default "false" }}"
   - name: GITSYNC_DEPTH
     value: "1"
   - name: GITSYNC_SUBMODULES

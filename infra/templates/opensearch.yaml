@@ -259,7 +259,6 @@ spec:
   nodePools:
     - component: nodes
       replicas: {{ .Values.opensearch.general.replicas }}
-      
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -267,6 +266,15 @@ spec:
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.opensearch.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range .Values.opensearch.topologySpreadConstraints }}
+        - labelSelector:
+            matchLabels:
+              opster.io/opensearch-nodepool: nodes
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:

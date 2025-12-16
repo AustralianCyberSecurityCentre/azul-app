@@ -97,6 +97,9 @@ spec:
           mountPath: /home/azul/.gitconfig
           subPath: .gitconfig
       {{- include "plugin.container.source.loop" (dict "root" $ "source" $source ) | nindent 6 }}
+      # Init container to ensure git repo is present before the pod tries to startup.
+      initContainers:
+      {{- include "plugin.container.source.loop" (dict "root" $ "source" $source "gitsync_one_time" "true" ) | nindent 6 }}
       volumes:
       - name: tmp
         emptyDir:

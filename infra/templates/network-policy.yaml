@@ -44,6 +44,22 @@ spec:
 ---
 {{ end }}
 
+{{ if not (has "allow-egress-kafka-entity-operator" .Values.disableNetworkPolicies) }}
+# Kafka entity operator
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-kafka-entity-operator
+spec:
+  podSelector:
+    matchLabels:
+      strimzi.io/cluster: "azul-kafka"
+  policyTypes:
+    - Egress
+  egress:
+    - {}
+{{- end }}
+
 {{- if .Values.istioEnabled }}
 # Default deny for Istio policy
 apiVersion: security.istio.io/v1
@@ -129,7 +145,51 @@ spec:
     - key: destination.port
       values: ["9090", "9091", "8443", "9092", "9093", "9094"]
 ---
-
+{{ end }}
+{{ if not (has "allow-ingress-kafka-metrics" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-kafka-metrics
+spec:
+  podSelector:
+    matchLabels:
+      strimzi.io/cluster: azul-kafka
+      strimzi.io/kind: Kafka
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 9404
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+      from:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-kafka-metrics
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      strimzi.io/cluster: azul-kafka
+      strimzi.io/kind: Kafka
+  rules:
+  - to:
+    - operation:
+        ports: ["9404"]
+    when:
+    - key: destination.port
+      values: ["9404"]
+---
+{{ end }}
 {{ end }}
 # --------------------------- Minio Policies ---------------------------
 # Minio ingress policy for API and HTTP interfaces.

@@ -7,7 +7,7 @@ metadata:
     section: core
     component: frontend
 spec:
-  replicas: 2
+  replicas: {{ .Values.web.replicas }}
   revisionHistoryLimit: 1
   selector:
     matchLabels:
@@ -80,6 +80,15 @@ spec:
           mountPath: "/usr/share/nginx/html/dist/browser/assets/config.json"
           subPath: "config.json"
           readOnly: true
+      {{- if .Values.web.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range .Values.web.topologySpreadConstraints }}
+        - labelSelector:
+            matchLabels:
+              app: web
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
       volumes:
         - name: tmp
           emptyDir:
@@ -101,6 +110,21 @@ spec:
             items:
             - key: config.json
               path: config.json
+{{- if .Values.web.pdb.enabled }}
+{{- if (lt (int .Values.web.replicas) 2) }}
+{{- fail "web pod needs multiple replicas to enable poddisruptionbudgets" }}
+{{- end }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: webui-pdb
+spec:
+  minAvailable: {{ .Values.web.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app: webui
+{{- end }}
 ---
 apiVersion: v1
 kind: Service
