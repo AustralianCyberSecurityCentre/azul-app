@@ -1865,4 +1865,4 @@ images:
     plugin-qrcode: plugin-qrcode:20251215T2341-unstable@sha256:0fdb9498e066d6d53fef19ec84597f80d5e33c39b2097b8d0485fa68b198f3c8
     smart-string-filter: smart-string-filter:20251215T2334-unstable@sha256:ea6fcf1383ac4bb2ef0a0a79a1a7b83bd3ddb9a37cb628db97f08eb2f281a729
     plugin-ghidra: plugin-ghidra:20251215T2342-unstable@sha256:d0ca9a2d619a0b86fd9ff5f883b4908718e641c663d75cdf1353538e792f9cae
-    plugin-report-feeds: dummy
+    # plugin-report-feeds: dummy

@@ -318,7 +318,7 @@ sources:
 plugins:
   report-feeds:
     type: reportFeeds
-    enabled: true
+    enabled: false
     demoConfig: true
     # feedConfig:
     #   - publisher: Microsoft
@@ -445,4 +445,3 @@ restapi:
     - maxSkew: 1
       topologyKey: topology.kubernetes.io/zone
       whenUnsatisfiable: ScheduleAnyway
-
