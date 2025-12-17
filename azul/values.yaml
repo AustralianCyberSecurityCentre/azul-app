@@ -1840,7 +1840,7 @@ images:
     plugin-lief: plugin-lief:20251215T2353-unstable@sha256:7a5b16d2d8454b0c4ec75931f7d9a279179897591fc084124ec79d321db70190
     plugin-lookback: plugin-lookback:20251217T0051-unstable@sha256:2cd5f3c0051a2486c31f8e23374f642ce8ef83732f6973ac2d84da9984df55f6
     plugin-malcarve: plugin-malcarve:20251215T2351-unstable@sha256:01decd09a88ab23d79feaff7712d3d7a67f1da8ebc271eca9934ae0f0f22916e
-    plugin-netinfo: plugin-netinfo:20251215T2342-unstable@sha256:63cb89db41ea313228a533f4a1a5ef2dda8f0f101ba40bd156c7efa71eacbd35
+    plugin-netinfo: plugin-netinfo:20251217T0051-unstable@sha256:39cf7cf0b44f5e3be4a94411423227c84c0c67b7832efd53cedc731db4f67cde
     plugin-nsrl: plugin-nsrl:20251217T0056-unstable@sha256:0b51678d0e60b21414327bdad154f5efc58ab54ef5263c9992a43dde2791fec7
     plugin-office: plugin-office:20251217T0056-unstable@sha256:c307973d59708215dcabd14b63e7ff691dc63694da2df700d7643470bfcfd53a
     plugin-pdftools: plugin-pdftools:20251217T0049-unstable@sha256:879e76f4f785201b21ee95457b01b9bf126fa951d4784f3379b5237d29de6375
