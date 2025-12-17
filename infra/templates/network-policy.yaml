@@ -396,23 +396,6 @@ spec:
     - key: destination.port
       values: ["9200", "9300", "9600", "9650"]
 ---
-apiVersion: security.istio.io/v1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-connect-opensearch-internal-security
-spec:
-  action: ALLOW
-  selector:
-    matchLabels:
-      job-name: azul-opensearch-securityconfig-update
-  rules:
-  - to:
-    - operation:
-        ports: ["9200", "9300", "9600", "9650"]
-    when:
-    - key: destination.port
-      values: ["9200", "9300", "9600", "9650"]
----
 {{ end }}
 {{ end }}
 {{ if not (has "allow-egress-auth-for-opensearch-nodes" .Values.disableNetworkPolicies) }}
