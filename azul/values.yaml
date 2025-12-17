@@ -1839,7 +1839,7 @@ images:
     plugin-js-deobf: plugin-js-deobf:20251215T2343-unstable@sha256:f4125b9c225fbf61ca812e1c774819f72f1a2bd3b08afc66c4bbbffeec893a35
     plugin-lief: plugin-lief:20251217T0105-unstable@sha256:24a04492110d9ced5ee688a3a5560bde3c9929ab960a1cc1319f3c6e6c888dfa
     plugin-lookback: plugin-lookback:20251217T0051-unstable@sha256:2cd5f3c0051a2486c31f8e23374f642ce8ef83732f6973ac2d84da9984df55f6
-    plugin-malcarve: plugin-malcarve:20251215T2351-unstable@sha256:01decd09a88ab23d79feaff7712d3d7a67f1da8ebc271eca9934ae0f0f22916e
+    plugin-malcarve: plugin-malcarve:20251217T0050-unstable@sha256:f7c6d5d8dcd5e5e72b63e2ca1d0e21bc711800e7001b56920698c330baf89036
     plugin-netinfo: plugin-netinfo:20251217T0051-unstable@sha256:39cf7cf0b44f5e3be4a94411423227c84c0c67b7832efd53cedc731db4f67cde
     plugin-nsrl: plugin-nsrl:20251217T0056-unstable@sha256:0b51678d0e60b21414327bdad154f5efc58ab54ef5263c9992a43dde2791fec7
     plugin-office: plugin-office:20251217T0056-unstable@sha256:c307973d59708215dcabd14b63e7ff691dc63694da2df700d7643470bfcfd53a
