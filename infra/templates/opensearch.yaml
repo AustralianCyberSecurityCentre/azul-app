@@ -201,10 +201,9 @@ spec:
       adminCredentialsSecret:
         name: {{ .Values.opensearch.adminCredentialsSecret }}
       updateJob:
-        metadata:
-          labels:
-            # Jobs don't play nice with istio
-            istio.io/dataplane-mode: "none"
+        labels:
+          # Jobs don't play nice with istio
+          istio.io/dataplane-mode: "none"
     tls:
       transport:
         generate: false
