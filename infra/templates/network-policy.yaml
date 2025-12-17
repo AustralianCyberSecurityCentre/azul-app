@@ -397,6 +397,7 @@ spec:
       values: ["9200", "9300", "9600", "9650"]
 ---
 {{ end }}
+{{ end }}
 {{ if not (has "allow-connect-opensearch-security-job" .Values.disableNetworkPolicies) }}
 # allow creation of security policy for opensearch via the opensearch job.
 apiVersion: networking.k8s.io/v1
