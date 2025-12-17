@@ -342,6 +342,9 @@ spec:
       - podSelector:
           matchLabels:
             opster.io/opensearch-cluster: azul-opensearch
+      - podSelector:
+          matchLabels:
+            job-name: azul-opensearch-securityconfig-update
     - ports:
       - port: 9200
         protocol: TCP
@@ -359,6 +362,9 @@ spec:
       - podSelector:
           matchLabels:
             opster.io/opensearch-cluster: azul-opensearch
+      - podSelector:
+          matchLabels:
+            job-name: azul-opensearch-securityconfig-update
     - ports:
       - port: 9200
         protocol: TCP
@@ -391,6 +397,22 @@ spec:
       values: ["9200", "9300", "9600", "9650"]
 ---
 {{ end }}
+{{ end }}
+{{ if not (has "allow-connect-opensearch-security-job" .Values.disableNetworkPolicies) }}
+# allow creation of security policy for opensearch via the opensearch job.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-opensearch-security-job
+spec:
+  podSelector:
+    matchLabels:
+      job-name: azul-opensearch-securityconfig-update
+  policyTypes:
+    - Egress
+  egress:
+    - {}
+---
 {{ end }}
 {{ if not (has "allow-egress-auth-for-opensearch-nodes" .Values.disableNetworkPolicies) }}
 # Allow egress for accessing an OIDC server.
