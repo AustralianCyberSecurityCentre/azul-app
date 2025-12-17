@@ -1814,7 +1814,7 @@ images:
     backup: backup:9.0.0-rc3@sha256:af546f347b2b34ef8e9700b94d2f7c8f0d70c132402457d1ea26e6afae3e034c
     client: client:9.0.0-rc3@sha256:eff9c51e9c12e2a9fd94ccb2024c9c8736b100ee66b66d8742be4fd6ea9fa952
     dispatcher: dispatcher:9.0.0-rc3@sha256:6d4bc2a94e71d904acb1fa4f38e958002ea5b5a15bb297b7df0ef835f1cc1e54
-    docs: docs:9.0.0-rc3@sha256:292e7ce136cb0b6a1eb93699f5a45bb87737fcb0afb46599a85c1299d02d23b7
+    docs: docs:20251217T0245-unstable@sha256:7ba9ee7c528d6df3022997801b4ac45d3f8afcc1531fcc162f9c19410ce07f51
     restapi-server: restapi-server:9.0.0-rc3@sha256:e5c3c33518bd090cf4d827cd9c62955472ac87825e2a09282fd5ff161c00e671
     webui: webui:9.0.0-rc3@sha256:34324f83a9cf0205e444047aa8c5d113c5ec4188ecff62723ebc340943af7807
     plugin-alphabets: plugin-alphabets:9.0.0-rc3@sha256:922cb5fb5aad4b24badc9b7bc95e5c83fad6da02629785432a76a3344af14726
