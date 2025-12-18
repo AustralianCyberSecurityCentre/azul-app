@@ -1835,7 +1835,7 @@ images:
     plugin-floss: plugin-floss:20251218T0218-unstable@sha256:8e40144393f2259183242f0d3674522b23368864231d88ba531183f2eb6b3ec3
     plugin-goinfo: plugin-goinfo:20251217T2243-unstable@sha256:b4447878fd29819a8dd74f0ca46a7fbebb84ccbc0325ecb05d8af9992eb9c4f0
     plugin-image-convert: plugin-image-convert:20251218T0218-unstable@sha256:1ad3aef379e070c20efb3d66b0fdaeb39d9f0fab60b89f38818e803be9503196
-    plugin-index-coincidence: plugin-index-coincidence:20251217T2250-unstable@sha256:d75c2e58e20ce23c82c2db6d37f38d82f6459e62b6c42e9813d1526fac21183d
+    plugin-index-coincidence: plugin-index-coincidence:20251218T0224-unstable@sha256:2d1e72805802e81b214501d6b50db6dcfef5da6685a267353a0ee26e9e3ef9b0
     plugin-js-deobf: plugin-js-deobf:20251217T2248-unstable@sha256:c0cc4a141900a40e44219406acfd68930a9a29cb42f4374297a16ba550b83c9b
     plugin-lief: plugin-lief:20251218T0219-unstable@sha256:b98c014a1721b865e90d7a541b1a2a7c39cb0b2675d8f683db677e7efc8d0bb9
     plugin-lookback: plugin-lookback:20251218T0216-unstable@sha256:9b9f0c1fa42fa4204d7b8ed77d964ccebe0859b2efa201dfb370bc615d50add6
