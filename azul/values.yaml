@@ -1852,7 +1852,7 @@ images:
     plugin-shortcut: plugin-shortcut:20251218T0320-unstable@sha256:cf4ee9c7e4cce97fe6f9eb5ff124883e8fa16017741c992665f3fd44680e2c2b
     plugin-tika: plugin-tika:20251218T0333-unstable@sha256:6a39923d86aec8166537bb77265fdaf79b4f8db49e4176a349f2cb824c567163
     plugin-unbox: plugin-unbox:20251218T0321-unstable@sha256:db5e207923c4db4d3e9806184a09a16a2571add620d5a610cf52609c51657832
-    plugin-virustotal: plugin-virustotal:20251218T0346-unstable@sha256:aa5206d3473b58e1ddf58b00234b34d61945bae836d167410d12cdf8dd2e874a
+    plugin-virustotal: plugin-virustotal:20251220T0013-unstable@sha256:6c911f13555cd7b8c3fa4a529899e161d6ca4555871d681ff6dd72e387e47a2a
     stats: stats:20251220T0006-unstable@sha256:dc981838b0acb683c877dbe2c182d8ad580130b8a3a8c5cb8d30b603b28d2697
     nsrl-lookup-server: nsrl-lookup-server:20251220T0004-unstable@sha256:e25d8aa8cf95110dc295d2fd4370618f7119703de36e21f56008dcf4f591c4e2
     plugin-suricata: plugin-suricata:20251218T0322-unstable@sha256:ae39f4f6c6679c8445b4e6eb20aa63684b0fcef4d000377593cd3dd963f7e314
