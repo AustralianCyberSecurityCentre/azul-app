@@ -1860,7 +1860,7 @@ images:
     plugin-debloat: plugin-debloat:20251220T0019-unstable@sha256:a55965210a24ba7d7c8c682122bd4a563683f3c0cac7e816e4444a04c79d619f
     plugin-yara: plugin-yara:20251220T0019-unstable@sha256:c3dd0e4dd17a5043333c34660c011769ae0ccb3fb989a6b9c265f62b6b210aba
     plugin-portex: plugin-portex:20251220T0023-unstable@sha256:cefa0cfcb374634c790e21b7c200a95ac51226ad03392bc5d30e6d7433e84cf4
-    plugin-truncated: plugin-truncated:20251220T0029-unstable@sha256:722aa05794bcc39c439656066464a18b2467876247c1cddaac1cd2680ca880c0
+    plugin-truncated: plugin-truncated:20251227T0003-unstable@sha256:34c17d1a728c972c6719493808091620e25e627fffb08a4f07e61994fa759172
     plugin-certificates: plugin-certificates:20251220T0027-unstable@sha256:aac5ac58776ff44f3583958e11d478ffc7f5c81c5720bd4e66f8fdd361a1da53
     plugin-qrcode: plugin-qrcode:20251220T0028-unstable@sha256:e4b35944c1d7b27f8c0f688454167a81254f402f5f959b14257cbfe185c92489
     smart-string-filter: smart-string-filter:20251220T0011-unstable@sha256:00223047251bdaddd5c9f07f0aed8d41d5e20bd88091c4e35ffc3402433cb39e
