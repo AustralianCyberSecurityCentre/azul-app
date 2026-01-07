@@ -17,6 +17,7 @@ spec:
         # To allow access to loki in the monitoring namespace
         allow-egress-loki: "true"
         allow-ingress-audit-forwarder-health: "true"
+        allow-egress-https: "true"
       annotations:
         # ensure deployment restarts if config is changed
         checksum/config: {{ include (print $.Template.BasePath "/core/audit/config.yaml") . | sha256sum }}
