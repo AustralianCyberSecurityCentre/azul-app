@@ -26,6 +26,9 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.auditForwarder.serviceAccountName }}
+      serviceAccountName: {{ .Values.auditForwarder.serviceAccountName }}
+      {{- end }}
       {{- include "harden.deployment" . | nindent 6 }}
       containers:
       - name: audit-forwarder
