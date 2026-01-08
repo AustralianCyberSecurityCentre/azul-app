@@ -1410,6 +1410,9 @@
         "cloudwatch_log_stream": {
           "type": "string"
         },
+        "serviceAccountName": {
+          "type": "string"
+        },
         "cloudwatch_region": {
           "type": "string"
         },
