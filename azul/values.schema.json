@@ -1401,6 +1401,9 @@
         "sendInterval": {
           "type": "number"
         },
+        "serviceAccountName": {
+          "type": "string"
+        },
         "client_timeout": {
           "type": "number"
         },
@@ -1408,9 +1411,6 @@
           "type": "string"
         },
         "cloudwatch_log_stream": {
-          "type": "string"
-        },
-        "serviceAccountName": {
           "type": "string"
         },
         "cloudwatch_region": {
