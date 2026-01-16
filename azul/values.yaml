@@ -1011,6 +1011,10 @@ security:
       prefix: "REL:"
       # Always add this group even if it was not manually added.
       origin: ""
+      # Origin alternate name. This is used if user filters all but rel:origin in Azul. If this is the case and an origin_alt_name exists 
+      # the filter label will show the origin_alt_name. Eg: user filters on REL:Australia only and origin_alt_name has a value of AGAO -
+      # AGAO will be the only label shown in the webui security filter. 
+      origin_alt_name: ""
       # names of this specific security label that can be chosen
       options: []
       # - name: REL:APPLE
