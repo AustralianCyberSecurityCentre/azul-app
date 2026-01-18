@@ -1043,6 +1043,9 @@
                 "origin": {
                   "type": "string"
                 },
+                "origin_alt_name": {
+                  "type": "string"
+                },
                 "options": {
                   "type": "array",
                   "items": {
