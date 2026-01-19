@@ -1835,7 +1835,7 @@ images:
     plugin-entrypointcheck: plugin-entrypointcheck:20260119T0557-unstable@sha256:477ef7657d11df1a9a042a3600fa94c2ba441086409044aafae1e5e934c683fd
     plugin-exiftool: plugin-exiftool:20260119T0554-unstable@sha256:06fdcbf2da49bbd97ca69004d777b35c015d9df5b5fedc42e3cd284d808c179a
     plugin-export-hashes: plugin-export-hashes:20260119T0554-unstable@sha256:b763e2d50957c2fcd0e60bfd3b192e62b24d63496f87bf1650c41beec42d8461
-    plugin-maco: plugin-maco:20260110T0033-unstable@sha256:6e5702f35f0975891b205af07979cc66a1db09200b9a1529c3a46ec2c59cc314
+    plugin-maco: plugin-maco:20260119T2333-unstable@sha256:3e9b376c43ba5f33bc1c805d95101d6539898334421c7ae68d87674402ace350
     plugin-floss: plugin-floss:20260114T0552-unstable@sha256:09d498067b9b163d9a5a15aa914f2d099c065a093206039bcaba33d485b5ea38
     plugin-goinfo: plugin-goinfo:20260117T0013-unstable@sha256:9e8cdc7af5e276f64761cc4d46bf652caf729489a5a7939212000f5bcef75533
     plugin-image-convert: plugin-image-convert:20260119T2333-unstable@sha256:a5d2d4dd94c641ad62a2d32cc02689d5e85f2dcf4f3147a7045ba725f913014c
