@@ -1851,7 +1851,7 @@ images:
     plugin-python: plugin-python:20260110T0037-unstable@sha256:a3986404066864498dd40f191f3185c945c684fa5e9241235ce33fd456e96aa1
     plugin-repeated-bytes: plugin-repeated-bytes:20260119T0536-unstable@sha256:65b05993745664dfb8b9286c8544845d481e878c84463e1363ea534b1a1f080c
     plugin-retrohunt: plugin-retrohunt:20260119T0552-unstable@sha256:8d11e4235cea9fe23646d74597a0080066a40e533ed813cf6f6eb9839c25c11c
-    plugin-richid: plugin-richid:20260119T0539-unstable@sha256:6436e70b5800531caafc7cdda59abb4e64bc21ab7393c5252df2966af3c242da
+    plugin-richid: plugin-richid:20260119T0558-unstable@sha256:fb49d5345819feef12f86380980ee2035c7fce80a22577b28d3af25c78f10ff9
     plugin-script-decoder: plugin-script-decoder:20260119T0549-unstable@sha256:38f2c6544dd230fe09101e96e1c288f795f7dff0afec7801eccf2f94cfe44d42
     plugin-shortcut: plugin-shortcut:20260119T0554-unstable@sha256:00a49228788df6c866cd579625170ea829b89940f332977eeba047b716378df4
     plugin-tika: plugin-tika:20260119T0544-unstable@sha256:7e13c52f9121b781fef53fa4a1db5eab293f6497e5825800b2588ee42b6a106f
