@@ -1862,7 +1862,7 @@ images:
     plugin-suricata: plugin-suricata:20260110T0033-unstable@sha256:ff7ab2fd406bef9456c106344c28a387319c8c95d5345d61a14893d8cb681995
     scaler: scaler:20260117T0005-unstable@sha256:88ba790fce33c5785243bccad7e270e60c11a254397ac68f6b655e7ebbb98159
     plugin-debloat: plugin-debloat:20260117T0033-unstable@sha256:1901ca0d12bd0336534c7bc3e98dddf7656271eab270260b21734148bfbbfa46
-    plugin-yara: plugin-yara:20260117T0025-unstable@sha256:846ccd52b18c7033f1d3fc86fa9e6ee01e7e6d96ad40a7a9f5eca33a413f3df2
+    plugin-yara: plugin-yara:20260119T0517-unstable@sha256:118e4b073c95c32af118c93344172dca7aa20d440b929c3d7a446d6644ed5053
     plugin-portex: plugin-portex:20260117T0027-unstable@sha256:f1b44754fc936200d6a80a173e92c6a0866da64ab69ef3a961740bd3cc457a11
     plugin-truncated: plugin-truncated:20260119T0514-unstable@sha256:940b891775ebd56a2626c117621cb3ea6e0743b0b4524cbf634a42486a586dd7
     plugin-certificates: plugin-certificates:20260119T0517-unstable@sha256:5a90bce8293702a690593ce14adeb6eae9ad342a1165ebe45953dcbdcbdf58dc
