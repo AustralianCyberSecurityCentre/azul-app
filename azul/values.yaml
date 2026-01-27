@@ -202,6 +202,14 @@ secrets:
   #    client_secret: <secret-for-the-client-id-for-service-account>
   azulStats: "azul-stats"
 
+  # Report feed credentials for authenticating to certain feed types
+  azulReportFeeds: "azul-report-feeds"
+  # data:
+  # URL encoded stream Id to use from feedly.
+  # feedly_url_encoded_stream_id
+  # Bearer token to authenticate to feedly with.
+  # feedly_bearer_token
+
 # Configuration related to connection to external services.
 # for any deployment, you'll need to override most properties in this section
 external:
@@ -1318,6 +1326,8 @@ plugins:
   # Note - not open-sourced yet.
   # Ingest reports and samples for analysis.
   # Only runs as a cronjob.
+  # NOTE - if the feed your using requires credentials also create the report feeds secret and adjust the reportFeeds
+  # name if required.
   report-feeds:
     type: reportFeeds
     # Note - not open-sourced yet, cannot be enabled.
@@ -1341,6 +1351,12 @@ plugins:
     #     distribution: public
     #     site: "https://www.microsoft.com/security/"
     #     feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
+    #   - publisher: Feedly
+    #     source: reporting
+    #     module: reportcollector.feeds.feedly.JsonFeedly
+    #     distribution: public
+    #     site: "https://api.feedly.com"
+    #     feed_url: https://api.feedly.com/v3/streams/contents
 
   # On demand historic yara rules scanning.
   retrohunt:

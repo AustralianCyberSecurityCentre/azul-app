@@ -318,7 +318,7 @@ sources:
 plugins:
   report-feeds:
     type: reportFeeds
-    enabled: false
+    enabled: true
     demoConfig: true
     # feedConfig:
     #   - publisher: Microsoft
@@ -327,6 +327,12 @@ plugins:
     #     distribution: public
     #     site: "https://www.microsoft.com/security/"
     #     feed_url: "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/feed/"
+    #   - publisher: Feedly
+    #     source: reporting
+    #     module: reportcollector.feeds.feedly.JsonFeedly
+    #     distribution: public
+    #     site: "https://api.feedly.com"
+    #     feed_url: https://api.feedly.com/v3/streams/contents
 
   virustotal:
     # Ensure that virustotal source named "virustotal" is setup.
@@ -445,3 +451,7 @@ restapi:
     - maxSkew: 1
       topologyKey: topology.kubernetes.io/zone
       whenUnsatisfiable: ScheduleAnyway
+
+images:
+  custom:
+    plugin-report-feeds: dummy

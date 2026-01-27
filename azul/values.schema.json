@@ -234,6 +234,9 @@
         },
         "azulStats": {
           "type": "string"
+        },
+        "azulReportFeeds": {
+          "type": "string"
         }
       },
       "required": [
