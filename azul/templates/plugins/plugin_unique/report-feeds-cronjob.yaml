@@ -61,6 +61,18 @@ spec:
                 memory: "3Gi"
                 cpu: "1500m"
             env:
+          - name: REPORT_FEED_FEEDLY_URL_ENCODED_STREAM_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.azulReportFeeds }}
+                key: feedly_url_encoded_stream_id
+                optional: true
+          - name: REPORT_FEED_FEEDLY_BEARER_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.azulReportFeeds }}
+                key: feedly_bearer_token
+                optional: true
             - name: PLUGIN_STATE_DIRECTORY
               value: "/state"
             - name: PLUGIN_PROMETHEUS_PUSH_GATEWAY
