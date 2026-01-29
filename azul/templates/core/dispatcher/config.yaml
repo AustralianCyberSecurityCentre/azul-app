@@ -17,7 +17,7 @@ data:
   DP.EVENTS.GLOBAL_REPLICA_COUNT: "{{ .Values.external.kafka.topicDefaultReplicas }}"
   DP.EVENTS.GLOBAL_PARTITION_COUNT: "{{ .Values.external.kafka.topicDefaultPartitions }}"
   DP.EVENTS.KAFKA.TOPIC_PREFIX: "{{ .Values.external.kafka.topicPrefix }}"
-  DP.EVENTS.KAFKA.CONSUMER_GROUP_RETENTION_DAYS: "{{ .Values.external.kafka.ConsumerGroupRetentionDays }}"
+  DP.EVENTS.KAFKA.CONSUMER_GROUP_RETENTION_DAYS: "{{ .Values.external.kafka.consumerGroupRetentionDays }}"
   DP.STREAMS.BACKEND: "{{ .Values.external.filestore.backend | lower | required "external.filestore.backend not set" }}"
   {{- if eq "s3" (.Values.external.filestore.backend | lower) }}
   DP.STREAMS.S3.ENDPOINT: "{{ .Values.external.filestore.endpoint | required "external.filestore.endpoint not set" }}"
