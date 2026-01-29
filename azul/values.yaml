@@ -256,6 +256,9 @@ external:
     # i.e. azul.default01.system.status, azul.default01.mysource.binary.data
     # This will need to be modified when the event format changes, to transform existing events to new format.
     topicPrefix: "default01"
+    # Number of days to retain a consumer group for (30 by default)
+    # If a plugin is inactive for longer than this duration it will re-process all of it's events through its historic feed.
+    ConsumerGroupRetentionDays: 30
     # default replication factor of Azul's kafka topics
     topicDefaultReplicas: 3
     # default number of partitions (max replicas of dispatcher) for kafka topics
