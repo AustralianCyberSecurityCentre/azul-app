@@ -334,6 +334,10 @@
             "topicPrefix": {
               "type": "string"
             },
+            "consumerGroupRetentionDays": {
+              "type": "integer",
+              "minimum": 1
+            },
             "topicDefaultReplicas": {
               "type": "integer",
               "minimum": 0
@@ -383,6 +387,7 @@
           },
           "required": [
             "endpoint",
+            "consumerGroupRetentionDays",
             "topicDefaultPartitions",
             "topicDefaultReplicas"
           ],
