@@ -1852,7 +1852,7 @@ images:
     plugin-email: plugin-email:20260131T0026-unstable@sha256:93e5c7df59909cb4aeb8615007933eb640edce4b75993353aa2e27bb8f4beb5b
     plugin-entropy: plugin-entropy:20260131T0015-unstable@sha256:adeef9798e72d21c4af970744b51a510bdd1120c87f908c4ec3f2021347b252b
     plugin-entrypointcheck: plugin-entrypointcheck:20260124T0029-unstable@sha256:196e817ed642553abf60051ca7abb3f04442fd338a7d3646e84cfae5818d1f9a
-    plugin-exiftool: plugin-exiftool:20260124T0020-unstable@sha256:49a5eff0706eafe492ba74c81cc6d81a3ea57b11761af434f115f8b6d8e350af
+    plugin-exiftool: plugin-exiftool:20260131T0034-unstable@sha256:dc181926575615717e21c63f8b9d1d420728ce78921250333247e454f8e6189b
     plugin-export-hashes: plugin-export-hashes:20260124T0034-unstable@sha256:08b1c6e9b844b29f505d1ca2103ac71c617558cc25f9bfd909d04de8b995be5e
     plugin-maco: plugin-maco:20260124T0020-unstable@sha256:2158f3f6e78d42fc2da69552cb5e5eadf14e0594b5badfa4b254c67d6adfbfac
     plugin-floss: plugin-floss:20260124T0019-unstable@sha256:2c23ae65e4cc8f1b36860f83bfaac21835ec3f61f08eb1f75c0cc8dbdb075510
