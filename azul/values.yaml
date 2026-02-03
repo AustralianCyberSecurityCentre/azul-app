@@ -1882,7 +1882,7 @@ images:
     scaler: scaler:20260203T0413-unstable@sha256:ff41f3caccdddb31f51d6a31be4aea06e84332dc8b1114ebe7c168d508444f74
     plugin-debloat: plugin-debloat:20260203T2313-unstable@sha256:d92e8a5bedce56848fb52913aecf6f7a60aa1e54e10e6e4a5f5e075f68eaaad3
     plugin-yara: plugin-yara:20260203T2258-unstable@sha256:575320062b77444f679b5302796838a912d758f0155a447e11ad38e29b094ad9
-    plugin-portex: plugin-portex:20260203T2309-unstable@sha256:e27222f1b2f9674c39648d08cbe9b58e0ed341699e2b6379d19d18d6f135ee69
+    plugin-portex: plugin-portex:20260203T2321-unstable@sha256:dab554c7046da782d17dd1d1b06d1123fb65afcf8efb7f7196c3e3c9d98ee2b2
     plugin-truncated: plugin-truncated:20260203T2321-unstable@sha256:f170e378fc39037dd6066c99f3c070f6203595a841336fe91ce952c48e7248f0
     plugin-certificates: plugin-certificates:20260203T2311-unstable@sha256:8f2f60e00d6da1389fb5650f98acd850c237fdbf6725a6caeef5c65d88f53346
     plugin-qrcode: plugin-qrcode:20260203T2304-unstable@sha256:518d49678eb98d81649381a1ba59a532f1adca6c0de443741ec08a47c236d204
