@@ -108,6 +108,7 @@ spec:
           - run
           - /etc/alloy/config.river
           - --storage.path=/data/alloy
+          - --disable-reporting
         volumeMounts:
           - name: {{ .name }}-alloy
             mountPath: /etc/alloy

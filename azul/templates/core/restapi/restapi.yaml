@@ -109,6 +109,7 @@ spec:
           - run
           - /etc/alloy/config.river
           - --storage.path=/data/alloy
+          - --disable-reporting
         volumeMounts:
           - name: restapi-alloy
             mountPath: /etc/alloy
