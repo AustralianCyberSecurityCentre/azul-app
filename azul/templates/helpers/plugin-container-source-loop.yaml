@@ -50,7 +50,7 @@
   - name: GITSYNC_ADD_USER
     value: "true"
   - name: GITSYNC_PERIOD
-    value: "600"
+    value: "600s"
   {{- end }}
   {{- if eq (.source.sslVerify | default true) false }}
   - name: GITSYNC_GIT_CONFIG
