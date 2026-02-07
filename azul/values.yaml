@@ -1862,7 +1862,7 @@ images:
     plugin-js-deobf: plugin-js-deobf:20260205T2205-unstable@sha256:7959324c992f0dd4c9b678a8b0e50601d43dac146947efe165cedde36226a774
     plugin-lief: plugin-lief:20260205T2212-unstable@sha256:f3d0780414192719d0a70a4d695acc6befce15673acda77911fb348265eabfdd
     plugin-lookback: plugin-lookback:20260205T2213-unstable@sha256:dd029511c613b83322dad6620ae755ddcfcf4798d21ea5fcd975ed34d1f66071
-    plugin-malcarve: plugin-malcarve:20260205T2213-unstable@sha256:4bca8a4769de94596c7f478121a84ecc7a8c3998d10696169051df9763c56e5d
+    plugin-malcarve: plugin-malcarve:20260207T0013-unstable@sha256:7376621022215e5a3b3a5ebc7958d58cc6fc673cf504bf55a4ce8dfb40601a2d
     plugin-netinfo: plugin-netinfo:20260205T2219-unstable@sha256:6d670f4f1879aa237196fb9d889a3f64ff65b81cfffc26461751e11a1c09908b
     plugin-nsrl: plugin-nsrl:20260207T0014-unstable@sha256:f5fcd8ca2e52a537873107ebd15a3c0e9a4999d78cf6f195e00f90267f696350
     plugin-office: plugin-office:20260205T2214-unstable@sha256:d60cf60ef6add997957d4b46a42ad2469a6ea397324d580b08feadf511049af5
