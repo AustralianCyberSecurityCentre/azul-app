@@ -1839,7 +1839,7 @@ images:
     dispatcher: dispatcher:20260209T2251-unstable@sha256:6ad1f3ee0d697d097df7bac694a9bfa96a2a3dc7bbc94d96b73dfc8f599028ac
     docs: docs:20260207T0000-unstable@sha256:a1eac6cca03d411270c630e3bbc98ce2af6f5576dbfe996a3791e90a75483025
     restapi-server: restapi-server:20260204T0049-unstable@sha256:38c7825bf44f46f45e99102c2782ce905593b41f61acc00592c4e5ebb530be0f
-    webui: webui:20260210T0046-unstable@sha256:e75b8e1aa3bb8a3a6c90d0848a51fcdc72c45a2cea24b507d16b57780394451f
+    webui: webui:20260212T0415-unstable@sha256:eb826dc2d81823aec8d467b5469a7d07fbcaca90a09bf77c8f8a175ddccda310
     plugin-alphabets: plugin-alphabets:20260210T0154-unstable@sha256:1711656fb7bf9d94e9ea84631f38e4ea5f704755847f1387141d5c419a247622
     plugin-android-parser: plugin-android-parser:20260210T0158-unstable@sha256:0493871903b7c3617a64e8312222c420196c50e3863ad8a7a4df853f0238af1e
     plugin-assemblyline: plugin-assemblyline:20260203T2339-unstable@sha256:cb239912c1d4c1adf2fc50e554f0d93be31aea297cf13740ef7896de085339b5
