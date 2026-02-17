@@ -5,6 +5,7 @@ metadata:
 data:
   # constants
   LOGGER_AUDIT_FILE: "/logs/restapi-audit.log"
+  LOGGER_LOG_LEVEL: "{{ .Values.restapi.config.logLevel }}"
   METASTORE_SPECIAL_LOG_FILE_PATH: "/logs/additional-audit.log"
   # METASTORE_SPECIAL_LOG_MESSAGE_FORMAT: full_time="{time:%d/%b/%Y:%H:%M:%S.%f}" connection="{connection}" username="{username}" special_method="{method}" special_path="{path}" sha256="{sha256}"
   RESTAPI_RELOAD: "false"
@@ -37,7 +38,6 @@ data:
   # Temporary workaround restapi guvicorn inconsistent settings
   RESTAPI_MAX_WORKERS: "{{ .Values.restapi.config.processWorkers }}"
   RESTAPI_ASYNCIO_WORKERS: "{{ .Values.restapi.config.asyncioWorkers }}"
-  RESTAPI_LOG_LEVEL: "{{ .Values.restapi.config.logLevel }}"
   # cross origin settings
   CORS_ALLOW_ORIGINS: "{{ .Values.restapi.cors.allowOrigins }}"
   CORS_ALLOW_CREDENTIALS: "{{ .Values.restapi.cors.allowCredentials }}"

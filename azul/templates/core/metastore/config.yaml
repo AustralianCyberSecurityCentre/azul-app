@@ -6,7 +6,7 @@ data:
   REQUESTS_CA_BUNDLE: "/cafile/ca.crt"
   SSL_CERT_FILE: "/cafile/ca.crt"
   PYTHONUNBUFFERED: "yes"
-  LOGGER_LOG_LEVEL: "{{ .Values.metastore.logLevel }}"
+  METASTORE_LOG_LEVEL: "{{ .Values.metastore.logLevel }}"
   METASTORE_DISPATCHER_EVENTS_URL: "http://dp-metastore-events:8111"
   METASTORE_DISPATCHER_STREAMS_URL: "http://dp-metastore-streams:8111"
   METASTORE_OPENSEARCH_URL: "{{ .Values.external.opensearch.endpoint | required "external.opensearch.endpoint not set" }}"
