@@ -733,6 +733,9 @@
         "dataUrl": {
           "type": "string"
         },
+        "logLevel": {
+          "type": "string"
+        },
         "instances": {
           "type": "object",
           "$comment": "Define explict metastore instance properties to provide doco about each `standard` configuration. Technically validation can just be handled by the additionalProperties definition.",
