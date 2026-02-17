@@ -734,7 +734,7 @@
           "type": "string"
         },
         "logLevel": {
-          "type": "string"
+          "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL"]
         },
         "instances": {
           "type": "object",
