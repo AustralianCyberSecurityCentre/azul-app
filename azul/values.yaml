@@ -963,7 +963,7 @@ restapi:
     port: "8000"
     processWorkers: 2
     asyncioWorkers: 2
-    logLevel: "info"
+    logLevel: "INFO"
   env: {}
 
 # Access control configuration.
