@@ -733,9 +733,6 @@
         "dataUrl": {
           "type": "string"
         },
-        "logLevel": {
-          "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL"]
-        },
         "instances": {
           "type": "object",
           "$comment": "Define explict metastore instance properties to provide doco about each `standard` configuration. Technically validation can just be handled by the additionalProperties definition.",

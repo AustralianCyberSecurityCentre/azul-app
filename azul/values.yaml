@@ -861,7 +861,6 @@ metastore:
   # Service for metastore to hit dispatcher instances
   # Should not need to be changed
   env: {}
-  logLevel: "INFO"
   instances:
     # Metadata age off.
     ageoff:
