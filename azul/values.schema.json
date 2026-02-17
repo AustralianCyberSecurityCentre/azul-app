@@ -889,7 +889,7 @@
               "type": "integer"
             },
             "logLevel": {
-              "type": "string"
+              "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL"]
             }
           }
         },
