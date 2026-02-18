@@ -74,6 +74,8 @@ spec:
               secretKeyRef:
                 name: {{ .Values.secrets.metastoreCreds }}
                 key: writer
+          - name: REDIS_ENDPOINT
+            value: "{{ .Values.redis.endpoint }}"
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
