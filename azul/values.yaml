@@ -1387,6 +1387,19 @@ plugins:
           allow_splitting_and_deletion: "true"
     plugins:
       retrohunt-server:
+        env:
+          - name: REDIS_ENDPOINT
+            value: "{{ .Values.redis.endpoint }}"
+          - name: REDIS_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.redis }}"
+                key: redis-username
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.redis }}"
+                key: redis-password
         ingress:
           name: plugin-retrohunt-server
           serviceName: plugin-retrohunt-server
@@ -1454,6 +1467,18 @@ plugins:
             # Environment variable can be used to change prometheus port if you want multiple workers
             # All containers in retrohunt must have different prometheus scrape ports.
             env:
+              - name: REDIS_ENDPOINT
+                value: "{{ .Values.redis.endpoint }}"
+              - name: REDIS_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Values.secrets.redis }}"
+                    key: redis-username
+              - name: REDIS_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Values.secrets.redis }}"
+                    key: redis-password
               - name: PLUGIN_PROMETHEUS_PORT_WORKER
                 value: "8901"
             image: plugin-retrohunt
