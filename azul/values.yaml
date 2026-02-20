@@ -281,7 +281,7 @@ external:
   redis:
     # shouldn't need to change this
     endpoint: "azul-redis-master"
-    port: "6379"
+    port: 6379
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
