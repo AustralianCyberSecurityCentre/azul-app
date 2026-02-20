@@ -280,7 +280,8 @@ external:
 
   redis:
     # shouldn't need to change this
-    endpoint: "azul-redis-master:6379"
+    endpoint: "azul-redis-master"
+    port: "6379"
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
@@ -1388,8 +1389,10 @@ plugins:
     plugins:
       retrohunt-server:
         env:
-          - name: REDIS_ENDPOINT
+          - name: REDIS_HOST
             value: "{{ .Values.redis.endpoint }}"
+          - name: REDIS_PORT
+            value: "{{ .Values.redis.port }}"
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
@@ -1467,8 +1470,10 @@ plugins:
             # Environment variable can be used to change prometheus port if you want multiple workers
             # All containers in retrohunt must have different prometheus scrape ports.
             env:
-              - name: REDIS_ENDPOINT
+              - name: REDIS_HOST
                 value: "{{ .Values.redis.endpoint }}"
+              - name: REDIS_PORT
+                value: "{{ .Values.redis.port }}"
               - name: REDIS_USERNAME
                 valueFrom:
                   secretKeyRef:
