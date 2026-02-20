@@ -81,6 +81,18 @@ spec:
               secretKeyRef:
                 name: {{ .Values.secrets.metastoreCreds }}
                 key: writer
+          {{- if .Values.security.oidc.enable_pat }}
+          - name: METASTORE_JWT_SIGNING_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.metastoreCreds }}
+                key: jwt_signing_secret
+          - name: METASTORE_OPENSEARCH_AZUL_SECURITY_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.metastoreCreds }}
+                key: opensearch_azul_security_password
+          {{- end }}
           - name: METASTORE_PURGE_SHA256_FOLDER
             value: "/purge"
         volumeMounts:

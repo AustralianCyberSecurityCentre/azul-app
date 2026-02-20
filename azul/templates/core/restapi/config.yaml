@@ -16,7 +16,15 @@ data:
   RESTAPI_PREFIX: "/api"
   # oidc config
   {{- if .Values.security.oidc.enabled }}
+   {{- if .Values.security.oidc.enable_pat }}
+  RESTAPI_SECURITY: "oidc_pat"
+  # PAT config
+  METASTORE_OPENSEARCH_AZUL_SECURITY_INDEX: "{{ .Values.security.oidc.security_index | required "security.oidc.security_index required" }}"
+  METASTORE_OPENSEARCH_AZUL_SECURITY_USERNAME: "{{ .Values.security.oidc.pat_index_username | required "security.oidc.pat_index_username required" }}"
+    {{- else }}
   RESTAPI_SECURITY: "oidc"
+    {{- end }}
+
   OIDC_AUTHORITY_URL: "{{ .Values.security.oidc.authority_url | required "oidc authority_url required" }}"
   OIDC_CLIENT_ID: "{{ .Values.security.oidc.client_id | required "oidc client_id required" }}"
   OIDC_SCOPES: "{{ .Values.security.oidc.scopes | required "oidc scopes required" }}"
