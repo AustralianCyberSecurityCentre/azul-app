@@ -280,8 +280,7 @@ external:
 
   redis:
     # shouldn't need to change this
-    endpoint: "azul-redis-master"
-    port: 6379
+    endpoint: "azul-redis-master:6379"
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
@@ -1391,8 +1390,6 @@ plugins:
         env:
           - name: REDIS_HOST
             value: "{{ .Values.redis.endpoint }}"
-          - name: REDIS_PORT
-            value: "{{ .Values.redis.port }}"
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
@@ -1472,8 +1469,6 @@ plugins:
             env:
               - name: REDIS_HOST
                 value: "{{ .Values.redis.endpoint }}"
-              - name: REDIS_PORT
-                value: "{{ .Values.redis.port }}"
               - name: REDIS_USERNAME
                 valueFrom:
                   secretKeyRef:

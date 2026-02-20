@@ -304,9 +304,6 @@
           "properties": {
             "endpoint": {
               "type": "string"
-            },
-            "port": {
-              "type": "integer"
             }
           },
           "required": ["endpoint"],
