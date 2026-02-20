@@ -244,8 +244,7 @@
         "redis",
         "metastoreCreds",
         "assemblylineReceiver",
-        "virustotalCreds",
-        "backupS3Keys"
+        "virustotalCreds"
       ],
       "additionalProperties": false
     },
