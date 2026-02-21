@@ -1891,7 +1891,7 @@ images:
     plugin-netinfo: plugin-netinfo:20260215T2314-unstable@sha256:44cf126eeada1d103316573436da9ea9b284ebed7fd3668741fa2ce12bce9716
     plugin-nsrl: plugin-nsrl:20260207T0014-unstable@sha256:f5fcd8ca2e52a537873107ebd15a3c0e9a4999d78cf6f195e00f90267f696350
     plugin-office: plugin-office:20260215T2312-unstable@sha256:4e75d516e8645a5f36e1365bb89c7f2fefd773873d6e886d3c45f74ac9217a64
-    plugin-pdftools: plugin-pdftools:20260215T2310-unstable@sha256:1d3ba09d45abff6ed37d6281a25afd7c1dce74aee4da20014372514db7041dc0
+    plugin-pdftools: plugin-pdftools:20260221T0019-unstable@sha256:0d3455a49f6eb9ec2ec681099bf8e0bc8ebf04397e70ad2ab39d32fe0a09a138
     plugin-python: plugin-python:20260215T2309-unstable@sha256:78c448b79bbec8ff1d3a9c50c8f0e465454b32c74236d3f3899bc1051951f384
     plugin-repeated-bytes: plugin-repeated-bytes:20260215T2309-unstable@sha256:3e6f2d2ba82ddf9b8213059a94bd95010eb4d237ab4e9cfac1afc7b9f207cadb
     plugin-retrohunt: plugin-retrohunt:20260221T0009-unstable@sha256:dd6951c935ad688f0a6554217a461e06049dcc0770a5e2ac39fbe591f7b964c3
