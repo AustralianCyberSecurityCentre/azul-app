@@ -1883,7 +1883,7 @@ images:
     plugin-floss: plugin-floss:20260215T2301-unstable@sha256:37e80c9d2004925f75b4d119bac06d78df7cb00176f8dd6fd0432271704be41c
     plugin-goinfo: plugin-goinfo:20260221T0008-unstable@sha256:8903bc9506846615f929477ec36ee3be2469cd4b0e78f62652688e499eef9c20
     plugin-image-convert: plugin-image-convert:20260215T2309-unstable@sha256:94ec07c15a20c542c6189de625397a6589f47c357ea41740126b61ea87f8e31b
-    plugin-index-coincidence: plugin-index-coincidence:20260215T2302-unstable@sha256:f001ded6e996346ab737e1e215bf3c64277fe4ca759141d0ceec12c926052a10
+    plugin-index-coincidence: plugin-index-coincidence:20260221T0015-unstable@sha256:b8a3d1c6b73355244c76b3c69919ec063c99872620ea9111583085b7b0e76480
     plugin-js-deobf: plugin-js-deobf:20260215T2307-unstable@sha256:8435781214da3cad672d77204aaa8512b49c4b430d19639b4e4eb2fb857a0e4d
     plugin-lief: plugin-lief:20260215T2312-unstable@sha256:847a03edad6411a351d2d0fcb8e7534a4697db95fe2b37b81efe1d220e203d7c
     plugin-lookback: plugin-lookback:20260205T2213-unstable@sha256:dd029511c613b83322dad6620ae755ddcfcf4798d21ea5fcd975ed34d1f66071
