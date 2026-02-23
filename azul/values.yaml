@@ -1388,7 +1388,7 @@ plugins:
     plugins:
       retrohunt-server:
         env:
-          - name: REDIS_ENDPOINT
+          - name: REDIS_HOST
             value: "{{ .Values.redis.endpoint }}"
           - name: REDIS_USERNAME
             valueFrom:
@@ -1467,7 +1467,7 @@ plugins:
             # Environment variable can be used to change prometheus port if you want multiple workers
             # All containers in retrohunt must have different prometheus scrape ports.
             env:
-              - name: REDIS_ENDPOINT
+              - name: REDIS_HOST
                 value: "{{ .Values.redis.endpoint }}"
               - name: REDIS_USERNAME
                 valueFrom:
