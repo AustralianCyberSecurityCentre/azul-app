@@ -43,6 +43,9 @@ data:
   BK.BACKUP_ID: "{{ .Values.recovery.label }}"
   # Bucket name prefix for backup buckets.
   BK.BUCKET_NAME_PREFIX: "{{ .Values.recovery.bucketNamePrefix }}"
+  {{- if .Values.recovery.bucketRegion }}
+  BK.EXTERNAL_BACKUP.REGION: "{{ .Values.recovery.bucketRegion }}"
+  {{- end }}
 
   # Enable automatic deletion of data that is older than what the source would keep.
   BK.ENABLE_AUTOMATIC_AGEOFF: "{{ toString .Values.recovery.enableAutomaticAgeoff }}"
