@@ -989,7 +989,7 @@ security:
     enable_pat: false
     # This username is the username associated with an account that has permissions to create and manage the security_index in Opensearch
     # This index is used to store generated PATs.
-    pat_index_username: "admin"
+    security_index_username: "admin"
     security_index: "security_azul"
 
   # terminology

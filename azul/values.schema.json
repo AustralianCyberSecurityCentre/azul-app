@@ -949,7 +949,7 @@
             "enable_pat":{
               "type": "boolean"
             },
-            "pat_index_username":{
+            "security_index_username":{
               "type": "string"
             },
             "security_index":{
