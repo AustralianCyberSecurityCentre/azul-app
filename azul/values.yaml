@@ -1882,7 +1882,7 @@ images:
     plugin-maco: plugin-maco:20260223T0533-unstable@sha256:c8ed954e5b5fbfe36e4676483390bef74c98c0a2222c053f4bd38fd9d7878842
     plugin-floss: plugin-floss:20260223T0532-unstable@sha256:40314c8a6ae10c1dfb6ed409bd67a692b60c30ab96ec65755119f8cfd829147a
     plugin-goinfo: plugin-goinfo:20260223T0529-unstable@sha256:2219346343aa904f08b6202d05e1fb4d21c945c516d345e8fe161564e9a94abc
-    plugin-image-convert: plugin-image-convert:20260223T0532-unstable@sha256:69bcce6297f2baa95652c740623718ab5f365730056186cc15590f4b60a05fee
+    plugin-image-convert: plugin-image-convert:20260223T0546-unstable@sha256:239ae4ddf2cc5a5f36085798b8aeb8fabd78b5c2520caf39d089808bc7b9f170
     plugin-index-coincidence: plugin-index-coincidence:20260223T0539-unstable@sha256:8ca8dda291355496cf4a8aa35ab609a1193dd7dd43402b77842e4784cd71050b
     plugin-js-deobf: plugin-js-deobf:20260221T0018-unstable@sha256:7f128d5d8398e2fa6964220aef986fa497b18887103b8ad78be0def1da0a3bf0
     plugin-lief: plugin-lief:20260221T0025-unstable@sha256:e74203eb2de45870d7304bf3b07bbe0dbcc7159cbae23f3b7622d9c006be687d
