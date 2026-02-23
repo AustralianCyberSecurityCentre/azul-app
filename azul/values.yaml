@@ -176,6 +176,9 @@ secrets:
   # data:
   #   writer: <opensearch-user-writer-password> # As part of azul installation a user called "writer" should be created in Opensearch.
   #                                             # This is the password for that user so that metastore pods can access Opensearch.
+  #   jwt_signing_secret: <opensearch-preshared-jwt-secret> # This is created as part of the JWT auth method in Opensearch.
+  #                                                         # This is only required if PAT auth is enabled.
+  #   opensearch_azul_security_password         # Password for the user accessing the security index within azul, that is used to store PATs.
   metastoreCreds: "metastore-creds"
 
   # Credentials used to recieve events from assemblyline post-processing actions.
@@ -981,6 +984,13 @@ security:
     # A space separated list of scopes
     # scopes: "openid profile email offline_access"
     scopes: ""
+    # Enable the pat (username and secret need to be enabled.)
+    # OIDC and PAT security enabled, expects the secret key jwt_signing_secret to be set in metastore-creds (refer to secrets)
+    enable_pat: false
+    # This username is the username associated with an account that has permissions to create and manage the security_index in Opensearch
+    # This index is used to store generated PATs.
+    security_index_username: "admin"
+    security_index: "security_azul"
 
   # terminology
   # security label - a single token/group that a user may possess and grants access to information

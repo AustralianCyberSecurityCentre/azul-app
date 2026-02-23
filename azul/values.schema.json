@@ -945,6 +945,15 @@
             },
             "scopes": {
               "type": "string"
+            },
+            "enable_pat":{
+              "type": "boolean"
+            },
+            "security_index_username":{
+              "type": "string"
+            },
+            "security_index":{
+              "type": "string"
             }
           },
           "required": ["enabled"],
