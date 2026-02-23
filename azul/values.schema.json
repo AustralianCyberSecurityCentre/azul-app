@@ -1624,6 +1624,9 @@
         "bucketNamePrefix": {
           "type": "string"
         },
+        "bucketRegion": {
+          "type": "string"
+        },
         "enableAutomaticAgeoff": {
           "type": "boolean"
         },
