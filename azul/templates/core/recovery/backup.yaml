@@ -90,6 +90,9 @@ spec:
             name: ca-cert
             subPath: ca.crt
           {{- end }}
+      {{- if .Values.external.filestore.serviceAccountName }}
+      serviceAccountName: {{ .Values.external.filestore.serviceAccountName }}
+      {{- end }}
       volumes:
       - name: tmp
         emptyDir:
