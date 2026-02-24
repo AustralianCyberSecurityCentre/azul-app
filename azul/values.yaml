@@ -1375,6 +1375,7 @@ plugins:
   retrohunt:
     type: standard
     enabled: true
+    schedule: "0 2 * * *"
     pvc:
       size: "1000Gi"
     # Group config applied to all retrohunt containers and extraContainers.
