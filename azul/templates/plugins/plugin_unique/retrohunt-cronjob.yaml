@@ -10,7 +10,7 @@ metadata:
     section: plugins
     component: retrohunt
 spec:
-  schedule: "{{ index .Values.retrohunt.plugins \"retrohunt-server\" \"schedule\" }}"
+  schedule: "{{ .Values.plugins.retrohunt.schedule }}"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 2
