@@ -1280,8 +1280,17 @@
         },
         "retrohunt": {
           "allOf": [
+            { "$ref": "#/definitions/pluginGroup" },
             {
-              "$ref": "#/definitions/pluginGroup"
+              "type": "object",
+              "properties": {
+                "schedule": {
+                  "type": "string",
+                  "description": "Cron schedule for the retrohunt plugin"
+                }
+              },
+              "required": ["schedule"],
+              "additionalProperties": false
             }
           ]
         },
@@ -2718,10 +2727,6 @@
             "suricata",
             "reportFeeds"
           ]
-        },
-        "schedule": {
-          "type": "string",
-          "description": "Cron schedule for plugin CronJobs"
         }
       },
       "required": ["type"],
