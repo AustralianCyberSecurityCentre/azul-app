@@ -1289,8 +1289,7 @@
                   "description": "Cron schedule for the retrohunt plugin"
                 }
               },
-              "required": ["schedule"],
-              "additionalProperties": false
+              "required": ["schedule"]
             }
           ]
         },
