@@ -244,8 +244,7 @@
         "redis",
         "metastoreCreds",
         "assemblylineReceiver",
-        "virustotalCreds",
-        "backupS3Keys"
+        "virustotalCreds"
       ],
       "additionalProperties": false
     },
@@ -1632,6 +1631,9 @@
           "type": "string"
         },
         "bucketNamePrefix": {
+          "type": "string"
+        },
+        "bucketRegion": {
           "type": "string"
         },
         "enableAutomaticAgeoff": {
