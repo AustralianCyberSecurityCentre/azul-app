@@ -2718,6 +2718,10 @@
             "suricata",
             "reportFeeds"
           ]
+        },
+        "schedule": {
+          "type": "string",
+          "description": "Cron schedule for plugin CronJobs"
         }
       },
       "required": ["type"],
