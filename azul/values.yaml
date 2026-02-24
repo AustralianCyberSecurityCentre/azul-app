@@ -1375,7 +1375,6 @@ plugins:
   retrohunt:
     type: standard
     enabled: true
-    schedule: "0 2 * * *"
     pvc:
       size: "1000Gi"
     # Group config applied to all retrohunt containers and extraContainers.
@@ -1398,6 +1397,7 @@ plugins:
           allow_splitting_and_deletion: "true"
     plugins:
       retrohunt-server:
+        schedule: "0 2 * * *"
         env:
           - name: REDIS_HOST
             value: "{{ .Values.redis.endpoint }}"

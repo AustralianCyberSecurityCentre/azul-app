@@ -1280,16 +1280,8 @@
         },
         "retrohunt": {
           "allOf": [
-            { "$ref": "#/definitions/pluginGroup" },
-            {
-              "type": "object",
-              "properties": {
-                "schedule": {
-                  "type": "string",
-                  "description": "Cron schedule for the retrohunt plugin"
-                }
-              },
-              "required": ["schedule"]
+            { 
+             "$ref": "#/definitions/pluginGroup" 
             }
           ]
         },
