@@ -39,6 +39,9 @@ spec:
             - name: retrohunt-cron
               image: {{ include "image.custom" (dict "images" .Values.images "name" "plugin-retrohunt") }}
               imagePullPolicy: {{ .Values.images.pullPolicy }}
+              command: ["python", "-m", "azul_plugin_retrohunt.cronjob"]
+              args:
+                - "cronjob"
 
               envFrom:
                 - configMapRef:
@@ -49,9 +52,6 @@ spec:
               env:
                 - name: PLUGIN_DEPLOYMENT_KEY
                   value: plugin-retrohunt
-
-              args:
-                - "cronjob"
 
 {{- end }}
 {{- end }}
