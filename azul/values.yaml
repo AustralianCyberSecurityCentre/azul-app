@@ -196,7 +196,7 @@ secrets:
   # data:
   #   access_key: <access-key-from-backup-minio-or-s3> # Access key / username from S3 UI.
   #   secret_key: <secret-key-from-backup-minio-or-s3> # Secret key / password from S3 UI.
-  backupS3Keys: ""
+  backupS3Keys: "s3-backup-keys"
 
   # Stats holds the secrets for azul-stats to contact auth.
   # This is expected to be a service account that can authenticate to the authentication provider and get an auth token.
@@ -487,6 +487,8 @@ recovery:
   # 'streams' will only restore S3 artifacts
   # 'events' will only restore Kafka events
   restoreType: "all"
+  # S3 auth mode. Options are 'keys' or 'service_account'. 
+  s3AuthMode: "keys"
   # This should not be the same s3 instance that Azul uses!
   externalS3Endpoint: ""
   # externalS3Endpoint: "minio-backup.internal" # NOTE - no leading http/https allowed.

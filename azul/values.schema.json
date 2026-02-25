@@ -1624,6 +1624,9 @@
         "externalS3Endpoint": {
           "type": "string"
         },
+        "s3AuthMode": {
+          "type": "string"
+        },
         "externalS3Secure": {
           "type": "string"
         },

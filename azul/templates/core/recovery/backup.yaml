@@ -67,7 +67,7 @@ spec:
         envFrom:
           - configMapRef:
               name: recovery
-        {{- if .Values.secrets.backupS3Keys }}
+        {{- if and (eq .Values.recovery.s3AuthMode "keys") .Values.secrets.backupS3Keys }}
         env:
           - name: BK.EXTERNAL_BACKUP.ACCESS_KEY
             valueFrom:
@@ -90,7 +90,7 @@ spec:
             name: ca-cert
             subPath: ca.crt
           {{- end }}
-      {{- if .Values.external.filestore.serviceAccountName }}
+      {{- if and (eq .Values.recovery.s3AuthMode "service_account") .Values.external.filestore.serviceAccountName }}
       serviceAccountName: {{ .Values.external.filestore.serviceAccountName }}
       {{- end }}
       volumes:

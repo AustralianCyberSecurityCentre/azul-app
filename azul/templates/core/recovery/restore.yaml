@@ -62,7 +62,7 @@ spec:
         envFrom:
           - configMapRef:
               name: recovery
-        {{- if .Values.secrets.backupS3Keys }}
+        {{- if and (eq .Values.recovery.s3AuthMode "keys") .Values.secrets.backupS3Keys }}
         env:
           - name: BK.EXTERNAL_BACKUP.ACCESS_KEY
             valueFrom:
