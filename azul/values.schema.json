@@ -1624,6 +1624,10 @@
         "externalS3Endpoint": {
           "type": "string"
         },
+        "s3AuthMode": {
+          "description": "The type of S3 authentication to use.",
+          "enum": ["keys", "service_account"]
+        },
         "externalS3Secure": {
           "type": "string"
         },
