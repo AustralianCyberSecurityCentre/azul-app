@@ -39,7 +39,8 @@ spec:
             - name: retrohunt-cron
               image: {{ include "image.custom" (dict "images" .Values.images "name" "plugin-retrohunt") }}
               imagePullPolicy: {{ .Values.images.pullPolicy }}
-              command: ["python", "-m", "azul_plugin_retrohunt.cronjob"]
+
+              command: ["azul-plugin-retrocron"]
               args:
                 - "cronjob"
 
