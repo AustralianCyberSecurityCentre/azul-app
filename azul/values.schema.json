@@ -304,6 +304,12 @@
           "properties": {
             "endpoint": {
               "type": "string"
+            },
+            "db": {
+              "type": "integer"
+            },
+            "cleanup_delay": {
+              "type": "integer"
             }
           },
           "required": ["endpoint"],
