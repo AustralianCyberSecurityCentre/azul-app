@@ -303,6 +303,12 @@
           "properties": {
             "endpoint": {
               "type": "string"
+            },
+            "db": {
+              "type": "integer"
+            },
+            "cleanup_delay": {
+              "type": "integer"
             }
           },
           "required": ["endpoint"],
@@ -1279,8 +1285,8 @@
         },
         "retrohunt": {
           "allOf": [
-            {
-              "$ref": "#/definitions/pluginGroup"
+            { 
+             "$ref": "#/definitions/pluginGroup" 
             }
           ]
         },
@@ -2646,7 +2652,11 @@
         },
         "pvc": { "type": "object" },
         "demoConfig": { "type": "boolean" },
-        "pullFromApi": { "type": "boolean" }
+        "pullFromApi": { "type": "boolean" },
+        "schedule": {
+          "type": "string",
+          "description": "Cron schedule for this plugin"
+        }
       },
       "required": ["type"],
       "$comment": "If `enabled` is not provided (ie `null`) it is considered `true`",

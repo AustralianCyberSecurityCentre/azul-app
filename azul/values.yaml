@@ -284,6 +284,9 @@ external:
   redis:
     # shouldn't need to change this
     endpoint: "azul-redis-master:6379"
+    db: 15
+    # days before cronjob removes completed hunts.
+    cleanup_delay: 30
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
@@ -1380,6 +1383,8 @@ plugins:
   retrohunt:
     type: standard
     enabled: true
+    # cronjob schedule to clean up hunts
+    schedule: "0 2 * * *"
     pvc:
       size: "1000Gi"
     # Group config applied to all retrohunt containers and extraContainers.
@@ -1405,6 +1410,8 @@ plugins:
         env:
           - name: REDIS_HOST
             value: "{{ .Values.redis.endpoint }}"
+          - name: REDIS_DB
+            value: "{{ .Values.redis.db }}"
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
@@ -1415,6 +1422,8 @@ plugins:
               secretKeyRef:
                 name: "{{ .Values.secrets.redis }}"
                 key: redis-password
+          - name: REDIS_CLEANUP_DELAY
+            value: "{{ .Values.redis.cleanup_delay }}"
         ingress:
           name: plugin-retrohunt-server
           serviceName: plugin-retrohunt-server
