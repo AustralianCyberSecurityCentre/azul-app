@@ -41,8 +41,6 @@ spec:
               imagePullPolicy: {{ .Values.images.pullPolicy }}
 
               command: ["azul-plugin-retrocron"]
-              args:
-                - "cronjob"
 
               envFrom:
                 - configMapRef:
