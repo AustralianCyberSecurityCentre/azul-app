@@ -76,7 +76,7 @@ spec:
           - configMapRef:
               name: restapi
         env:
-          - name: RESTAPI_HOST
+          - name: HOST_IP
             valueFrom:
               fieldRef:
                 fieldPath: status.hostIP
