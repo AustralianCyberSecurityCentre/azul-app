@@ -76,6 +76,11 @@ spec:
           - configMapRef:
               name: restapi
         env:
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+
           - name: METASTORE_OPENSEARCH_PASSWORD
             valueFrom:
               secretKeyRef:
