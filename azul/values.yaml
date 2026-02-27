@@ -366,6 +366,7 @@ apiServices:
   smartStringFilter:
     enabled: true
     replicas: 1
+    logLevel: "WARN"
     # resources may require adjustment based on workloads.
     resources:
       limits:
@@ -380,6 +381,8 @@ stats:
   config:
     # Maximum time to scrape metrics.
     maxScrapeTime: "60"
+    # logging level for stats
+    logLevel: "WARN"
     # Enable scraping of Opensearch service.
     opensearch:
       enabled: true
@@ -506,6 +509,8 @@ recovery:
   bucketNamePrefix: "azul-backup-"
   # Bucket region will need to be set when using IRSA account for S3 access.
   bucketRegion: ""
+  # log level for backup/restore
+  logLevel: "INFO"
 
   backup:
     resources:
@@ -708,6 +713,8 @@ dispatcher:
   sessionAffinity: ClientIP
   # If the dispatcher pods crash due to OOM, consider increasing memory allocation
   config:
+    # Default log level for dispatcher which can be overridden explicitly in the env, sections per instance.
+    defaultLogLevel: "INFO"
     # Dispatcher instances dedicated to processing metadata related content.
     metastore:
       events:
@@ -873,6 +880,7 @@ metastore:
     # Metadata age off.
     ageoff:
       error_log: true
+      logLevel: "WARN"
       minReplicas: 1
       maxReplicas: 2
       command:
@@ -888,6 +896,7 @@ metastore:
     # Binary/entity ingestion.
     ingest-binary:
       error_log: true
+      logLevel: "WARN"
       minReplicas: 1
       maxReplicas: 5
       command:
@@ -903,6 +912,7 @@ metastore:
     # Plugin event ingestion.
     ingest-plugin:
       error_log: true
+      logLevel: "WARN"
       minReplicas: 1
       maxReplicas: 2
       command:
@@ -918,6 +928,7 @@ metastore:
     # Status event ingestion.
     ingest-status:
       error_log: true
+      logLevel: "WARN"
       minReplicas: 1
       maxReplicas: 5
       command:
@@ -1094,8 +1105,11 @@ security:
 # See example-values.yaml for example sources.
 sources: {}
 
-# Configuration applied to all plugins.
-pluginConfig: {}
+# Configuration applied to all plugins (default log level, memory limits etc.)
+pluginConfig:
+  RUNNER_LOG_LEVEL: "info"
+  ENABLE_MEM_LIMITS: "true"
+  PLUGIN_DEPTH_LIMIT: "10"
 
 # enable/disable all plugins
 # use when restoring from backup or during an upgrade

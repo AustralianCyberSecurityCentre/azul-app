@@ -580,6 +580,10 @@
         "config": {
           "type": "object",
           "properties": {
+            "defaultLogLevel": {
+              "type":"string", 
+              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
+            },
             "metastore": {
               "type": "object",
               "properties": {
@@ -885,7 +889,8 @@
               "type": "integer"
             },
             "logLevel": {
-              "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL"]
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
             }
           }
         },
@@ -1465,6 +1470,10 @@
             },
             "replicas": {
               "type": "integer"
+            },
+            "logLevel":{
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
             }
           },
           "allOf": [
@@ -1489,6 +1498,10 @@
           "properties": {
             "maxScrapeTime": {
               "type": "string"
+            },
+            "logLevel": {
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
             },
             "opensearch": {
               "type": "object",
@@ -1639,6 +1652,10 @@
         },
         "bucketRegion": {
           "type": "string"
+        },
+        "logLevel": {
+          "type": "string",
+          "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
         },
         "enableAutomaticAgeoff": {
           "type": "boolean"
@@ -2005,6 +2022,10 @@
         },
         "error_log": {
           "type": "boolean"
+        },
+        "logLevel":{
+          "type": "string",
+          "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
         }
       },
       "allOf": [

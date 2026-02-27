@@ -31,3 +31,4 @@ data:
   DP.STREAMS.XOR_ENCODING: "{{ .Values.external.filestore.xorEncoding }}"
   DP.EVENTS.REDIS.ENDPOINT: "{{ .Values.external.redis.endpoint | required "external.redis.endpoint not set" }}"
   DP.LOG_PATH: "/logs/dispatcher/"
+  BED.LOG_LEVEL: "{{ .Values.dispatcher.config.defaultLogLevel }}"

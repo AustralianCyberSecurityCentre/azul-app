@@ -8,6 +8,7 @@ data:
   SSL_CERT_FILE: "/cafile/ca.crt"
   PYTHONUNBUFFERED: "yes"
   STATS_MAX_SCRAPE_TIME: "{{ .Values.stats.config.maxScrapeTime }}"
+  STATS_LOG_LEVEL: "{{ .Values.stats.config.logLevel }}"
   STATS_AZUL: "{{ .Values.stats.config.azulProbe.enabled }}"
   STATS_OPENSEARCH: "{{ .Values.stats.config.opensearch.enabled }}"
   STATS_KAFKA: "{{ .Values.stats.config.kafka }}"
