@@ -1905,7 +1905,7 @@ images:
     plugin-malcarve: plugin-malcarve:20260225T0018-unstable@sha256:366f27b307285857dbc991aea4fe86a26a19dea9f105ecc3fd79967685feaeb7
     plugin-netinfo: plugin-netinfo:20260228T0014-unstable@sha256:09bc78f7ec86216e253a1ce277c3cddcc0c24dfa645f511896f45a53fb209a58
     plugin-nsrl: plugin-nsrl:20260207T0014-unstable@sha256:f5fcd8ca2e52a537873107ebd15a3c0e9a4999d78cf6f195e00f90267f696350
-    plugin-office: plugin-office:20260225T0023-unstable@sha256:c8209c7d20d2e16bd459307d7ae1c55b09368b63c4d90cb996ee6e09a5d62623
+    plugin-office: plugin-office:20260228T0017-unstable@sha256:82fbab751142cf6f74fa66984e5ed524be3bbb97b5de169f62109fccafc938f3
     plugin-pdftools: plugin-pdftools:20260225T0019-unstable@sha256:60fd6e2845a065d50e89517f5acdd5734cf4789d6ac282d3fbef60a38bcd8866
     plugin-python: plugin-python:20260225T0025-unstable@sha256:887c219dc23fd514023473e47b531fb1101562c0152dd7a301292ae099e1f831
     plugin-repeated-bytes: plugin-repeated-bytes:20260225T0020-unstable@sha256:70e749bd9c62407b564be7948449b4d2fde84956580732820fd48580d965722a
