@@ -218,6 +218,7 @@ metadata:
     prometheus.io/scrape: "true"
     prometheus.io/port: "8000"
 spec:
+  externalTrafficPolicy: Local
   selector:
     app: restapi
   ports:
