@@ -90,6 +90,7 @@ spec:
             - name: PLUGIN_DEPLOYMENT_KEY
               value: plugin-vtfilefeed
             envFrom:
+              # Plugin ref first so the plugin specific settings will override standard settings.
               - configMapRef:
                   name: plugin-standard
               - configMapRef:

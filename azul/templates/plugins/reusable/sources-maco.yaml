@@ -67,6 +67,7 @@ spec:
           {{- $group.resources | toYaml | nindent 10 }}
         {{- end }}
         envFrom:
+        # Plugin ref first so the plugin specific settings will override standard settings.
         - configMapRef:
             name: plugin-standard
         {{- if $group.config }}

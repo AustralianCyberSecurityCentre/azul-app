@@ -72,6 +72,8 @@ spec:
             name: metastore
         env:
         - name: METASTORE_OPENSEARCH_PASSWORD
+          values: "{{ .config.logLevel }}"
+        - name: METASTORE_LOG_LEVEL
           valueFrom:
             secretKeyRef:
               name: {{ .root.Values.secrets.metastoreCreds }}

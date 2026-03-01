@@ -20,6 +20,7 @@ kind: ConfigMap
 metadata:
   name: recovery
 data:
+  BED.LOG_LEVEL: "{{ .Values.recovery.logLevel }}"
   BK.DISPATCHER_EVENTS: "http://dp-plugin-events:8111"
   BK.DISPATCHER_STREAMS: "http://dp-plugin-streams:8111"
   {{- if ne .Values.recovery.mode "off" }}
