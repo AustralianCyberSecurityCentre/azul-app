@@ -71,9 +71,9 @@ spec:
         - configMapRef:
             name: metastore
         env:
-        - name: METASTORE_OPENSEARCH_PASSWORD
-          values: "{{ .config.logLevel }}"
         - name: METASTORE_LOG_LEVEL
+          values: "{{ .config.logLevel }}"
+        - name: METASTORE_OPENSEARCH_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ .root.Values.secrets.metastoreCreds }}
