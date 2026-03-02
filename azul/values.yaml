@@ -1893,7 +1893,7 @@ images:
     dispatcher: dispatcher:20260301T2132-unstable@sha256:4025c0e3cbda6594cf774f17bc998181684db0ed5d611df46cb951d2316c162e
     docs: docs:20260228T0001-unstable@sha256:a347921f05182f32016732714d9789f07896e4ebda60fda03453f8dd729db6b8
     restapi-server: restapi-server:20260301T2157-unstable@sha256:26a44f6789689276fe42a3149df7903c273cac519c38a1f3a74a056245b660c0
-    webui: webui:20260301T2114-unstable@sha256:2c418db7e9cab07812f7f3a3ca1b5a6bf72af1f726f65dc99debf012f117362b
+    webui: webui:20260302T2243-unstable@sha256:c0e9b0a5dd9bc53df2b4d74d678e6ca3c064391b5680567cd18ab06cefcbaabd
     plugin-alphabets: plugin-alphabets:20260301T2139-unstable@sha256:93b3d072b55aa840a8ed937c1bbedb314cf16a0b5f6a184f3858310ee49322f6
     plugin-android-parser: plugin-android-parser:20260301T2133-unstable@sha256:242e5f99b5d8e4eac55cfaaebb771c0ec90760b32a50e63ca95747f49ea11516
     plugin-assemblyline: plugin-assemblyline:20260301T2141-unstable@sha256:f1b2b356d39fc1c7e81a5dc32ff34b493f53ea0510d0e13a6272e1b8a0957e62
