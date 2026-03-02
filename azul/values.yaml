@@ -574,11 +574,11 @@ global:
     Cross-Origin-Opener-Policy: "unsafe-none"
     # 'X-XSS-Protection' is old & broken: https://bugzilla.mozilla.org/show_bug.cgi?id=528661
     X-XSS-Protection: "0"
-    # Passing through IP addresses
-    Host: "$host"
-    X-Real-IP: "$remote_addr"
-    X-Forwarded-For: "$proxy_add_x_forwarded_for"
-    X-Forwarded-Proto: "$scheme"
+    # # Passing through IP addresses
+    # Host: "$host"
+    # X-Real-IP: "$remote_addr"
+    # X-Forwarded-For: "$proxy_add_x_forwarded_for"
+    # X-Forwarded-Proto: "$scheme"
 
 # Web UI configuration
 web:
