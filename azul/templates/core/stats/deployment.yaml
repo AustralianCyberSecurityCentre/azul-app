@@ -123,6 +123,7 @@ spec:
                 key: tenantId
                 optional: true
           {{- end }}
+        {{- if .Values.secrets.backupS3Keys }}
           - name: MINIO_BKUP_ACCESSKEY
             valueFrom:
               secretKeyRef:
@@ -133,6 +134,7 @@ spec:
               secretKeyRef:
                 name: {{ .Values.secrets.backupS3Keys }}
                 key: secret_key
+          {{- end }}
           {{- end }}
           # If auth is being scraped this secret is required.
           {{- if .Values.stats.config.auth }}

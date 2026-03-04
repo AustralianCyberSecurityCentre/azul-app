@@ -71,6 +71,12 @@ spec:
         - configMapRef:
             name: metastore
         env:
+        - name: METASTORE_LOG_LEVEL
+          {{- if empty .config.logLevel }}
+          value: "WARN"
+          {{- else }}
+          value: {{ .config.logLevel }}
+          {{- end}}
         - name: METASTORE_OPENSEARCH_PASSWORD
           valueFrom:
             secretKeyRef:

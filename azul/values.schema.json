@@ -244,8 +244,7 @@
         "redis",
         "metastoreCreds",
         "assemblylineReceiver",
-        "virustotalCreds",
-        "backupS3Keys"
+        "virustotalCreds"
       ],
       "additionalProperties": false
     },
@@ -587,6 +586,10 @@
         "config": {
           "type": "object",
           "properties": {
+            "defaultLogLevel": {
+              "type":"string", 
+              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
+            },
             "metastore": {
               "type": "object",
               "properties": {
@@ -892,7 +895,8 @@
               "type": "integer"
             },
             "logLevel": {
-              "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "FATAL"]
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
             }
           }
         },
@@ -1472,6 +1476,10 @@
             },
             "replicas": {
               "type": "integer"
+            },
+            "logLevel":{
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
             }
           },
           "allOf": [
@@ -1496,6 +1504,10 @@
           "properties": {
             "maxScrapeTime": {
               "type": "string"
+            },
+            "logLevel": {
+              "type": "string",
+              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
             },
             "opensearch": {
               "type": "object",
@@ -1631,6 +1643,10 @@
         "externalS3Endpoint": {
           "type": "string"
         },
+        "s3AuthMode": {
+          "description": "The type of S3 authentication to use.",
+          "enum": ["keys", "service_account"]
+        },
         "externalS3Secure": {
           "type": "string"
         },
@@ -1639,6 +1655,13 @@
         },
         "bucketNamePrefix": {
           "type": "string"
+        },
+        "bucketRegion": {
+          "type": "string"
+        },
+        "logLevel": {
+          "type": "string",
+          "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
         },
         "enableAutomaticAgeoff": {
           "type": "boolean"
@@ -2005,6 +2028,10 @@
         },
         "error_log": {
           "type": "boolean"
+        },
+        "logLevel":{
+          "type": "string",
+          "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
         }
       },
       "allOf": [
