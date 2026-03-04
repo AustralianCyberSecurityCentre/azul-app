@@ -1443,7 +1443,7 @@ plugins:
           - name: REDIS_CLEANUP_DELAY
             value: "{{ .Values.external.redis.cleanup_delay }}"
           - name: REDIS_TTL
-            value: "{{ .Values.external.redis.ttl }}"
+            value: "{{ .Values.external.redis.ttl | quote }}"
         ingress:
           name: plugin-retrohunt-server
           serviceName: plugin-retrohunt-server
@@ -1507,6 +1507,8 @@ plugins:
             value: "{{ .Values.external.redis.endpoint }}"
           - name: REDIS_PORT
             value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
+          - name: REDIS_DB
+            value: "{{ .Values.external.redis.db }}"
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
@@ -1520,7 +1522,7 @@ plugins:
           - name: REDIS_CLEANUP_DELAY
             value: "{{ .Values.external.redis.cleanup_delay }}"
           - name: REDIS_TTL
-            value: "{{ .Values.external.redis.ttl }}"
+            value: "{{ .Values.external.redis.ttl | quote }}"
         extraContainers:
           worker:
             template: "plugin.container.main"
