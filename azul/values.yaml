@@ -1427,7 +1427,7 @@ plugins:
           - name: REDIS_HOST
             value: "{{ .Values.external.redis.endpoint }}"
           - name: REDIS_PORT
-            value: "{{ (split ":" .Values.external.redis.endpoint)._1 }}"
+            value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
           - name: REDIS_DB
             value: "{{ .Values.external.redis.db }}"
           - name: REDIS_USERNAME
@@ -1514,7 +1514,7 @@ plugins:
               - name: REDIS_HOST
                 value: "{{ .Values.external.redis.endpoint }}"
               - name: REDIS_PORT
-                value: "{{ (split ":" .Values.external.redis.endpoint)._1 }}"
+                value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
               - name: REDIS_USERNAME
                 valueFrom:
                   secretKeyRef:
