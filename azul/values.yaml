@@ -288,7 +288,7 @@ external:
     # days before cronjob removes completed hunts.
     cleanup_delay: 30
     # time a worker has hold of a hunt
-    ttl: 21600000
+    ttl: "21600000"
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
@@ -1443,7 +1443,7 @@ plugins:
           - name: REDIS_CLEANUP_DELAY
             value: "{{ .Values.external.redis.cleanup_delay }}"
           - name: REDIS_TTL
-            value: "{{ .Values.external.redis.ttl | quote }}"
+            value: "{{ .Values.external.redis.ttl }}"
         ingress:
           name: plugin-retrohunt-server
           serviceName: plugin-retrohunt-server
@@ -1522,7 +1522,7 @@ plugins:
           - name: REDIS_CLEANUP_DELAY
             value: "{{ .Values.external.redis.cleanup_delay }}"
           - name: REDIS_TTL
-            value: "{{ .Values.external.redis.ttl | quote }}"
+            value: "{{ .Values.external.redis.ttl }}"
         extraContainers:
           worker:
             template: "plugin.container.main"
