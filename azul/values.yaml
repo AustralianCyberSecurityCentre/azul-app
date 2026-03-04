@@ -1442,7 +1442,7 @@ plugins:
                 key: redis-password
           - name: REDIS_CLEANUP_DELAY
             value: "{{ .Values.external.redis.cleanup_delay }}"
-          - name: REDIS_CLEANUP_DELAY
+          - name: REDIS_TTL
             value: "{{ .Values.external.redis.ttl }}"
         ingress:
           name: plugin-retrohunt-server
@@ -1502,6 +1502,25 @@ plugins:
           - name: indices
             persistentVolumeClaim:
               claimName: plugin-retrohunt
+        baseEnv:
+          - name: REDIS_HOST
+            value: "{{ .Values.external.redis.endpoint }}"
+          - name: REDIS_PORT
+            value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
+          - name: REDIS_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.redis }}"
+                key: redis-username
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.redis }}"
+                key: redis-password
+          - name: REDIS_CLEANUP_DELAY
+            value: "{{ .Values.external.redis.cleanup_delay }}"
+          - name: REDIS_TTL
+            value: "{{ .Values.external.redis.ttl }}"
         extraContainers:
           worker:
             template: "plugin.container.main"
@@ -1510,25 +1529,7 @@ plugins:
             promPort: "8901"
             # Environment variable can be used to change prometheus port if you want multiple workers
             # All containers in retrohunt must have different prometheus scrape ports.
-            baseEnv:
-              - name: REDIS_HOST
-                value: "{{ .Values.external.redis.endpoint }}"
-              - name: REDIS_PORT
-                value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
-              - name: REDIS_USERNAME
-                valueFrom:
-                  secretKeyRef:
-                    name: "{{ .Values.secrets.redis }}"
-                    key: redis-username
-              - name: REDIS_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: "{{ .Values.secrets.redis }}"
-                    key: redis-password
-              - name: REDIS_CLEANUP_DELAY
-                value: "{{ .Values.external.redis.cleanup_delay }}"
-              - name: REDIS_CLEANUP_DELAY
-                value: "{{ .Values.external.redis.ttl }}"
+            env:
               - name: PLUGIN_PROMETHEUS_PORT_WORKER
                 value: "8901"
             image: plugin-retrohunt
