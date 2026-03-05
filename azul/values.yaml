@@ -1577,7 +1577,7 @@ plugins:
                 value: "{{ .Values.external.redis.cleanup_delay }}"
               - name: REDIS_TTL
                 value: "{{ .Values.external.redis.ttl }}"
-                image: plugin-retrohunt
+            image: plugin-retrohunt
             resources:
               requests:
                 memory: "8Gi"
