@@ -1425,7 +1425,7 @@ plugins:
       retrohunt-server:
         baseEnv:
           - name: REDIS_HOST
-            value: "{{ .Values.external.redis.endpoint }}"
+            value: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
           - name: REDIS_PORT
             value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
           - name: REDIS_DB
@@ -1504,7 +1504,7 @@ plugins:
               claimName: plugin-retrohunt
         baseEnv:
           - name: REDIS_HOST
-            value: "{{ .Values.external.redis.endpoint }}"
+            value: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
           - name: REDIS_PORT
             value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
           - name: REDIS_DB
