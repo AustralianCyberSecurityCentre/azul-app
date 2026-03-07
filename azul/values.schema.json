@@ -309,6 +309,9 @@
             },
             "cleanup_delay": {
               "type": "integer"
+            },
+            "ttl": {
+              "type": "string"
             }
           },
           "required": ["endpoint"],
