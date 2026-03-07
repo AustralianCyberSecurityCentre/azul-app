@@ -95,6 +95,10 @@ spec:
           {{- end }}
           - name: METASTORE_PURGE_SHA256_FOLDER
             value: "/purge"
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
         volumeMounts:
           - name: tmp
             mountPath: /tmp/
