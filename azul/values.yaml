@@ -1476,6 +1476,7 @@ plugins:
             memory: "2Gi"
         additionalLabels:
           allow-ingress-retrohunt-server: "true"
+          allow-egress-redis: "true"
         promMetricsEnabled: true
         promPort: "8852"
         args:
@@ -1532,6 +1533,8 @@ plugins:
         extraContainers:
           worker:
             template: "plugin.container.main"
+            additionalLabels:
+              allow-egress-redis: "true"
             promMetricsEnabled: true
             # Promport must be the same value as PLUGIN_PROMETHEUS_PORT_WORKER
             promPort: "8901"
