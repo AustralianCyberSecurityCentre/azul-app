@@ -309,6 +309,12 @@
             },
             "cleanup_delay": {
               "type": "integer"
+            },
+            "ttl": {
+              "type": "string"
+            },
+            "exception_wait": {
+              "type": "integer"
             }
           },
           "required": ["endpoint"],

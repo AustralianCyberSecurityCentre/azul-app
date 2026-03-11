@@ -287,6 +287,10 @@ external:
     db: 15
     # days before cronjob removes completed hunts.
     cleanup_delay: 30
+    # time a worker has hold of a hunt
+    ttl: "21600000"
+    # seconds before worker tries to access redis after an exception
+    exception_wait: 60
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
@@ -1421,11 +1425,13 @@ plugins:
           allow_splitting_and_deletion: "true"
     plugins:
       retrohunt-server:
-        env:
+        baseEnv:
           - name: REDIS_HOST
-            value: "{{ .Values.redis.endpoint }}"
+            value: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
+          - name: REDIS_PORT
+            value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
           - name: REDIS_DB
-            value: "{{ .Values.redis.db }}"
+            value: "{{ .Values.external.redis.db }}"
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
@@ -1437,7 +1443,11 @@ plugins:
                 name: "{{ .Values.secrets.redis }}"
                 key: redis-password
           - name: REDIS_CLEANUP_DELAY
-            value: "{{ .Values.redis.cleanup_delay }}"
+            value: "{{ .Values.external.redis.cleanup_delay }}"
+          - name: REDIS_TTL
+            value: "{{ .Values.external.redis.ttl }}"
+          - name: REDIS_EXCEPTION_WAIT
+            value: "{{ .Values.external.redis.exception_wait }}"
         ingress:
           name: plugin-retrohunt-server
           serviceName: plugin-retrohunt-server
@@ -1496,6 +1506,29 @@ plugins:
           - name: indices
             persistentVolumeClaim:
               claimName: plugin-retrohunt
+        baseEnv:
+          - name: REDIS_HOST
+            value: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
+          - name: REDIS_PORT
+            value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
+          - name: REDIS_DB
+            value: "{{ .Values.external.redis.db }}"
+          - name: REDIS_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.redis }}"
+                key: redis-username
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Values.secrets.redis }}"
+                key: redis-password
+          - name: REDIS_CLEANUP_DELAY
+            value: "{{ .Values.external.redis.cleanup_delay }}"
+          - name: REDIS_TTL
+            value: "{{ .Values.external.redis.ttl }}"
+          - name: REDIS_EXCEPTION_WAIT
+            value: "{{ .Values.external.redis.exception_wait }}"
         extraContainers:
           worker:
             template: "plugin.container.main"
@@ -1505,8 +1538,14 @@ plugins:
             # Environment variable can be used to change prometheus port if you want multiple workers
             # All containers in retrohunt must have different prometheus scrape ports.
             env:
+              - name: PLUGIN_PROMETHEUS_PORT_WORKER
+                value: "8901"
               - name: REDIS_HOST
-                value: "{{ .Values.redis.endpoint }}"
+                value: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
+              - name: REDIS_PORT
+                value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
+              - name: REDIS_DB
+                value: "{{ .Values.external.redis.db }}"
               - name: REDIS_USERNAME
                 valueFrom:
                   secretKeyRef:
@@ -1517,8 +1556,12 @@ plugins:
                   secretKeyRef:
                     name: "{{ .Values.secrets.redis }}"
                     key: redis-password
-              - name: PLUGIN_PROMETHEUS_PORT_WORKER
-                value: "8901"
+              - name: REDIS_CLEANUP_DELAY
+                value: "{{ .Values.external.redis.cleanup_delay }}"
+              - name: REDIS_TTL
+                value: "{{ .Values.external.redis.ttl }}"
+              - name: REDIS_EXCEPTION_WAIT
+                value: "{{ .Values.external.redis.exception_wait }}"
             image: plugin-retrohunt
             resources:
               requests:
@@ -1542,6 +1585,28 @@ plugins:
             env:
               - name: PLUGIN_PROMETHEUS_PORT_INDEXER
                 value: "8902"
+              - name: REDIS_HOST
+                value: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
+              - name: REDIS_PORT
+                value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
+              - name: REDIS_DB
+                value: "{{ .Values.external.redis.db }}"
+              - name: REDIS_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Values.secrets.redis }}"
+                    key: redis-username
+              - name: REDIS_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Values.secrets.redis }}"
+                    key: redis-password
+              - name: REDIS_CLEANUP_DELAY
+                value: "{{ .Values.external.redis.cleanup_delay }}"
+              - name: REDIS_TTL
+                value: "{{ .Values.external.redis.ttl }}"
+              - name: REDIS_EXCEPTION_WAIT
+                value: "{{ .Values.external.redis.exception_wait }}"
             image: plugin-retrohunt
             resources:
               requests:
