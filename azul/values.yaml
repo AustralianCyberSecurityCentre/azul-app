@@ -289,6 +289,8 @@ external:
     cleanup_delay: 30
     # time a worker has hold of a hunt
     ttl: "21600000"
+    # seconds before worker tries to access redis after an exception
+    exception_wait: "60"
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
@@ -1444,6 +1446,8 @@ plugins:
             value: "{{ .Values.external.redis.cleanup_delay }}"
           - name: REDIS_TTL
             value: "{{ .Values.external.redis.ttl }}"
+          - name: REDIS_EXCEPTION_WAIT
+            value: "{{ .Values.external.redis.exception_wait }}"
         ingress:
           name: plugin-retrohunt-server
           serviceName: plugin-retrohunt-server
@@ -1523,6 +1527,8 @@ plugins:
             value: "{{ .Values.external.redis.cleanup_delay }}"
           - name: REDIS_TTL
             value: "{{ .Values.external.redis.ttl }}"
+          - name: REDIS_EXCEPTION_WAIT
+            value: "{{ .Values.external.redis.exception_wait }}"
         extraContainers:
           worker:
             template: "plugin.container.main"
@@ -1554,6 +1560,8 @@ plugins:
                 value: "{{ .Values.external.redis.cleanup_delay }}"
               - name: REDIS_TTL
                 value: "{{ .Values.external.redis.ttl }}"
+              - name: REDIS_EXCEPTION_WAIT
+                value: "{{ .Values.external.redis.exception_wait }}"
             image: plugin-retrohunt
             resources:
               requests:
@@ -1597,6 +1605,8 @@ plugins:
                 value: "{{ .Values.external.redis.cleanup_delay }}"
               - name: REDIS_TTL
                 value: "{{ .Values.external.redis.ttl }}"
+              - name: REDIS_EXCEPTION_WAIT
+                value: "{{ .Values.external.redis.exception_wait }}"
             image: plugin-retrohunt
             resources:
               requests:
