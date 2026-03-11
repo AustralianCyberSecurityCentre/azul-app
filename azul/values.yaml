@@ -1489,6 +1489,8 @@ plugins:
           - --port
           - "8852"
       retrohunt-worker:
+        additionalLabels:
+          allow-egress-redis: "true"
         strategy:
           type: Recreate
         promMetricsEnabled: true
@@ -1533,8 +1535,6 @@ plugins:
         extraContainers:
           worker:
             template: "plugin.container.main"
-            additionalLabels:
-              allow-egress-redis: "true"
             promMetricsEnabled: true
             # Promport must be the same value as PLUGIN_PROMETHEUS_PORT_WORKER
             promPort: "8901"
