@@ -290,7 +290,7 @@ external:
     # time a worker has hold of a hunt
     ttl: "21600000"
     # seconds before worker tries to access redis after an exception
-    exception_wait: "60"
+    exception_wait: 60
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
