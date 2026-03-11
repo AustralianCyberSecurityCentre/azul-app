@@ -312,6 +312,9 @@
             },
             "ttl": {
               "type": "string"
+            },
+            "exception_wait": {
+              "type": "integer"
             }
           },
           "required": ["endpoint"],
