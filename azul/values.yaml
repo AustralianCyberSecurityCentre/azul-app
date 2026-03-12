@@ -1476,6 +1476,7 @@ plugins:
             memory: "2Gi"
         additionalLabels:
           allow-ingress-retrohunt-server: "true"
+          allow-egress-redis: "true"
         promMetricsEnabled: true
         promPort: "8852"
         args:
@@ -1488,6 +1489,8 @@ plugins:
           - --port
           - "8852"
       retrohunt-worker:
+        additionalLabels:
+          allow-egress-redis: "true"
         strategy:
           type: Recreate
         promMetricsEnabled: true
