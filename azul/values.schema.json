@@ -310,6 +310,9 @@
             "cleanup_delay": {
               "type": "integer"
             },
+            "cleanup_running_delay": {
+              "type": "integer"
+            },
             "ttl": {
               "type": "string"
             },

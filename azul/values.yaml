@@ -285,8 +285,10 @@ external:
     # shouldn't need to change this
     endpoint: "azul-redis-master:6379"
     db: 15
-    # days before cronjob removes completed hunts.
+    # days before cronjob removes completed hunts
     cleanup_delay: 30
+    # days before cronjob removes running hunts
+    cleanup_running_delay: 7
     # time a worker has hold of a hunt
     ttl: "21600000"
     # seconds before worker tries to access redis after an exception
@@ -1444,6 +1446,8 @@ plugins:
                 key: redis-password
           - name: REDIS_CLEANUP_DELAY
             value: "{{ .Values.external.redis.cleanup_delay }}"
+          - name: REDIS_CLEANUP_RUNNING_DELAY
+            value: "{{ .Values.external.redis.cleanup_running_delay }}"
           - name: REDIS_TTL
             value: "{{ .Values.external.redis.ttl }}"
           - name: REDIS_EXCEPTION_WAIT
@@ -1528,6 +1532,8 @@ plugins:
                 key: redis-password
           - name: REDIS_CLEANUP_DELAY
             value: "{{ .Values.external.redis.cleanup_delay }}"
+          - name: REDIS_CLEANUP_RUNNING_DELAY
+            value: "{{ .Values.external.redis.cleanup_running_delay }}"
           - name: REDIS_TTL
             value: "{{ .Values.external.redis.ttl }}"
           - name: REDIS_EXCEPTION_WAIT
@@ -1561,6 +1567,8 @@ plugins:
                     key: redis-password
               - name: REDIS_CLEANUP_DELAY
                 value: "{{ .Values.external.redis.cleanup_delay }}"
+              - name: REDIS_CLEANUP_RUNNING_DELAY
+                value: "{{ .Values.external.redis.cleanup_running_delay }}"
               - name: REDIS_TTL
                 value: "{{ .Values.external.redis.ttl }}"
               - name: REDIS_EXCEPTION_WAIT
@@ -1606,6 +1614,8 @@ plugins:
                     key: redis-password
               - name: REDIS_CLEANUP_DELAY
                 value: "{{ .Values.external.redis.cleanup_delay }}"
+              - name: REDIS_CLEANUP_RUNNING_DELAY
+                value: "{{ .Values.external.redis.cleanup_running_delay }}"
               - name: REDIS_TTL
                 value: "{{ .Values.external.redis.ttl }}"
               - name: REDIS_EXCEPTION_WAIT
