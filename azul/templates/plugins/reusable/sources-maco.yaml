@@ -102,6 +102,36 @@ spec:
         - name: REQUESTS_CA_BUNDLE
           value: /etc/ssl/certs/ca-certificates.crt
         {{- end }}
+        - name: PLUGIN_GIT_SYNC_REPO
+          value: {{ $source.repo}}
+        - name: PLUGIN_GIT_SYNC_REF
+          value: {{ $source.branch }}
+        - name: PLUGIN_GIT_SYNC_DEPTH
+          value: "1"
+        - name: PLUGIN_GIT_SYNC_SUBMODULES
+          value: {{ $source.includeSubmodules | default "\"off\"" }}
+        - name: PLUGIN_GIT_SYNC_MAX_SYNC_FAILURES
+          value: {{ $source.maxSyncFailures | default "0" }}
+        {{- if $source.secretSSH }}
+        - name: PLUGIN_GIT_SYNC_SSH
+          value: "true"
+        - name: PLUGIN_GIT_SYNC_PERIOD
+          value: "600"
+        {{- end }}
+        {{- if eq ($source.sslVerify | default true) false }}
+        - name: PLUGIN_GIT_SYNC_GIT_CONFIG
+          value: "http.sslVerify:false"
+        {{- end }}
+        {{- if $source.secretSSH }}
+        - name: ssh
+          subPath: id_rsa
+          mountPath: /etc/git-secret/ssh
+        {{- end }}
+        {{- if $source.secretEnv }}
+        envFrom:
+        - secretRef:
+            name: {{ $source.secretEnv }}
+        {{- end }}
         volumeMounts:
         - name: tmp
           mountPath: /tmp/
@@ -124,10 +154,6 @@ spec:
           name: ca-cert
           subPath: ca.crt
         {{- end }}
-      {{- include "plugin.container.source.loop" (dict "root" $ "source" $source ) | nindent 6 }}
-      # Init container to ensure git repo is present before the pod tries to startup.
-      initContainers:
-      {{- include "plugin.container.source.loop" (dict "root" $ "source" $source "gitsync_one_time" "true" ) | nindent 6 }}
       volumes:
       - name: tmp
         emptyDir:
