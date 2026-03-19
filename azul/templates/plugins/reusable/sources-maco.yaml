@@ -74,6 +74,10 @@ spec:
         - configMapRef:
             name: {{ printf "plugin-%s" $group_name }}
         {{- end }}
+        {{- if $source.secretEnv }}
+        - secretRef:
+            name: {{ $source.secretEnv }}
+        {{- end }}
         env:
         {{- with $source.env }}
         {{- . | toYaml | nindent 8 }}
@@ -126,11 +130,6 @@ spec:
         - name: ssh
           subPath: id_rsa
           mountPath: /etc/git-secret/ssh
-        {{- end }}
-        {{- if $source.secretEnv }}
-        envFrom:
-        - secretRef:
-            name: {{ $source.secretEnv }}
         {{- end }}
         volumeMounts:
         - name: tmp

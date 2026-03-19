@@ -67,6 +67,10 @@ spec:
         # Plugin ref first so the plugin specific settings will override standard settings.
         - configMapRef:
             name: plugin-standard
+        {{- if $source.secretEnv }}
+        - secretRef:
+            name: {{ $source.secretEnv }}
+        {{- end }}
         {{- if $group.config }}
         - configMapRef:
             name: {{ printf "plugin-%s" $group_name }}
@@ -121,11 +125,6 @@ spec:
         - name: ssh
           subPath: id_rsa
           mountPath: /etc/git-secret/ssh
-        {{- end }}
-        {{- if $source.secretEnv }}
-        envFrom:
-        - secretRef:
-            name: {{ $source.secretEnv }}
         {{- end }}
         volumeMounts:
         - name: tmp
