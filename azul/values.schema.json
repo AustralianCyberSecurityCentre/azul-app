@@ -2589,6 +2589,10 @@
           "description": "The branch to checkout, if not the default.",
           "type": "string"
         },
+        "maxSyncFailures": {
+          "description": "The branch to checkout, if not the default.",
+          "type": "string"
+        },
         "secretEnv": {
           "description": "HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD).",
           "type": "string"
