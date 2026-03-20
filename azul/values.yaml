@@ -2008,7 +2008,7 @@ images:
     plugin-nsrl: plugin-nsrl:20260320T0315-unstable@sha256:fc079352d727723754293294ca95f09946295cb20d12890c5999318e552e4f93
     plugin-office: plugin-office:20260320T0319-unstable@sha256:089b91ccd46e79ab332805f16cc7aa9c19274f47892f933ab9fb71ddec11afc1
     plugin-pdftools: plugin-pdftools:20260320T0313-unstable@sha256:b7644eb4fa43925ee9aa4b0dd6d02947bf4c19362b7a79564ac427ed2b2e38fb
-    plugin-python: plugin-python:20260320T0257-unstable@sha256:a98d95f5f43ef3073f49a96fd5591b1e70952867ba0ec76c5560c6cac86a7cff
+    plugin-python: plugin-python:20260320T0324-unstable@sha256:23c1282dcacc5c260da421c9ed6380bfc3beec0c462d4278b1cd6b6f604cd008
     plugin-repeated-bytes: plugin-repeated-bytes:20260320T0314-unstable@sha256:bccdef285649a99c1b0c920a20eaa11bc125f23460595a83955ae93067e03df9
     plugin-retrohunt: plugin-retrohunt:20260320T0314-unstable@sha256:d87c87cb771d8d2646a350c84a54548ed1f4ba67d242babf30dc0afa7c341bbd
     plugin-richid: plugin-richid:20260320T0319-unstable@sha256:7af71409839dc72b79af1c10ac07c982d7f05aabe599275085918205dbaa892d
