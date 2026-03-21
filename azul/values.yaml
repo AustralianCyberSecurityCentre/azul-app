@@ -2009,7 +2009,7 @@ images:
     plugin-office: plugin-office:20260321T0017-unstable@sha256:0dec347e34867402acafa4e44c77f84b7c9e5868de59cc8cba041f22cf47c9d1
     plugin-pdftools: plugin-pdftools:20260321T0015-unstable@sha256:2e9cac90e79aff7ad363e51f961234beb8d45d72e7202489d53ada8101e75899
     plugin-python: plugin-python:20260320T0324-unstable@sha256:23c1282dcacc5c260da421c9ed6380bfc3beec0c462d4278b1cd6b6f604cd008
-    plugin-repeated-bytes: plugin-repeated-bytes:20260320T0314-unstable@sha256:bccdef285649a99c1b0c920a20eaa11bc125f23460595a83955ae93067e03df9
+    plugin-repeated-bytes: plugin-repeated-bytes:20260321T0020-unstable@sha256:87432339b73739156a6b493f49806b86f985485bf1190935c7d0a1be6b58ab01
     plugin-retrohunt: plugin-retrohunt:20260321T0008-unstable@sha256:011903588f3f0126440bf36c59bc897652519aec0d289d04954c20fa8a70296e
     plugin-richid: plugin-richid:20260320T0319-unstable@sha256:7af71409839dc72b79af1c10ac07c982d7f05aabe599275085918205dbaa892d
     plugin-script-decoder: plugin-script-decoder:20260320T0319-unstable@sha256:5f9fe180f5dbef7750757333738ba2edbef4d433f898d78fc3d7c68461cc813e
