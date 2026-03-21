@@ -2004,7 +2004,7 @@ images:
     plugin-lief: plugin-lief:20260321T0015-unstable@sha256:b219cff62d044886d455a3c34aeda67f7840eac7ee2f872f167edbb8b78eccda
     plugin-lookback: plugin-lookback:20260321T0014-unstable@sha256:666a2131214f579ed2fab677f27d5041ecf7b7b27cd9b3edd61c9d3272909cf8
     plugin-malcarve: plugin-malcarve:20260321T0017-unstable@sha256:c59173d551be4a367df410376a491365762ee4780836549ae19c87c62ecff1dd
-    plugin-netinfo: plugin-netinfo:20260320T0310-unstable@sha256:39fcd47e8e02633a8cf771e55cd434b5dd25ae57ab22930c449201fdb1926f64
+    plugin-netinfo: plugin-netinfo:20260321T0021-unstable@sha256:80dee31a381f2f766450f0d12e767327825c706a8a8c9747c3dc5774cd8d71aa
     plugin-nsrl: plugin-nsrl:20260321T0015-unstable@sha256:fa3dbd9a91777ce8905810d74b5392e4049fa870f785fee6b4538dbbcc76934a
     plugin-office: plugin-office:20260321T0017-unstable@sha256:0dec347e34867402acafa4e44c77f84b7c9e5868de59cc8cba041f22cf47c9d1
     plugin-pdftools: plugin-pdftools:20260321T0015-unstable@sha256:2e9cac90e79aff7ad363e51f961234beb8d45d72e7202489d53ada8101e75899
