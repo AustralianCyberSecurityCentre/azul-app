@@ -150,7 +150,7 @@ spec:
 {{- end }}
 
 ---
-apiVersion: opensearch.org/v1
+apiVersion: opensearch.opster.io/v1
 kind: OpenSearchCluster
 metadata:
   name: {{ .Values.opensearch.name }}
