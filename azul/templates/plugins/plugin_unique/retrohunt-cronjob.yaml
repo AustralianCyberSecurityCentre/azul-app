@@ -35,12 +35,19 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
 
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+
           containers:
             - name: retrohunt-cron
               image: {{ include "image.custom" (dict "images" .Values.images "name" "plugin-retrohunt") }}
               imagePullPolicy: {{ .Values.images.pullPolicy }}
 
               command: ["azul-plugin-retrocron"]
+
+              {{- include "harden.container" . | nindent 14 }}
 
               envFrom:
                 - configMapRef:
