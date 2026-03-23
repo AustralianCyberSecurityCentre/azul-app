@@ -42,6 +42,8 @@ spec:
 
               command: ["azul-plugin-retrocron"]
 
+              {{- include "harden.container" . | nindent 14 }}
+
               envFrom:
                 - configMapRef:
                     name: plugin-standard
