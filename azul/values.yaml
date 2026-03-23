@@ -517,7 +517,7 @@ recovery:
   # Used to initialise another backup to create a copy that can quickly be switched to.
   # This reduces the risk of losing any data when swapping between backup iterations.
   # If this value and label are the same value nothing happens, this label has no affect on recovery.
-  nextBackupLabel: "02"
+  nextBackupLabel: ""
   # Bucket name prefix for backup buckets.
   bucketNamePrefix: "azul-backup-"
   # Bucket region will need to be set when using IRSA account for S3 access.
