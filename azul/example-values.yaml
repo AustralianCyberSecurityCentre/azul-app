@@ -76,6 +76,10 @@ scaler:
   # Use in conjunction with useSmartScaler - see above
   enabled: true
 
+recovery:
+  mode: "backup"
+  externalS3Endpoint: "https://fake-s3.net"
+
 # This file is used to set fields required by the azul helm chart. This file is used to ensure checks pass during development.
 external:
   opensearch:

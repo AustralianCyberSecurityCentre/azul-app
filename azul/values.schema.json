@@ -1644,7 +1644,8 @@
       "additionalProperties": false,
       "properties": {
         "mode": {
-          "type": "string"
+          "type": "string",
+          "enum": ["off", "backup", "restore"]
         },
         "restoreType": {
           "type": "string"
@@ -1660,6 +1661,9 @@
           "type": "string"
         },
         "label": {
+          "type": "string"
+        },
+        "nextBackupLabel":{
           "type": "string"
         },
         "bucketNamePrefix": {

@@ -514,6 +514,10 @@ recovery:
   # If this label is changed, a full backup will be started into a new set of buckets.
   # Bucket names are `<recovery.bucketNamePrefix><recovery.label>-(streams|events)`.
   label: "01"
+  # Used to initialise another backup to create a copy that can quickly be switched to.
+  # This reduces the risk of losing any data when swapping between backup iterations.
+  # If this value and label are the same value nothing happens, this label has no affect on recovery.
+  nextBackupLabel: "02"
   # Bucket name prefix for backup buckets.
   bucketNamePrefix: "azul-backup-"
   # Bucket region will need to be set when using IRSA account for S3 access.
@@ -1966,10 +1970,10 @@ images:
   external:
     git-sync: registry.k8s.io/git-sync/git-sync:v4.5.0@sha256:0e64aedb0d0ae0a3bab880349a5109b2a31891d646dd61e433ca36ed220dff1f
     tika_external: docker.io/apache/tika:3.2.3.0-full@sha256:21d8052de04e491ccf66e8680ade4da6f3d453a56d59f740b4167e54167219b7
-    alloy: docker.io/grafana/alloy:v1.11.2@sha256:6ab34b8201f0e8b0c4346be4934c9965723af3f7f21dd9a65fd73f270f69b451
+    alloy: docker.io/grafana/alloy:v1.14.1@sha256:8f5666aebb871ba43ee2d65159c5d1c26c903720efafaf2d9ed4e237afc3bc88
     # Pod to scrape kafka consumer lag statistics from Kafka.
     burrow: ghcr.io/linkedin/burrow/burrow:v1.9.5@sha256:670c59255a339e14e241ca2d8f80085628d9295e6a46102b4730ace820e51952
-    redis: docker.io/redis:8.4.0-bookworm@sha256:3906b477e4b60250660573105110c28bfce93b01243eab37610a484daebceb04
+    redis: docker.io/redis:8.6.1-trixie@sha256:315270d166080f537bbdf1b489b603aaaa213cb55a544acfa51feb7481abb1c0
   # custom registry to retrieve 'custom' images from (prepended)
   customRegistry: docker.io/asdazul/
   # images that form part of an azul release
