@@ -1,8 +1,16 @@
 {{- if eq .Values.recovery.mode "backup" -}}
+{{- $labelList := list .Values.recovery.label -}}
+{{- if and (not (empty .Values.recovery.nextBackupLabel)) (ne .Values.recovery.nextBackupLabel .Values.recovery.label) -}}
+  {{- $labelList = append $labelList .Values.recovery.nextBackupLabel -}}
+{{- end }}
+{{- $recoveryConfigmapSha256 := include (print $.Template.BasePath "/core/recovery/recovery.yaml") . | sha256sum }}
+---
+# Create one deployment per label, to allow multiple concurrent backups.
+{{- range $index, $labelVal := $labelList }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: recovery-backup-{{ .Values.recovery.label }}
+  name: recovery-backup-{{ $labelVal }}
   labels:
     part-of: azul
     section: core
@@ -17,7 +25,7 @@ spec:
       app: backup
   template:
     metadata:
-      name: recovery-backup-{{ .Values.recovery.label }}
+      name: recovery-backup-{{ $labelVal }}
       labels:
         app: backup
         part-of: azul
@@ -31,53 +39,53 @@ spec:
         prometheus.io/port: "8900"
         prometheus.io/scrape: "true"
         # ensure deployment restarts if config is changed
-        checksum/config: {{ include (print $.Template.BasePath "/core/recovery/recovery.yaml") . | sha256sum }}
-      {{- with .Values.podAnnotations }}
+        checksum/config: {{ $recoveryConfigmapSha256 }}
+      {{- with $.Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with $.Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- with $.Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with $.Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with $.Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "harden.deployment" . | nindent 6 }}
       containers:
       - name: main
-        image: {{ include "image.custom" (dict "images" .Values.images "name" "backup")}}
-        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        image: {{ include "image.custom" (dict "images" $.Values.images "name" "backup")}}
+        imagePullPolicy: {{ $.Values.images.pullPolicy }}
         {{- include "harden.container" . | nindent 8 }}
-        {{- if .Values.recovery.backup.resources }}
+        {{- if $.Values.recovery.backup.resources }}
         resources:
-        {{- .Values.recovery.backup.resources | toYaml | nindent 10 }}
+        {{- $.Values.recovery.backup.resources | toYaml | nindent 10 }}
         {{- end }}
         args:
         - "backup"
         envFrom:
           - configMapRef:
               name: recovery
-        {{- if and (eq .Values.recovery.s3AuthMode "keys") .Values.secrets.backupS3Keys }}
+        {{- if and (eq $.Values.recovery.s3AuthMode "keys") $.Values.secrets.backupS3Keys }}
         env:
           - name: BK.EXTERNAL_BACKUP.ACCESS_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.secrets.backupS3Keys }}
+                name: {{ $.Values.secrets.backupS3Keys }}
                 key: access_key
           - name: BK.EXTERNAL_BACKUP.SECRET_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.secrets.backupS3Keys }}
+                name: {{ $.Values.secrets.backupS3Keys }}
                 key: secret_key
         {{- end }}
         volumeMounts:
@@ -85,13 +93,13 @@ spec:
             mountPath: /tmp/
           - name: fcache
             mountPath: "/fcache"
-          {{- if .Values.CACertificateConfigMap }}
+          {{- if $.Values.CACertificateConfigMap }}
           - mountPath: /etc/ssl/certs/ca-certificates.crt
             name: ca-cert
             subPath: ca.crt
           {{- end }}
-      {{- if and (eq .Values.recovery.s3AuthMode "service_account") .Values.external.filestore.serviceAccountName }}
-      serviceAccountName: {{ .Values.external.filestore.serviceAccountName }}
+      {{- if and (eq $.Values.recovery.s3AuthMode "service_account") $.Values.external.filestore.serviceAccountName }}
+      serviceAccountName: {{ $.Values.external.filestore.serviceAccountName }}
       {{- end }}
       volumes:
       - name: tmp
@@ -99,11 +107,12 @@ spec:
           sizeLimit: 200Mi
       - name: fcache
         persistentVolumeClaim:
-          claimName: azul-backup-{{ .Values.recovery.label }}
-      {{- if .Values.CACertificateConfigMap }}
+          claimName: azul-backup-{{ $labelVal }}
+      {{- if $.Values.CACertificateConfigMap }}
       - name: ca-cert
         configMap:
-          name: {{ .Values.CACertificateConfigMap }}
+          name: {{ $.Values.CACertificateConfigMap }}
       {{- end }}
 ---
+{{- end }}
 {{- end }}

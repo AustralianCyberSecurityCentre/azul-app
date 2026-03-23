@@ -60,6 +60,19 @@ Also reference `.recovery` in `values.yaml` for specific values that can be conf
 Backup runs like a plugin taking in all kafka events and then downloading all their binary streams, it then saves this data to an S3 server. This is a continuous backup of current state and will never 'finish'.
 Note - avoid deleting this pod as deletions will cause data not to be backed up.
 
+## Purging and Backup
+
+When files are purged from the system they are not purged from backup.
+
+To purge a file from backup you need to create a new backup and then delete the existing backup.
+
+This can be done using the `nextBackupLabel` parameter in the helm `values.yaml`.
+It allows you to start a new backup before you stop the existing one.
+
+Once monitoring indicates that the new backup has caught up to live you can then increment the backup label to match the nextBackupLabel.
+
+Then only one backup will exist and the old backup should be removed with your organisations associated backup processes.
+
 ### Restore
 
 Runs as a k8s 'job'. It will restore all raw stream data first and then restore all the kafka events.
