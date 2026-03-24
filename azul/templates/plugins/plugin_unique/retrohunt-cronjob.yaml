@@ -42,7 +42,7 @@ spec:
 
               command: ["azul-plugin-retrocron"]
 
-              {{- include "harden.container" . | nindent 14 }}
+              {{- include "harden.deployment" . | nindent 14 }}
 
               envFrom:
                 - configMapRef:
