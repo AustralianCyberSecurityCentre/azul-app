@@ -27,4 +27,5 @@ stages:
               set -e
               ls -lha
               helm template azul --values azul/values.yaml --values azul/example-values.yaml > built.yaml
+              helm template azul --values azul/values.yaml --values azul/smallest-examples-values.yaml > built-smallest.yaml
             displayName: Validate chart
