@@ -35,7 +35,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
 
-           {{- include "harden.container" . | nindent 10 }}
+           {{- include "harden.deployment" . | nindent 10 }}
 
           containers:
             - name: retrohunt-cron
@@ -44,6 +44,8 @@ spec:
 
               command: ["azul-plugin-retrocron"]
 
+              {{- include "harden.container" . | nindent 14 }}
+              
               envFrom:
                 - configMapRef:
                     name: plugin-standard
