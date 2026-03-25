@@ -2594,7 +2594,11 @@
           "type": "string"
         },
         "maxSyncFailures": {
-          "description": "The branch to checkout, if not the default.",
+          "description": "Number of consecutive sync failures permitted before exiting.",
+          "type": "string"
+        },
+        "syncPeriod": {
+          "description": "Interval to poll the remote repo for changes, in seconds.",
           "type": "string"
         },
         "secretEnv": {
