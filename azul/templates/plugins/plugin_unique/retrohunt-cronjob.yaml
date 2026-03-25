@@ -63,6 +63,31 @@ spec:
               env:
                 - name: PLUGIN_DEPLOYMENT_KEY
                   value: plugin-retrohunt
+                - name: REDIS_HOST
+                  value: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
+                - name: REDIS_PORT
+                  value: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
+                - name: REDIS_DB
+                  value: "{{ .Values.external.redis.db }}"
+                - name: REDIS_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: "{{ .Values.secrets.redis }}"
+                      key: redis-username
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: "{{ .Values.secrets.redis }}"
+                      key: redis-password
+                - name: REDIS_CLEANUP_DELAY
+                  value: "{{ .Values.external.redis.cleanup_delay }}"
+                - name: REDIS_CLEANUP_RUNNING_DELAY
+                  value: "{{ .Values.external.redis.cleanup_running_delay }}"
+                - name: REDIS_TTL
+                  value: "{{ .Values.external.redis.ttl }}"
+                - name: REDIS_EXCEPTION_WAIT
+                  value: "{{ .Values.external.redis.exception_wait }}"  
+
 
 {{- end }}
 {{- end }}
