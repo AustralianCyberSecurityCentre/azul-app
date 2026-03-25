@@ -35,7 +35,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
 
-           {{- include "harden.deployment" . | nindent 10 }}
+           {{- include "harden.container" . | nindent 10 }}
 
           containers:
             - name: retrohunt-cron
