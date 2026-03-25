@@ -37,15 +37,15 @@ spec:
 
           {{- include "harden.deployment" . | nindent 10 }}
 
-          volumes:
-            - name: tmp
-              emptyDir: {}
+          #volumes:
+          #  - name: tmp
+          #    emptyDir: {}
 
           containers:
             - name: retrohunt-cron
-              volumeMounts:
-                - name: tmp
-                  mountPath: /tmp
+              #volumeMounts:
+              #  - name: tmp
+              #    mountPath: /tmp
 
               image: {{ include "image.custom" (dict "images" .Values.images "name" "plugin-retrohunt") }}
               imagePullPolicy: {{ .Values.images.pullPolicy }}
