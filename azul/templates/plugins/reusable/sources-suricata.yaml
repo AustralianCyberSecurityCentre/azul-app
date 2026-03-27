@@ -108,17 +108,12 @@ spec:
         {{- if $source.secretSSH }}
         - name: PLUGIN_GIT_SYNC_SSH
           value: "true"
-        - name: PLUGIN_GIT_SYNC_PERIOD
-          value: "600"
+        - name: PLUGIN_GIT_SYNC_SSH_KEY_PATH
+          value: /etc/git-secret/ssh/id_rsa
         {{- end }}
         {{- if eq ($source.sslVerify | default true) false }}
         - name: PLUGIN_GIT_SYNC_GIT_CONFIG
           value: "http.sslVerify:false"
-        {{- end }}
-        {{- if $source.secretSSH }}
-        - name: ssh
-          subPath: id_rsa
-          mountPath: /etc/git-secret/ssh
         {{- end }}
         volumeMounts:
         - name: tmp
@@ -128,6 +123,11 @@ spec:
         - name: plugin-gitconfig
           mountPath: /home/azul/.gitconfig
           subPath: .gitconfig
+        {{- if $source.secretSSH }}
+        - name: ssh
+          mountPath: /etc/git-secret/ssh
+          subPath: id_rsa
+        {{- end }}
       volumes:
       - name: tmp
         emptyDir:
