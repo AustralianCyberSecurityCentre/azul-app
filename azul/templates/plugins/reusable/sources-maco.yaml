@@ -54,6 +54,22 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "harden.deployment" . | nindent 6 }}
+      initContainers:
+      # We need to create workingDir with correct permissions before the main container runs.
+      # Otherwise, we won't be able to write to it when we clone the repo
+      - name: init-workdir
+        image: {{ include "image.custom" (dict "images" $root.images "name" $image)}}
+        command: ["mkdir", "-p", "/code/dest/{{ $source.path | default "" }}"]
+        securityContext:
+          runAsUser: 21000
+          runAsGroup: 21000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        volumeMounts:
+        - name: code
+          mountPath: /code
       containers:
       - name: main
         image: {{ include "image.custom" (dict "images" $root.images "name" $image)}}
@@ -73,6 +89,10 @@ spec:
         {{- if $group.config }}
         - configMapRef:
             name: {{ printf "plugin-%s" $group_name }}
+        {{- end }}
+        {{- if $source.secretEnv }}
+        - secretRef:
+            name: {{ $source.secretEnv }}
         {{- end }}
         env:
         {{- with $source.env }}
@@ -102,6 +122,28 @@ spec:
         - name: REQUESTS_CA_BUNDLE
           value: /etc/ssl/certs/ca-certificates.crt
         {{- end }}
+        - name: PLUGIN_GIT_SYNC_REPO
+          value: {{ $source.repo}}
+        - name: PLUGIN_GIT_SYNC_REF
+          value: {{ $source.branch }}
+        - name: PLUGIN_GIT_SYNC_DEPTH
+          value: "1"
+        - name: PLUGIN_GIT_SYNC_SUBMODULES
+          value: {{ $source.includeSubmodules | default "\"off\"" }}
+        - name: PLUGIN_GIT_SYNC_MAX_SYNC_FAILURES
+          value: {{ $source.maxSyncFailures | default "\"0\"" }}
+        - name: PLUGIN_GIT_SYNC_PERIOD
+          value: {{ $source.syncPeriod | default "\"600\"" }}
+        {{- if $source.secretSSH }}
+        - name: PLUGIN_GIT_SYNC_SSH
+          value: "true"
+        - name: PLUGIN_GIT_SYNC_SSH_KEY_PATH
+          value: /etc/git-secret/ssh/id_rsa
+        {{- end }}
+        {{- if eq ($source.sslVerify | default true) false }}
+        - name: PLUGIN_GIT_SYNC_GIT_CONFIG
+          value: "http.sslVerify:false"
+        {{- end }}
         volumeMounts:
         - name: tmp
           mountPath: /tmp/
@@ -124,10 +166,11 @@ spec:
           name: ca-cert
           subPath: ca.crt
         {{- end }}
-      {{- include "plugin.container.source.loop" (dict "root" $ "source" $source ) | nindent 6 }}
-      # Init container to ensure git repo is present before the pod tries to startup.
-      initContainers:
-      {{- include "plugin.container.source.loop" (dict "root" $ "source" $source "gitsync_one_time" "true" ) | nindent 6 }}
+        {{- if $source.secretSSH }}
+        - name: ssh
+          mountPath: /etc/git-secret/ssh
+          subPath: id_rsa
+        {{- end }}
       volumes:
       - name: tmp
         emptyDir:
