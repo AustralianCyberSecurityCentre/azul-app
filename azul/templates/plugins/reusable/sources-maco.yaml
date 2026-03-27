@@ -65,6 +65,8 @@ spec:
           runAsGroup: 21000
           runAsNonRoot: true
           allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
         volumeMounts:
         - name: code
           mountPath: /code
