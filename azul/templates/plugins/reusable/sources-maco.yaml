@@ -54,22 +54,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "harden.deployment" . | nindent 6 }}
-      initContainers:
-      # We need to create workingDir with correct permissions before the main container runs.
-      # Otherwise, we won't be able to write to it when we clone the repo
-      - name: init-workdir
-        image: {{ include "image.custom" (dict "images" $root.images "name" $image)}}
-        command: ["mkdir", "-p", "/code/dest/{{ $source.path | default "" }}"]
-        securityContext:
-          runAsUser: 21000
-          runAsGroup: 21000
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-        volumeMounts:
-        - name: code
-          mountPath: /code
       containers:
       - name: main
         image: {{ include "image.custom" (dict "images" $root.images "name" $image)}}
@@ -77,6 +61,10 @@ spec:
         # even when using MaCo venvs
         workingDir: /code/dest/{{ $source.path | default "" }}
         imagePullPolicy: {{ $root.images.pullPolicy }}
+        command:
+          - "/bin/sh"
+          - "-c"
+          - mkdir -p /code/dest/{{ $source.path | default "" }} && azul-plugin-maco
         {{- include "harden.container" . | nindent 8 }}
         {{- if $group.resources }}
         resources:
