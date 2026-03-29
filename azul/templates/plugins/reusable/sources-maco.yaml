@@ -129,11 +129,11 @@ spec:
         - name: PLUGIN_GIT_SYNC_DEPTH
           value: "1"
         - name: PLUGIN_GIT_SYNC_SUBMODULES
-          value: {{ $source.includeSubmodules | default "\"off\"" }}
+          value: "{{ $source.includeSubmodules | default "off" }}"
         - name: PLUGIN_GIT_SYNC_MAX_SYNC_FAILURES
-          value: {{ $source.maxSyncFailures | default "\"0\"" }}
+          value: "{{ $source.maxSyncFailures | default 0 }}"
         - name: PLUGIN_GIT_SYNC_PERIOD
-          value: {{ $source.syncPeriod | default "\"600\"" }}
+          value: "{{ $source.syncPeriod | default 600 }}"
         {{- if $source.secretSSH }}
         - name: PLUGIN_GIT_SYNC_SSH
           value: "true"

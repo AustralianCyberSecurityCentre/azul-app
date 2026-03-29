@@ -2595,11 +2595,11 @@
         },
         "maxSyncFailures": {
           "description": "Number of consecutive sync failures permitted before exiting.",
-          "type": "string"
+          "type": "integer"
         },
         "syncPeriod": {
           "description": "Interval to poll the remote repo for changes, in seconds.",
-          "type": "string"
+          "type": "integer"
         },
         "secretEnv": {
           "description": "HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD).",

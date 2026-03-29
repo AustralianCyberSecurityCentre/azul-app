@@ -403,8 +403,8 @@ plugins:
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
-        maxSyncFailures: "\"0\"" # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
-        syncPeriod: "\"600\"" # Interval to poll the remote repo for changes, in seconds.
+        maxSyncFailures: 0 # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
+        syncPeriod: 600 # Interval to poll the remote repo for changes, in seconds.
         env:
           - name: PLUGIN_CUSTOM_FEATURES
             value: >
@@ -423,8 +423,8 @@ plugins:
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
-        maxSyncFailures: "\"0\"" # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
-        syncPeriod: "\"600\"" # Interval to poll the remote repo for changes, in seconds.
+        maxSyncFailures: 0 # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
+        syncPeriod: 600 # Interval to poll the remote repo for changes, in seconds.
 
   yara-x:
     image: plugin-yara
@@ -438,8 +438,8 @@ plugins:
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
-        maxSyncFailures: "\"0\"" # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
-        syncPeriod: "\"600\"" # Interval to poll the remote repo for changes, in seconds.
+        maxSyncFailures: 0 # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
+        syncPeriod: 600 # Interval to poll the remote repo for changes, in seconds.
 
 # TopologySpreadConstraints check
 dispatcher:
