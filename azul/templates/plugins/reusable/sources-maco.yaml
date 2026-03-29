@@ -61,10 +61,6 @@ spec:
         # even when using MaCo venvs
         workingDir: /code/dest/{{ $source.path | default "" }}
         imagePullPolicy: {{ $root.images.pullPolicy }}
-        command:
-          - "/bin/sh"
-          - "-c"
-          - mkdir -p /code/dest/{{ $source.path | default "" }} && azul-plugin-maco
         {{- include "harden.container" . | nindent 8 }}
         {{- if $group.resources }}
         resources:
