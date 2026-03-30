@@ -24,6 +24,14 @@
   resources:
   {{- .plugin.resources | toYaml | nindent 4 }}
 {{- end }}
+  livenessProbe:
+    exec:
+      command:
+      - /bin/sh
+      - -c
+      - "[ $(($(date +%s) - $(stat -c %Y /tmp/.runner-keepalive))) -le 300 ]"
+    initialDelaySeconds: 600
+    periodSeconds: 300
   volumeMounts:
   - name: tmp
     mountPath: /tmp/
