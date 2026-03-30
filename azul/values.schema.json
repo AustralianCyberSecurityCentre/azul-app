@@ -2353,6 +2353,10 @@
           "description": "Set the maximum filesize the plugin will accept.",
           "type": "string"
         },
+        "livenessProbe": {
+          "description": "Enable the liveness probe for the plugin.",
+          "type": "boolean"
+        },
         "command": {
           "description": "Override the entrypoint of the `main` container.",
           "type": "array",
