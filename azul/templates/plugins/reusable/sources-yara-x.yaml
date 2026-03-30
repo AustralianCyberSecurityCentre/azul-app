@@ -57,6 +57,7 @@ spec:
       containers:
       - name: main
         image: {{ include "image.custom" (dict "images" $root.images "name" $image)}}
+        workingDir: /code/dest/{{ $source.path | default "" }}
         imagePullPolicy: {{ $root.images.pullPolicy }}
         {{- include "harden.container" . | nindent 8 }}
         {{- if $group.resources }}
