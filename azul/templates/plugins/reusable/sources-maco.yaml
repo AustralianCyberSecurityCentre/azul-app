@@ -59,7 +59,7 @@ spec:
         image: {{ include "image.custom" (dict "images" $root.images "name" $image)}}
         # extractor requirements can have relative path imports, so must be in correct dir
         # even when using MaCo venvs
-        workingDir: /code/dest/{{ $source.path | default "" }}
+        # workingDir: /code/dest/{{ $source.path | default "" }}
         imagePullPolicy: {{ $root.images.pullPolicy }}
         {{- include "harden.container" . | nindent 8 }}
         {{- if $group.resources }}
