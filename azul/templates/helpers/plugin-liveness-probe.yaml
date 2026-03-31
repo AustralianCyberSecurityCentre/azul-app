@@ -1,6 +1,6 @@
 {{/*
 Renders the livenessProbe block for a plugin container.
-Pass the object that holds enableLivenessProbe / livenessProbeInitialDelay / pluginLivenessProbePeriod.
+Pass the object that holds enableLivenessProbe / livenessProbeInitialDelay / livenessProbePeriod.
 Example (source templates): {{ include "plugin.livenessProbe" $source | nindent 8 }}
 Example (plugin-container-main): {{ include "plugin.livenessProbe" .plugin | nindent 2 }}
 */}}
