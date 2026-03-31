@@ -2353,10 +2353,6 @@
           "description": "Set the maximum filesize the plugin will accept.",
           "type": "string"
         },
-        "livenessProbe": {
-          "description": "Enable the liveness probe for the plugin.",
-          "type": "boolean"
-        },
         "command": {
           "description": "Override the entrypoint of the `main` container.",
           "type": "array",
@@ -2463,6 +2459,18 @@
         },
         "maxFileSize": {
           "type": "string"
+        },
+        "enableLivenessProbe": {
+          "description": "Enable the liveness probe for the plugin.",
+          "type": "boolean"
+        },
+        "livenessProbeInitialDelay": {
+          "description": "Initial delay for the liveness probe.",
+          "type": "integer"
+        },
+        "livenessProbePeriod": {
+          "description": "Period for the liveness probe.",
+          "type": "integer"
         },
         "resources": {
           "$ref": "#/definitions/resources"
@@ -2735,6 +2743,18 @@
         },
         "resources": {
           "$ref": "#/definitions/resources"
+        },
+        "enableLivenessProbe": {
+          "description": "Enable the liveness probe for the plugin.",
+          "type": "boolean"
+        },
+        "livenessProbeInitialDelay": {
+          "description": "Initial delay for the liveness probe.",
+          "type": "integer"
+        },
+        "livenessProbePeriod": {
+          "description": "Period for the liveness probe.",
+          "type": "integer"
         },
         "config": {
           "$ref": "#/definitions/pluginConfig"

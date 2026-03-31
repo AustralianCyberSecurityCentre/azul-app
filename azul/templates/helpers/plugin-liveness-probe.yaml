@@ -1,0 +1,18 @@
+{{/*
+Renders the livenessProbe block for a plugin container.
+Pass the object that holds enableLivenessProbe / livenessProbeInitialDelay / pluginLivenessProbePeriod.
+Example (source templates): {{ include "plugin.livenessProbe" $source | nindent 8 }}
+Example (plugin-container-main): {{ include "plugin.livenessProbe" .plugin | nindent 2 }}
+*/}}
+{{- define "plugin.livenessProbe" -}}
+{{- if ne false .enableLivenessProbe -}}
+livenessProbe:
+  exec:
+    command:
+    - /bin/sh
+    - -c
+    - "[ $(($(date +%s) - $(stat -c %Y /tmp/.runner-keepalive))) -le {{ .pluginLivenessProbePeriod | default 1800 }} ]"
+  initialDelaySeconds: {{ .livenessProbeInitialDelay | default 900 }}
+  periodSeconds: {{ .pluginLivenessProbePeriod | default 1800 }}
+{{- end -}}
+{{- end }}

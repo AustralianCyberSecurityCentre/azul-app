@@ -413,6 +413,7 @@ plugins:
               }
 
   suricata:
+    enableLivenessProbe: false # disable liveness probe for this plugin
     sources:
       example:
         enabled: true
@@ -428,6 +429,8 @@ plugins:
 
   yara-x:
     image: plugin-yara
+    livenessProbeInitialDelay: 60 # initial delay for liveness probe in seconds
+    livenessProbePeriod: 30 # period for liveness probe in seconds
     sources:
       example:
         enabled: true
