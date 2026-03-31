@@ -11,8 +11,8 @@ livenessProbe:
     command:
     - /bin/sh
     - -c
-    - "[ $(($(date +%s) - $(stat -c %Y /tmp/.runner-keepalive))) -le {{ .pluginLivenessProbePeriod | default 1800 }} ]"
+    - "[ $(($(date +%s) - $(stat -c %Y /tmp/.runner-keepalive))) -le {{ .livenessProbePeriod | default 1800 }} ]"
   initialDelaySeconds: {{ .livenessProbeInitialDelay | default 900 }}
-  periodSeconds: {{ .pluginLivenessProbePeriod | default 1800 }}
+  periodSeconds: {{ .livenessProbePeriod | default 1800 }}
 {{- end -}}
 {{- end }}

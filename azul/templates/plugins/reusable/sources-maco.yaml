@@ -85,7 +85,7 @@ spec:
         resources:
           {{- $group.resources | toYaml | nindent 10 }}
         {{- end }}
-        {{- include "plugin.livenessProbe" $source | nindent 8 }}
+        {{- include "plugin.livenessProbe" $group | nindent 8 }}
         envFrom:
         # Plugin ref first so the plugin specific settings will override standard settings.
         - configMapRef:
