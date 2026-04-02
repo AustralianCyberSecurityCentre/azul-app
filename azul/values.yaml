@@ -1981,7 +1981,7 @@ images:
     audit-forwarder: audit-forwarder:20260328T0003-unstable@sha256:05c02d2e6ec1f11e6b0a53736369ccc527137501795ae10bd34bcb6d9027c5c8
     backup: backup:20260402T0136-unstable@sha256:b4e74c16b04aa2fe9dec92d30b2134b231f5206963ed7bfc6d538685d074fe29
     client: client:20260326T0020-unstable@sha256:61d2655251c66d7cc2b63a97f6d83cb9a8a0715a3d77199fb8d72af07850798b
-    dispatcher: dispatcher:20260328T0026-unstable@sha256:134e599776cd3d0e4dfb6c6f7534a2390fb73927c47f3a949aa55ca53d83ab83
+    dispatcher: dispatcher:20260402T0246-unstable@sha256:c57ee81e29be1c0101ac7c3adfbfeb8e38c40c845b7f62cee05bdf17d1a25c98
     docs: docs:20260328T0001-unstable@sha256:b2daaefeccfb346d46a386fd91b0dc598d30a61311a5a8195c464f1f88c00374
     restapi-server: restapi-server:20260328T0043-unstable@sha256:2b243322ba9ecfe91d3d8eacedda8ac0a8895d59fb0c1170adf2554f6140fdbc
     webui: webui:20260402T0137-unstable@sha256:786e0189d69410312f09f906e0f9fe3c1cecffd89722d3cdf15eba46c4de72d5
