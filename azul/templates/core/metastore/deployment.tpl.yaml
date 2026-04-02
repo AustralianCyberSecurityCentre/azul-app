@@ -85,12 +85,12 @@ spec:
         - name: REDIS_USERNAME
           valueFrom:
             secretKeyRef:
-              name: "{{ .Values.secrets.redis }}"
+              name: {{ .root.Values.secrets.redis }}
               key: redis-username
         - name: REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: "{{ .Values.secrets.redis }}"
+              name: {{ .root.Values.secrets.redis }}
               key: redis-password
         {{ if .config.error_log }}
         - name: METASTORE_ERROR_LOG_FILE_PATH
