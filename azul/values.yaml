@@ -996,7 +996,7 @@ restapi:
     processWorkers: 2
     asyncioWorkers: 2
     logLevel: "INFO"
-  baseEnv:
+  env:
     - name: REDIS_USERNAME
       valueFrom:
         secretKeyRef:
@@ -1007,7 +1007,6 @@ restapi:
         secretKeyRef:
           name: "{{ .Values.secrets.redis }}"
           key: redis-password
-  env: {}
 
 # Access control configuration.
 security:
