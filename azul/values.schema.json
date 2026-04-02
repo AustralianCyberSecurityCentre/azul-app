@@ -2464,11 +2464,11 @@
           "description": "Enable the liveness probe for the plugin.",
           "type": "boolean"
         },
-        "livenessProbeInitialDelay": {
+        "livenessProbeInitialDelaySeconds": {
           "description": "Initial delay for the liveness probe.",
           "type": "integer"
         },
-        "livenessProbePeriod": {
+        "livenessProbePeriodSeconds": {
           "description": "Period for the liveness probe.",
           "type": "integer"
         },
@@ -2748,11 +2748,11 @@
           "description": "Enable the liveness probe for the plugin.",
           "type": "boolean"
         },
-        "livenessProbeInitialDelay": {
+        "livenessProbeInitialDelaySeconds": {
           "description": "Initial delay for the liveness probe.",
           "type": "integer"
         },
-        "livenessProbePeriod": {
+        "livenessProbePeriodSeconds": {
           "description": "Period for the liveness probe.",
           "type": "integer"
         },
