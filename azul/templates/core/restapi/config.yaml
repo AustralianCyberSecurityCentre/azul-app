@@ -58,3 +58,15 @@ data:
   {{ $k }}: "{{ $v }}"
   {{- end }}
   {{- end }}
+  {{- if .Values.plugins.retrohunt.enabled }}
+  RETROHUNT_ENABLED: "true"
+  REDIS_HOST: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
+  REDIS_PORT: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
+  REDIS_DB: "{{ .Values.external.redis.db }}"
+  REDIS_CLEANUP_DELAY: "{{ .Values.external.redis.cleanup_delay }}"
+  REDIS_CLEANUP_RUNNING_DELAY: "{{ .Values.external.redis.cleanup_running_delay }}"
+  REDIS_TTL: "{{ .Values.external.redis.ttl }}"
+  REDIS_EXCEPTION_WAIT: "{{ .Values.external.redis.exception_wait }}"
+  {{- else }}
+  RETROHUNT_ENABLED: "false"
+  {{- end }}
