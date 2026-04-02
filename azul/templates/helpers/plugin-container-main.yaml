@@ -24,6 +24,7 @@
   resources:
   {{- .plugin.resources | toYaml | nindent 4 }}
 {{- end }}
+{{- include "plugin.livenessProbe" .plugin | nindent 2 }}
   volumeMounts:
   - name: tmp
     mountPath: /tmp/
@@ -78,6 +79,10 @@
   {{- if .plugin.maxFileSize }}
   - name: PLUGIN_FILTER_MAX_CONTENT_SIZE
     value: "{{ .plugin.maxFileSize }}"
+  {{- end }}
+  {{- if ne false .plugin.enableLivenessProbe }}
+  - name: PLUGIN_ENABLE_LIVENESS_PROBE
+    value: "true"
   {{- end }}
   {{- if .plugin.runTimeout }}
   - name: PLUGIN_RUN_TIMEOUT
