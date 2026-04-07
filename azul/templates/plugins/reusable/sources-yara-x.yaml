@@ -63,6 +63,7 @@ spec:
         resources:
           {{- $group.resources | toYaml | nindent 10 }}
         {{- end }}
+        {{- include "plugin.livenessProbe" $group | nindent 8 }}
         envFrom:
         # Plugin ref first so the plugin specific settings will override standard settings.
         - configMapRef:
@@ -122,6 +123,10 @@ spec:
         {{- if eq ($source.sslVerify | default true) false }}
         - name: PLUGIN_GIT_SYNC_GIT_CONFIG
           value: "http.sslVerify:false"
+        {{- end }}
+        {{- if ne false $group.enableLivenessProbe }}
+        - name: PLUGIN_ENABLE_LIVENESS_PROBE
+          value: "true"
         {{- end }}
         volumeMounts:
         - name: tmp
