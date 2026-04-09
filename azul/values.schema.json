@@ -825,6 +825,12 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "additionalLabels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "env": {
           "type": "object",
           "patternProperties": {

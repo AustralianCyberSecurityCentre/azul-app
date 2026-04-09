@@ -996,7 +996,8 @@ restapi:
     processWorkers: 2
     asyncioWorkers: 2
     logLevel: "INFO"
-  allow-egress-redis: "true"
+  additionalLabels:
+    allow-egress-redis: "true"
   env: {}
 
 # Access control configuration.
