@@ -996,7 +996,7 @@ restapi:
     processWorkers: 2
     asyncioWorkers: 2
     logLevel: "INFO"
-  additionalLabels:
+  labels:
     allow-egress-redis: "true"
   env: {}
 
