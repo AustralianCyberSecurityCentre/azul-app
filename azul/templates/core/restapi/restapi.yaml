@@ -24,6 +24,7 @@ spec:
         allow-egress-dispatcher: "true"
         allow-egress-opensearch: "true"
         allow-egress-smart-string-finder: "true"
+        allow-egress-redis: "true"
         {{- if .Values.external.loki.endpoint }}
         allow-egress-loki: "true"
         {{- end }}
