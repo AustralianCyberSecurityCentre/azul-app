@@ -104,12 +104,12 @@ spec:
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
-                name: "{{ .Values.secrets.redis }}"
+                name: {{ .Values.secrets.redis }}
                 key: redis-username
           - name: REDIS_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: "{{ .Values.secrets.redis }}"
+                name: {{ .Values.secrets.redis }}
                 key: redis-password
           {{- end }}
         volumeMounts:
