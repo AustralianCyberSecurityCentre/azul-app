@@ -2021,7 +2021,7 @@ images:
     plugin-tika: plugin-tika:20260409T0233-unstable@sha256:eaeb6b19e308a9fe05de4b45339d9e3f18f80b646811b22ebd6d973bef863bc9
     plugin-unbox: plugin-unbox:20260409T0222-unstable@sha256:4ddb44504204c12027bdd90dcd5d5cc2d1c8fc01131fd868dbeeed50dac5fef8
     plugin-virustotal: plugin-virustotal:20260404T0008-unstable@sha256:7439d04247c949dc459d7c5095a7d659fb043ee2842ceb68330b77d82477d8fe
-    stats: stats:20260404T0005-unstable@sha256:2a202eecf6cccfd4d75a268fb127a1fdc8c985541cd6a4198e036214c5288708
+    stats: stats:20260409T0239-unstable@sha256:4d51f3f04686d86a16937c3e2eb8ac4d405c5ac40c269aeeb91227edad75c337
     nsrl-lookup-server: nsrl-lookup-server:20260404T0004-unstable@sha256:c3d59d30d003d1ceea23d0adf88116e97864972fc9a4e566ddac83ee091ae9e7
     plugin-suricata: plugin-suricata:20260409T0221-unstable@sha256:373f32b2addea798c899a891c4da293465368dff2f19ada35e8f1c483cdeaaf2
     scaler: scaler:20260404T0003-unstable@sha256:3f8e04f37ae24466bf61056dbee646f2228d46623e5e5fc56c43c41fb616be2a
