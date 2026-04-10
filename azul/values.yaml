@@ -878,6 +878,8 @@ migration:
 
 # Metadata storage.
 metastore:
+  # disable entropy similarity (note a reindex will be required after doing this).
+  disable_entropy_similarity: false
   # after updating these settings you need to re-index or wait for the old index to age off to take affect.
   status_index:
     number_of_shards: 3
