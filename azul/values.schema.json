@@ -740,6 +740,9 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "disable_entropy_similarity": {
+          "type": "boolean"
+        },
         "status_index": { "$ref": "#/definitions/opensearchConfig" },
         "plugin_index": { "$ref": "#/definitions/opensearchConfig" },
         "env": {
@@ -2460,6 +2463,18 @@
         "maxFileSize": {
           "type": "string"
         },
+        "enableLivenessProbe": {
+          "description": "Enable the liveness probe for the plugin.",
+          "type": "boolean"
+        },
+        "livenessProbeInitialDelaySeconds": {
+          "description": "Initial delay for the liveness probe.",
+          "type": "integer"
+        },
+        "livenessProbePeriodSeconds": {
+          "description": "Period for the liveness probe.",
+          "type": "integer"
+        },
         "resources": {
           "$ref": "#/definitions/resources"
         },
@@ -2731,6 +2746,18 @@
         },
         "resources": {
           "$ref": "#/definitions/resources"
+        },
+        "enableLivenessProbe": {
+          "description": "Enable the liveness probe for the plugin.",
+          "type": "boolean"
+        },
+        "livenessProbeInitialDelaySeconds": {
+          "description": "Initial delay for the liveness probe.",
+          "type": "integer"
+        },
+        "livenessProbePeriodSeconds": {
+          "description": "Period for the liveness probe.",
+          "type": "integer"
         },
         "config": {
           "$ref": "#/definitions/pluginConfig"

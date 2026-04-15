@@ -37,3 +37,4 @@ data:
     {{- .Values.metastore.status_index | mustToPrettyJson | nindent 4 }}
   METASTORE_PLUGIN_INDEX_CONFIG: |-
     {{- .Values.metastore.plugin_index | mustToPrettyJson | nindent 4 }}
+  METASTORE_DISABLE_ENTROPY_SIMILARITY: "{{ .Values.metastore.disable_entropy_similarity }}"
