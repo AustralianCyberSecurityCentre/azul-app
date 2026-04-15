@@ -1885,6 +1885,13 @@ plugins:
       goinfo: {}
       image-convert: {}
       index-coincidence: {}
+      jadx:
+        tmp: "2Gi" # Needs lots of space to decompile larger files. (TODO: may need to fine tune)
+        resources:
+          requests:
+            memory: "4Gi" # (TODO: may need to fine tune)
+          limits:
+            memory: "16Gi" # In testing, a 100MB file required 10Gi to decompile, so increase ceiling for headroom (TODO: may need to fine tune based on workloads)
       js-deobf: {}
       lief-elf:
         image: plugin-lief
@@ -2004,6 +2011,7 @@ images:
     plugin-goinfo: plugin-goinfo:20260410T0208-unstable@sha256:1cbc15e8b185f303df580530ac4133fc64c8ea4bb7acfa080170401655abb9f6
     plugin-image-convert: plugin-image-convert:20260409T0319-unstable@sha256:cd42cccac50ff4d286a90781776c443a5ea295d34c34857dcef50fd0d1216cff
     plugin-index-coincidence: plugin-index-coincidence:20260409T0325-unstable@sha256:2f5848fb4bceac26f8d4f0175b586f89f0ce2a287f5c3206ea782da7c45a7f6d
+    plugin-jadx: plugin-jadx:20260415T0058-dev@sha256:cf155a49232e9b2c655fd699919332197f5b258aced1a1f0ca452d8063a12d6b
     plugin-js-deobf: plugin-js-deobf:20260409T0315-unstable@sha256:fe097c1d7949246d3314b84ce2cfcc6eeb6b9979827a35fa69f45e9a0cc9ed28
     plugin-lief: plugin-lief:20260409T0323-unstable@sha256:da8a3af9f8dcbdedb5d6571e24f32d6c7233fa8d07ed8300df2a99b1fe1ef412
     plugin-lookback: plugin-lookback:20260409T0315-unstable@sha256:b463b5ba6ddf547bace24c1c670157a14ff0f6c088c89b6e80a278b94116be43
