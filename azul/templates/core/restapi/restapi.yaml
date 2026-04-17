@@ -24,6 +24,7 @@ spec:
         allow-egress-dispatcher: "true"
         allow-egress-opensearch: "true"
         allow-egress-smart-string-finder: "true"
+        allow-egress-redis: "true"
         {{- if .Values.external.loki.endpoint }}
         allow-egress-loki: "true"
         {{- end }}
@@ -99,6 +100,18 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.hostIP
+          {{- if .Values.plugins.retrohunt.enabled }}
+          - name: REDIS_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.redis }}
+                key: redis-username
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.redis }}
+                key: redis-password
+          {{- end }}
         volumeMounts:
           - name: tmp
             mountPath: /tmp/
