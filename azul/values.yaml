@@ -1988,7 +1988,7 @@ images:
     restapi-server: restapi-server:20260418T2225-unstable@sha256:e576594d88b264e6a1e72f0136be8c597b4ee95cf55d5ecc8c6c0152c945c21a
     webui: webui:20260418T1559-unstable@sha256:ad24d0e8ba761dfe84bb31f6a3daa1bd12b6c2d385f8ebc3e79c47ae0796720d
     plugin-alphabets: plugin-alphabets:20260418T2131-unstable@sha256:dfb952134c640f59e7e64ad9b1324d573d881716088e41f2928c5f0c03851fc3
-    plugin-android-parser: plugin-android-parser:20260418T2229-unstable@sha256:90187ea9c91f2e1cb61bbb48efde0679ce074e04540cf84b9b6587cf729dfd81
+    plugin-android-parser: plugin-android-parser:20260418T2234-unstable@sha256:183faba768d9bf4fac1cf33dec702ab4954871baad853c13793d9417aded1526
     plugin-assemblyline: plugin-assemblyline:20260418T2119-unstable@sha256:b097382b70f05a3d53c0795f2f6d6f115499f8a1c8ea36ba05fdc34ea0400999
     plugin-build-time-strings: plugin-build-time-strings:20260418T2200-unstable@sha256:32c6fb3d307d02a26a64555e5eb4276694a4c049ea495e39fb9cd57030fee724
     plugin-mandiant-capa: plugin-mandiant-capa:20260418T2148-unstable@sha256:7906ceda796a5357ccbbd458fc67bdf572220edd2b1f8e201493d6ec2f38774f
