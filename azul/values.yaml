@@ -2031,7 +2031,7 @@ images:
     plugin-yara: plugin-yara:20260418T1313-unstable@sha256:23475095cc352ccba6d7e2a82944694044e178a9109c1e845b0727a6e52f9cb7
     plugin-portex: plugin-portex:20260418T0017-unstable@sha256:272a25eb1b1424fee1953954e4cddde90ae6e95ee68d799a0c46319cd9272b44
     plugin-truncated: plugin-truncated:20260418T1313-unstable@sha256:ec2946fbee9eae495c20d822db92f0d8e3d7d225120361e2b1293333a2605465
-    plugin-certificates: plugin-certificates:20260418T1234-unstable@sha256:075b2eea7a35ce50ad0ee2654068a1b139f4ca24efdb4b73ff968739139df1cf
+    plugin-certificates: plugin-certificates:20260418T1310-unstable@sha256:e99ad90d94a51a40466a50c34d46341b9c49e801c38339a703a733a7ae2fe848
     plugin-qrcode: plugin-qrcode:20260418T1248-unstable@sha256:5d5fa6d60a4b2eac168c8e3f930c6583d975f14f30131ea3e565dab68c0f48af
     smart-string-filter: smart-string-filter:20260418T1239-unstable@sha256:f59e43c70e77dad23eb7ae417867141176f772aeace09d20ce56c20eb10f68fb
     plugin-ghidra: plugin-ghidra:20260418T1254-unstable@sha256:6fd00a43e9d6fbdabcdc94cf7f6f3f8c76d6009a3a4f9e085302881ba4f5452a
