@@ -2023,7 +2023,7 @@ images:
     plugin-tika: plugin-tika:20260417T0427-unstable@sha256:39512409ff38879fd0c87c46d226474feb9d35a2b89e68e4e5a57549c45d2bde
     plugin-unbox: plugin-unbox:20260417T0412-unstable@sha256:f530363cfb2d7ef504d4e1f16df1e57a7f7238e2e23aa5b04bbcb926203693ff
     plugin-virustotal: plugin-virustotal:20260417T1617-unstable@sha256:255f9bcc2cb814737ae6b5528d54d97afd8d089ff84c8ab6c83cd8a28aafab91
-    stats: stats:20260411T0005-unstable@sha256:37ff4a82d4836198fe8cad6ad6bf907e16e821635b9340b9978ef6aeba86539b
+    stats: stats:20260418T0005-unstable@sha256:e8e9ab313a720205f0c46cc56437dd820570e2a35a49b97ab61b0ae0204dd3d8
     nsrl-lookup-server: nsrl-lookup-server:20260418T0003-unstable@sha256:1ad496b21260582169b22307c45b6eddfcdd9f248e330b8a40dcbd83486f585e
     plugin-suricata: plugin-suricata:20260417T0413-unstable@sha256:3eb1cc76e797cff5d29c865b3b25b2f5f8499b10999be2e8a33fe68d3845829b
     scaler: scaler:20260418T0003-unstable@sha256:a5e9c8f6f4b21b60e0e7fe65e0b2c8fc4b2edd19a3c50a47a65aedc8833b903e
