@@ -1999,7 +1999,7 @@ images:
     plugin-email: plugin-email:20260418T1857-unstable@sha256:4bb8a7b02ad6ba53b27e41a188c3005298bed6df6c798c35967eac468d889cb0
     plugin-entropy: plugin-entropy:20260418T1704-unstable@sha256:68bb94f9da7ec2ffd3aafbd8f987a8c56c8404da16b11c12a1ab85362dd28f84
     plugin-entrypointcheck: plugin-entrypointcheck:20260418T2007-unstable@sha256:70b186f8b5cb6951ce081fc835c155803134ccfc6bccb80dee169f90ddc6cda0
-    plugin-exiftool: plugin-exiftool:20260418T2002-unstable@sha256:897b65fce29e27c81c14d282f605e78292e6080e37852fc2ec8c780fd8f34c01
+    plugin-exiftool: plugin-exiftool:20260418T2023-unstable@sha256:5846003dc034caf63437c4fea342acbbd83379579079982b7699b6610cb8c0eb
     plugin-export-hashes: plugin-export-hashes:20260418T1949-unstable@sha256:dabbb2ca3147dcff2b134b706506934c18071847dfdddc91448fae8882e0decc
     plugin-maco: plugin-maco:20260418T1855-unstable@sha256:b03588a682fb460ad9942473d12898a6df7155ed41e59e64588364603ef4e336
     plugin-floss: plugin-floss:20260418T1856-unstable@sha256:55e90af98b82093968a59c3425e97928bc53f596b87049cc21f7ee6628fa3709
