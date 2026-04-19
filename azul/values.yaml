@@ -2011,7 +2011,7 @@ images:
     plugin-lookback: plugin-lookback:20260419T0048-unstable@sha256:073080c641db1e3daf7ab7798238a99351fef6e80336ee4ffd91d839c7ef8090
     plugin-malcarve: plugin-malcarve:20260419T0136-unstable@sha256:cadd046d2af98b21acd856f5eff50a0cffeddeac9bf0048bc8d1b68cb7df4821
     plugin-netinfo: plugin-netinfo:20260419T0138-unstable@sha256:a38475f3334536c757cc30432b487512bf98c6dda862ed9cfded43b8a54230ed
-    plugin-nsrl: plugin-nsrl:20260419T0202-unstable@sha256:0ea2f033abb8e74c7e87001296298757bf7f044fcf97e69456c1a700f86149c6
+    plugin-nsrl: plugin-nsrl:20260419T1227-unstable@sha256:95b880d743cf730fd4f47be8d09de021345ddb3e1a49a26ae8c6f76236c03186
     plugin-office: plugin-office:20260419T0152-unstable@sha256:039e87fb3382344284b5aceb03428db91cb4f1ba6239aa402437bedd35c4f063
     plugin-pdftools: plugin-pdftools:20260419T0158-unstable@sha256:faf97c85f16c2e7b102294297927aa9dc6f9ecc2905e3fd8cdee763189573e0b
     plugin-python: plugin-python:20260419T0137-unstable@sha256:700263dbce4bced96d924d424bbebdfcb36565e7fcb9d6c19109700d259b9357
