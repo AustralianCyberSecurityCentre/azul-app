@@ -1061,9 +1061,19 @@
                             "$ref": "#/definitions/securityLabel"
                           }
                         ]
+                      },
+                      "min_priority": {
+                        "description": "A stringified number of the minimum priority classification a caveat can be used with.",
+                        "type": "string",
+                        "pattern": "^[0-9]+$"
+                      },
+                      "max_priority": {
+                        "description": "A stringified number of the maximum priority classification a caveat can be used with.",
+                        "type": "string",
+                        "pattern": "^[0-9]+$"
                       }
                     },
-                    "required": ["name"],
+                    "required": ["name", "min_priority", "max_priority"],
                     "additionalProperties": false
                   }
                 }
