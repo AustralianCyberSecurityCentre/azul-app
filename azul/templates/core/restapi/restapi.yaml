@@ -118,19 +118,19 @@ spec:
           - name: RETROHUNT_ENABLED
             value: "true"
           - name: REDIS_HOST
-            value: {{ (split ":" .Values.external.redis.endpoint)._0 }}
+            value: "{{ (split ":" .Values.external.redis.endpoint)._0 }}"
           - name: REDIS_PORT
-            value: {{ (split ":" .Values.external.redis.endpoint)._1 }}
+            value: "{{ (split ":" .Values.external.redis.endpoint)._1 }}"
           - name: REDIS_DB
-            value: {{ .Values.external.redis.db }}
+            value: "{{ .Values.external.redis.db }}"
           - name: REDIS_CLEANUP_DELAY
-            value: {{ .Values.external.redis.cleanup_delay }}
+            value: "{{ .Values.external.redis.cleanup_delay }}"
           - name: REDIS_CLEANUP_RUNNING_DELAY
-            value: {{ .Values.external.redis.cleanup_running_delay }}
+            value: "{{ .Values.external.redis.cleanup_running_delay }}"
           - name: REDIS_TTL
-            value: {{ .Values.external.redis.ttl }}
+            value: "{{ .Values.external.redis.ttl }}"
           - name: REDIS_EXCEPTION_WAIT
-            value: {{ .Values.external.redis.exception_wait }}
+            value: "{{ .Values.external.redis.exception_wait }}"
           {{- else }}
           - name: RETROHUNT_ENABLED
             value: "false"
