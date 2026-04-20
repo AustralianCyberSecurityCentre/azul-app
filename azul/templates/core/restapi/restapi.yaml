@@ -76,6 +76,10 @@ spec:
               name: metastore
           - configMapRef:
               name: restapi
+          {{- if .Values.plugins.retrohunt.enabled }}
+          - configMapRef:
+              name: retrohunt
+          {{- end }}
         env:
           - name: METASTORE_OPENSEARCH_PASSWORD
             valueFrom:
@@ -100,6 +104,20 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.hostIP
+          {{- if .Values.plugins.retrohunt.enabled }}
+          - name: REDIS_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.redis }}
+                key: redis-username
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secrets.redis }}
+                key: redis-password
+          - name: RETROHUNT_ENABLED
+            value: "true"
+          {{- end }}
         volumeMounts:
           - name: tmp
             mountPath: /tmp/
