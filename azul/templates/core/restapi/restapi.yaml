@@ -123,7 +123,7 @@ spec:
             value: {{ (split ":" .Values.external.redis.endpoint)._1 }}
           - name: REDIS_DB
             value: {{ .Values.external.redis.db }}
-          - name REDIS_CLEANUP_DELAY:
+          - name: REDIS_CLEANUP_DELAY
             value: {{ .Values.external.redis.cleanup_delay }}
           - name: REDIS_CLEANUP_RUNNING_DELAY
             value: {{ .Values.external.redis.cleanup_running_delay }}
@@ -132,7 +132,8 @@ spec:
           - name: REDIS_EXCEPTION_WAIT
             value: {{ .Values.external.redis.exception_wait }}
           {{- else }}
-          RETROHUNT_ENABLED: "false"
+          - name: RETROHUNT_ENABLED
+            value: "false"
           {{- end }}
         volumeMounts:
           - name: tmp
