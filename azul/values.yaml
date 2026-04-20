@@ -1040,7 +1040,7 @@ security:
       options:
         - name: OFFICIAL
           # Priority of this classification higher priority is considered more secure.
-          # Also impacts wihch classifications can have TLPs and which ones can have releasabilities.
+          # Also impacts which classifications can have TLPs and which ones can have releasabilities.
           priority: "0"
     # Access control marker which is exclusively applied (ie a user must be a member of all groups to gain access).
     # These items are rendered second.
