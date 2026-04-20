@@ -1040,7 +1040,7 @@ security:
       options:
         - name: OFFICIAL
           # Priority of this classification higher priority is considered more secure.
-          # Also impacts which classifications can have TLPs and which ones can have releasabilities.
+          # Also impacts wihch classifications can have TLPs and which ones can have releasabilities.
           priority: "0"
     # Access control marker which is exclusively applied (ie a user must be a member of all groups to gain access).
     # These items are rendered second.
@@ -1048,9 +1048,14 @@ security:
       # Group name to show in the web interface.
       title: Caveat
       # names of this specific security label that can be chosen
+      # Also min_priority and max_priority to allow limiting of labels to a range of valid classifications
       options: []
       # - name: FIREBALL
+      #   min_priority: "0" 
+      #   max_priority: "1000"
       # - name: TRUESTRIKE
+      #   min_priority: "0" 
+      #   max_priority: "1000"
 
     # Access control marker which is inclusively applied (ie a user must be a member of at least one to gain access).
     # Must be prefixed with 'REL:'

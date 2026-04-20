@@ -154,6 +154,56 @@ metastore:
     number_of_shards: 10
     number_of_replicas: 1
 
+
+security:
+  default: OFFICIAL
+  minimumRequiredAccess:
+    - LESS OFFICIAL
+    - OFFICIAL
+    - MORE OFFICIAL
+  presets:
+    - MORE OFFICIAL FIREBALL REL:APPLE
+    - MORE OFFICIAL REL:APPLE,BEE,CAR,DOG,ELEPHANT
+    - OFFICIAL TLP:AMBER+STRICT
+    - OFFICIAL TLP:AMBER
+    - OFFICIAL TLP:GREEN
+    - OFFICIAL TLP:CLEAR
+    - LESS OFFICIAL TLP:CLEAR
+  allow_releasability_priority_gte: "30"
+  labels:
+    classification:
+      options:
+        - name: LESS OFFICIAL
+          priority: "0"
+        - name: OFFICIAL
+          priority: "10"
+        - name: MORE OFFICIAL
+          priority: "30"
+    caveat:
+      options:
+        - name: FIREBALL
+          min_priority: "0"
+          max_priority: "0"
+        - name: TRUESTRIKE
+          min_priority: "0"
+          max_priority: "40"
+    releasability:
+      origin: REL:APPLE
+      origin_alt_name: APPLEO
+      options:
+        - name: REL:APPLE
+        - name: REL:BEE
+        - name: REL:CAR
+        - name: REL:DOG
+        - name: REL:ELEPHANT
+    tlp:
+      options:
+        - name: TLP:CLEAR
+        - name: TLP:GREEN
+        - name: TLP:AMBER
+        - name: TLP:AMBER+STRICT
+          enforce_security: true
+
 sources:
   # a source called 'testing'
   testing:
