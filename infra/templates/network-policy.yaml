@@ -318,6 +318,8 @@ spec:
     - ports:
       - port: 443
         protocol: TCP
+      - port: 9200
+        protocol: TCP
       {{- if .Values.istioEnabled }}
       - port: 15008
       {{- end }}
