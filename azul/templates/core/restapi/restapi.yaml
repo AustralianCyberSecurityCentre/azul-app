@@ -117,6 +117,8 @@ spec:
                 key: redis-password
           - name: RETROHUNT_ENABLED
             value: "true"
+          {{- else }}
+          RETROHUNT_ENABLED: "false"
           {{- end }}
         volumeMounts:
           - name: tmp
