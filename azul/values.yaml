@@ -293,6 +293,20 @@ external:
     ttl: "21600000"
     # seconds before worker tries to access redis after an exception
     exception_wait: 60
+    ingress:
+      # ATTENTION exposing redis should only be done in non-production scenarios
+      # as it does not have sufficient access controls for general availability
+      enabled: false
+      # change below properties as necessary
+      hosts: []
+      # - "redis.azul.example.internal"
+      ingressClassName: "default"
+      secretName: "redis-tls"
+      annotations: {}
+      security:
+        enableHarden: true
+        # Overrides
+        csp: {}
 
   # optional, loki receives restapi logs from dispatcher and restapi pods, forwarded by promtail
   loki:
