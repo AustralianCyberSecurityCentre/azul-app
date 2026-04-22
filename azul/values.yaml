@@ -2024,7 +2024,7 @@ images:
     plugin-retrohunt: plugin-retrohunt:20260420T2335-unstable@sha256:1b2ddbbbbf7ef88ba5132c81f35bd893b513024a0b37420ddbb81daec30bf3b7
     plugin-richid: plugin-richid:20260420T2320-unstable@sha256:98623e137c59696d26a286ff3e1c85d5da96a224546a03b1ca62c3d9db10314f
     plugin-script-decoder: plugin-script-decoder:20260422T0239-unstable@sha256:25ec4342ec69cee1bd6864f07bc537573f8a04f037395addb986a15380c32d2c
-    plugin-shortcut: plugin-shortcut:20260420T2310-unstable@sha256:ab592ca4c0b4559f054974c422abe779c023fcfa3bcbd750e1596325b2ee2962
+    plugin-shortcut: plugin-shortcut:20260422T0229-unstable@sha256:1164d43cec2fd71fdf2eb892fc4ff0b94d607ec67710274250515d715d998f35
     plugin-tika: plugin-tika:20260422T0245-unstable@sha256:d15ba51e3dfb94ad435103b62892c32dae4d6fa44710c077e79338774791275e
     plugin-unbox: plugin-unbox:20260422T0224-unstable@sha256:198eeebac8c8728074a21d473fcfc63550ce75e4b907fa4745565def7dc4ba3c
     plugin-virustotal: plugin-virustotal:20260422T0218-unstable@sha256:b3cbfb8b560f46854bc707073455b301aac4a6c3dd980dcc49c527171490b825
