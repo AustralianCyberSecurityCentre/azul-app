@@ -289,8 +289,8 @@ external:
     cleanup_delay: 30
     # days before cronjob removes running hunts
     cleanup_running_delay: 7
-    # time a worker has hold of a hunt
-    ttl: "21600000"
+    # time a worker has hold of a hunt in seconds. Refreshed with heartbeat.
+    ttl: "30"
     # seconds before worker tries to access redis after an exception
     exception_wait: 60
     ingress:
