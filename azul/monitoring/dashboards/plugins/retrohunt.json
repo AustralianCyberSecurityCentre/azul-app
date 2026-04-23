@@ -22,129 +22,29 @@
   "links": [],
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
       "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "histogram_quantile(0.99, sum by (le) (rate(retrohunt_narrow_phase_duration_seconds_bucket[5m])))"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 3,
         "w": 12,
         "x": 0,
         "y": 0
       },
-      "id": 31,
+      "id": 4,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
         },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
+        "content": "# Retrohunt\n\nThis dashboard tracks the status of the retrohunt plugin, including the state of storage, indexing and resource usage.",
+        "mode": "markdown"
       },
       "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(retrohunt_broad_phase_duration_seconds_bucket[5m])))",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "Broad Phase"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(retrohunt_narrow_phase_duration_seconds_bucket[5m])))",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "Narrow Phase"
-        }
-      ],
-      "title": "Retrohunt Phase Duration Comparison",
-      "type": "timeseries"
+      "title": "",
+      "type": "text"
     },
     {
       "datasource": {
@@ -251,137 +151,6 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 30,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(retrohunt_broad_phase_duration_seconds_bucket[5m])))",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(retrohunt_narrow_phase_duration_seconds_bucket[5m])))",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "{{label_name}}",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Retrohunt phase comparision",
-      "type": "timeseries"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 12,
-        "x": 0,
-        "y": 16
-      },
-      "id": 4,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "# Retrohunt\n\nThis dashboard tracks the status of the retrohunt plugin, including the state of storage, indexing and resource usage.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "12.1.1",
-      "title": "",
-      "type": "text"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
       "description": "Total RAM usage by container in the retrohunt worker pod.",
       "fieldConfig": {
         "defaults": {
@@ -443,7 +212,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 19
+        "y": 3
       },
       "id": 15,
       "options": {
@@ -483,7 +252,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 10
       },
       "id": 29,
       "panels": [
@@ -516,7 +285,7 @@
             "h": 4,
             "w": 8,
             "x": 0,
-            "y": 125
+            "y": 133
           },
           "id": 6,
           "options": {
@@ -583,7 +352,7 @@
             "h": 4,
             "w": 8,
             "x": 8,
-            "y": 125
+            "y": 133
           },
           "id": 5,
           "options": {
@@ -650,7 +419,7 @@
             "h": 4,
             "w": 8,
             "x": 16,
-            "y": 125
+            "y": 133
           },
           "id": 19,
           "options": {
@@ -702,7 +471,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 11
       },
       "id": 28,
       "panels": [
@@ -715,7 +484,7 @@
             "h": 2,
             "w": 9,
             "x": 0,
-            "y": 126
+            "y": 134
           },
           "id": 22,
           "options": {
@@ -740,7 +509,7 @@
             "h": 2,
             "w": 15,
             "x": 9,
-            "y": 126
+            "y": 134
           },
           "id": 23,
           "options": {
@@ -785,7 +554,7 @@
             "h": 5,
             "w": 4,
             "x": 0,
-            "y": 134
+            "y": 142
           },
           "id": 1,
           "options": {
@@ -852,7 +621,7 @@
             "h": 5,
             "w": 5,
             "x": 4,
-            "y": 134
+            "y": 142
           },
           "id": 9,
           "options": {
@@ -942,7 +711,7 @@
             "h": 5,
             "w": 7,
             "x": 9,
-            "y": 134
+            "y": 142
           },
           "id": 3,
           "options": {
@@ -1009,7 +778,7 @@
             "h": 5,
             "w": 4,
             "x": 16,
-            "y": 134
+            "y": 142
           },
           "id": 2,
           "options": {
@@ -1096,7 +865,7 @@
             "h": 5,
             "w": 4,
             "x": 20,
-            "y": 134
+            "y": 142
           },
           "id": 7,
           "options": {
@@ -1144,7 +913,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 12
       },
       "id": 27,
       "panels": [
@@ -1209,7 +978,7 @@
             "h": 6,
             "w": 18,
             "x": 0,
-            "y": 44
+            "y": 52
           },
           "id": 24,
           "options": {
@@ -1274,7 +1043,7 @@
             "h": 6,
             "w": 6,
             "x": 18,
-            "y": 44
+            "y": 52
           },
           "id": 26,
           "options": {
@@ -1327,155 +1096,154 @@
       "type": "row"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 13
       },
       "id": 34,
-      "panels": [
+      "panels": [],
+      "title": "Extra Information",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Broad.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Narrow.*"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "id": 32,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.1.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95,\r\n  sum(rate(retrohunt_broad_phase_duration_seconds_bucket[$__rate_interval])) by (le, query_hash)\r\n)",
+          "legendFormat": "Broad - {{query_hash}}",
+          "range": true,
+          "refId": "A"
+        },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "Broad.*"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "red",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byRegexp",
-                  "options": "Narrow.*"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "blue",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 33
-          },
-          "id": 32,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "12.1.1",
-          "targets": [
-            {
-              "editorMode": "code",
-              "expr": "histogram_quantile(0.95,\r\n  sum(rate(retrohunt_broad_phase_duration_seconds_bucket[$__rate_interval])) by (le, query_hash)\r\n)",
-              "legendFormat": "Broad - {{query_hash}}",
-              "range": true,
-              "refId": "A"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "prometheus"
-              },
-              "editorMode": "code",
-              "expr": "histogram_quantile(0.95,\r\n  sum(rate(retrohunt_narrow_phase_duration_seconds_bucket[$__rate_interval])) by (le, query_hash)\r\n)",
-              "hide": false,
-              "instant": false,
-              "legendFormat": "Narrow - {{query_hash}}",
-              "range": true,
-              "refId": "B"
-            }
-          ],
-          "title": "Broad/Narrow phase comparision",
-          "type": "timeseries"
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95,\r\n  sum(rate(retrohunt_narrow_phase_duration_seconds_bucket[$__rate_interval])) by (le, query_hash)\r\n)",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Narrow - {{query_hash}}",
+          "range": true,
+          "refId": "B"
         }
       ],
-      "title": "Extra Information",
-      "type": "row"
+      "title": "Broad/Narrow phase comparision",
+      "type": "timeseries"
     }
   ],
   "preload": false,
@@ -1516,5 +1284,5 @@
   "timezone": "browser",
   "title": "Retrohunt Status",
   "uid": "retrohunt-stats",
-  "version": 47
+  "version": 48
 }
