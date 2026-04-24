@@ -1993,7 +1993,7 @@ images:
     plugin-repeated-bytes: plugin-repeated-bytes:20260422T0234-unstable@sha256:720c477fca86a604afb6b0168794cc27a92a84be940a0fa6938851aad2438415
     plugin-retrohunt: plugin-retrohunt:20260422T0250-unstable@sha256:83a2a470af475056aea0d80726fff24bf00316e684ab3168365864fb97c76364
     plugin-richid: plugin-richid:20260422T0232-unstable@sha256:226f87addb7da8f8511f4129ab7733b2ff0a6588a1775299b125b3774c9d5786
-    plugin-script-decoder: plugin-script-decoder:20260422T0239-unstable@sha256:25ec4342ec69cee1bd6864f07bc537573f8a04f037395addb986a15380c32d2c
+    plugin-script-decoder: plugin-script-decoder:20260424T1222-unstable@sha256:39add80b9e5702b9a75bd454ee97e483e37cbfec259296cba3f6dde193a2b1e4
     plugin-shortcut: plugin-shortcut:20260422T0229-unstable@sha256:1164d43cec2fd71fdf2eb892fc4ff0b94d607ec67710274250515d715d998f35
     plugin-tika: plugin-tika:20260422T0245-unstable@sha256:d15ba51e3dfb94ad435103b62892c32dae4d6fa44710c077e79338774791275e
     plugin-unbox: plugin-unbox:20260422T0224-unstable@sha256:198eeebac8c8728074a21d473fcfc63550ce75e4b907fa4745565def7dc4ba3c
