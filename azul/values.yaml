@@ -1986,7 +1986,7 @@ images:
     plugin-lookback: plugin-lookback:20260425T1853-unstable@sha256:855791c6310f9d46ca01b6b5562a0f1afc8621e9188e791d37feaf1ea053efdf
     plugin-malcarve: plugin-malcarve:20260425T1925-unstable@sha256:9797fc8c10504020a1e274bab367447365672a04df17c7adfaf319bbbb2eab9c
     plugin-netinfo: plugin-netinfo:20260425T1931-unstable@sha256:431b9f9623750dc55a0a3a27baa23a7b2dbaf00d0ea278896f418ad183529275
-    plugin-nsrl: plugin-nsrl:20260425T1944-unstable@sha256:a56cd91dbcaf057f639dee7f04c1aaab2030e89e64e9764835529f74d6f8214d
+    plugin-nsrl: plugin-nsrl:20260425T2018-unstable@sha256:616f2495a289065502586ac0c74ecf383a4c3151d423171cbd987227bc47aa6b
     plugin-office: plugin-office:20260425T1946-unstable@sha256:ffa3618ad6b9bf4b691ee1ee921483d56f6455ed390dc1eb93728ebd90744367
     plugin-pdftools: plugin-pdftools:20260425T2017-unstable@sha256:33682a6be2ffe874cd546da8d87910f772525e71cba89748364472d3600d50fb
     plugin-python: plugin-python:20260425T1951-unstable@sha256:0bb44f08ade8de5e23d303f5375f470f35e69c00c9cc98cd3b097a36dea27a18
