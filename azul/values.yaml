@@ -1961,7 +1961,7 @@ images:
     dispatcher: dispatcher:20260425T1307-unstable@sha256:f896da413e9cbdb0e05d16e170f35c7e43c3d7199f6cd2c52b102749afbc157a
     docs: docs:20260425T0003-unstable@sha256:ebade2543ddc382591c5c6a78549199d79b6d1db8fdcbb5f8c8a9834c951aa6a
     restapi-server: restapi-server:20260425T1513-unstable@sha256:0c97c1af04d5bdf6a15042916eed9367226850cca68eff1cbbeb3184bf027f24
-    webui: webui:20260425T1519-unstable@sha256:b901c02f11ced1b12ce9812ff0c99519b4ce0c2c214275c41fd1a2d003cb5b62
+    webui: webui:20260425T1550-unstable@sha256:3ba5e21580c2c978b52b0343d61b79afd4f40f99b48883f8a3f56edf25d3d827
     plugin-alphabets: plugin-alphabets:20260425T1502-unstable@sha256:c340757dcd7dd5b01daa74951420ad060a3b5efc637077931af84ef7015e5a54
     plugin-android-parser: plugin-android-parser:20260425T1501-unstable@sha256:3179e0ca8e569e88b719e4ab7777b474f355082338aad7a5e4b9fbf9c97e92bb
     plugin-assemblyline: plugin-assemblyline:20260425T1444-unstable@sha256:cc6da739ec55db6a5f434e420f80ebc550f8f97d9cf54621a87dc5b0f3737ed5
