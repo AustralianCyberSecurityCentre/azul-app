@@ -1982,7 +1982,7 @@ images:
     plugin-image-convert: plugin-image-convert:20260426T1300-unstable@sha256:4fe7302ee0f819f7a7ea4e17d868538eb7ec12ffe271792f70e3284420bc3506
     plugin-index-coincidence: plugin-index-coincidence:20260426T1309-unstable@sha256:096e430cb63d9d68a62260b306a46808e17a92bf7cc51fda49ce1fcccade1193
     plugin-js-deobf: plugin-js-deobf:20260426T1251-unstable@sha256:0e0a4981772fe27168cac0b9d658733f8ffc358a0debf568a4d78e21fce55516
-    plugin-lief: plugin-lief:20260426T1256-unstable@sha256:0a67468be472278dbb8d6d70eee71d945171bc5677eb97ca21e6fbe3b27f35fb
+    plugin-lief: plugin-lief:20260426T1324-unstable@sha256:75c6fc5ece4d725200716fc34e30eeda1f1bca105007b49bfe9e9359153bd587
     plugin-lookback: plugin-lookback:20260425T2209-unstable@sha256:9224785d1fb2260de1764eac8eab606dacf91584a145d3413b10716d93289da8
     plugin-malcarve: plugin-malcarve:20260426T1308-unstable@sha256:03195094dbb7bb90a05686213f05971b0d4ca9fa1691739cc1d28f7e77f49e40
     plugin-netinfo: plugin-netinfo:20260426T1244-unstable@sha256:8b0dcbb69cf9a856fb41d25246964ce2b1afe36e436dca7bc4f3d241d008aa48
