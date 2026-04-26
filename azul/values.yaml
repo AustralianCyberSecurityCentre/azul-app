@@ -1999,7 +1999,7 @@ images:
     plugin-unbox: plugin-unbox:20260426T1514-unstable@sha256:0f0a3c0cfc40ff24196b7e58d0b108f328cfd0badb3e9d5ad1f8c0fa9924258d
     plugin-virustotal: plugin-virustotal:20260426T1501-unstable@sha256:9e401992d6fbc5027fac52c1123dae3143270a11d4a7812aedfcadba8a120124
     stats: stats:20260425T0009-unstable@sha256:e1ca2132e1b4a4c355a620bf186e9392efd4dfc4418869bdc6cf12e10db82f4e
-    nsrl-lookup-server: nsrl-lookup-server:20260426T1234-unstable@sha256:dde0f48119ea615864ed30f9f68ce17bc49fc00d85c4ed68482f1d6d0546c183
+    nsrl-lookup-server: nsrl-lookup-server:20260426T1539-unstable@sha256:e1ec45046b56f37d5cef08c041cf90ce9d329cd0be877958e30d795ef013e544
     plugin-suricata: plugin-suricata:20260426T1528-unstable@sha256:0170ed45950a2cfb2052f4ed1363c5d1cee8b2f8ebbc7f626b834627bb56e131
     scaler: scaler:20260426T1448-unstable@sha256:fa494b987bcd7bf75b869fcbbd4f0987b44b726aa0b570fee5036505e2939981
     plugin-debloat: plugin-debloat:20260426T1525-unstable@sha256:c3a988cbf4db6a9ce31601cdf486be8a52dce8660f6155212614f7dcb7531615
