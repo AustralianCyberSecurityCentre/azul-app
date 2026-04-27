@@ -1985,7 +1985,7 @@ images:
     plugin-lief: plugin-lief:20260427T2344-unstable@sha256:ac44009ee8ece786e25655b756130b836e37ae88316f9a61c61b5ab64e5ec448
     plugin-lookback: plugin-lookback:20260427T2339-unstable@sha256:d7156951bf8c639b9117205e72c60d1138f91814ce55f1d0687726629541f700
     plugin-malcarve: plugin-malcarve:20260426T1658-unstable@sha256:1f061386e6a68be667258aa2ef23417b7904321a9d12182cbedadfc376f36984
-    plugin-netinfo: plugin-netinfo:20260426T1951-unstable@sha256:fb3c846a2b9d789d5e5b24f30ce421a6381de30c598759fbf425ee75069f64c2
+    plugin-netinfo: plugin-netinfo:20260427T2350-unstable@sha256:da1a93d3dbf6781f11a199b5434eaa432457f72606d39b965aa51cd996aec98d
     plugin-nsrl: plugin-nsrl:20260427T2337-unstable@sha256:889c8aa90b6b64d1327fe17f5041aa5bc5b561761620683773f835604f214b3d
     plugin-office: plugin-office:20260426T1937-unstable@sha256:811fba25b87111e5262b65f9c8f125d1cac9d4f0d08b7aa8f8eca14500051eb6
     plugin-pdftools: plugin-pdftools:20260427T2341-unstable@sha256:6020a68b047b921004ae53882cf223db6ab856e9def7224ee24b43fb8edf4f21
