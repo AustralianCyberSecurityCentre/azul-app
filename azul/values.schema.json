@@ -318,6 +318,9 @@
             },
             "exception_wait": {
               "type": "integer"
+            },
+            "ingress": {
+              "$ref": "#/definitions/coreIngress"
             }
           },
           "required": ["endpoint"],
