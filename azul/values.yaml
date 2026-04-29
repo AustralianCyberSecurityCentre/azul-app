@@ -1863,12 +1863,12 @@ plugins:
       image-convert: {}
       index-coincidence: {}
       jadx:
-        tmp: "2Gi" # Needs lots of space to decompile larger files. (TODO: may need to fine tune)
+        tmp: "2Gi" # Needs lots of space to decompile larger files. (FUTURE: may need to fine tune)
         resources:
           requests:
-            memory: "4Gi" # (TODO: may need to fine tune)
+            memory: "4Gi" # (FUTURE: may need to fine tune)
           limits:
-            memory: "16Gi" # In testing, a 100MB file required 10Gi to decompile, so increase ceiling for headroom (TODO: may need to fine tune based on workloads)
+            memory: "16Gi" # In testing, a 100MB file required 10Gi to decompile, so increase ceiling for headroom (FUTURE: may need to fine tune based on workloads)
       js-deobf: {}
       lief-elf:
         image: plugin-lief
