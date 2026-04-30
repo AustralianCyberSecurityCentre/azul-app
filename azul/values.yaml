@@ -1862,6 +1862,13 @@ plugins:
       goinfo: {}
       image-convert: {}
       index-coincidence: {}
+      jadx:
+        tmp: "2Gi" # Needs lots of space to decompile larger files. (FUTURE: may need to fine tune)
+        resources:
+          requests:
+            memory: "4Gi" # (FUTURE: may need to fine tune)
+          limits:
+            memory: "16Gi" # In testing, a 100MB file required 10Gi to decompile, so increase ceiling for headroom (FUTURE: may need to fine tune based on workloads)
       js-deobf: {}
       lief-elf:
         image: plugin-lief
@@ -2011,5 +2018,5 @@ images:
     smart-string-filter: smart-string-filter:20260428T1217-unstable@sha256:6a0ed8a3bf3e6ac9847e8419ec5028e67e05e8caa6d61e92b79bcd750c755b43
     plugin-ghidra: plugin-ghidra:20260428T1246-unstable@sha256:04e682600996f23e35091a220c90563732ecb94c0b1312725452b62c4125c36f
     # plugin-report-feeds: dummy
-
     plugin-report-feeds: plugin-report-feeds:20260428T1229-unstable@sha256:5182d6cd4f99b7ca872c3882fe698b4fab141a8b7c3e214dd4656fff53818e33
+    plugin-jadx: plugin-jadx:20260429T0345-dev@sha256:55596fd34733b6457228a3cc02588f760c7954b73eedcd62eda7c7ec2aae9f8a
