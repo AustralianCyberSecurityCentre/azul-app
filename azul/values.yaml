@@ -1962,12 +1962,12 @@ images:
   customRegistry: docker.io/asdazul/
   # images that form part of an azul release
   custom:
-    audit-forwarder: audit-forwarder:20260426T1931-unstable@sha256:a4cd0d3a583cd2f5512f62c9dbe514c13985b475ec78f77d99805e414849f27c
+    audit-forwarder: audit-forwarder:20260429T0726-unstable@sha256:a79f89d2fbbefe371fab2cb6d830a0a85b990c02e68b7819424d5528e2ed68c9
     backup: backup:20260428T1217-unstable@sha256:f27139790ec5491239ab3ed47aa48e4d4c81fc62521ccba7660d8e4b43144368
     client: client:20260428T1220-unstable@sha256:36c056e949bc42dd13fe9225b4188bd35e057265642699873fe6670f6dfbab9a
     dispatcher: dispatcher:20260428T1249-unstable@sha256:caa04546ce229d9e61ff1f6fc30dae2c3a0a1073b6978cd4528fe442d9c41be4
     docs: docs:20260425T0003-unstable@sha256:ebade2543ddc382591c5c6a78549199d79b6d1db8fdcbb5f8c8a9834c951aa6a
-    restapi-server: restapi-server:20260428T2221-unstable@sha256:7fefea34214fcd27f6f0d015d69960e0f96935e07de6dd894726ac3b2bf5a247
+    restapi-server: restapi-server:20260430T0050-unstable@sha256:286f5dc3873b9c04702717ff21926522ed99f42876801a51745caac8592f9c3a
     webui: webui:20260429T0127-unstable@sha256:67b6facd81da6b8d5471def9190296b3f10389fea2b361887f7f70b5abfbf169
     plugin-alphabets: plugin-alphabets:20260428T1235-unstable@sha256:e44e0019315d9cb079e0fbc2287843e491128c10310b07cb10e7f4bbd27fa788
     plugin-android-parser: plugin-android-parser:20260428T1240-unstable@sha256:531914ef157012d185157422d4cd8ba208e6e64d947c9bb0ca914c662d8088e7
@@ -1998,7 +1998,7 @@ images:
     plugin-pdftools: plugin-pdftools:20260428T1231-unstable@sha256:d95e1476f3021d8f9c262649a6f477694948345d74e1ac019e19509585fe8939
     plugin-python: plugin-python:20260428T1235-unstable@sha256:e3a1d6d5882a0dfce216d0e9cdc82418cfe4bbf32b65944d107663f93e9e36df
     plugin-repeated-bytes: plugin-repeated-bytes:20260428T1229-unstable@sha256:45c68231f7f15222edd639cd325c80d79d326a0fa61954fe7fd3a90a2bf6d8bc
-    plugin-retrohunt: plugin-retrohunt:20260428T1257-unstable@sha256:dec08c0477b7223eb4b1853ccdbf4edf716627d31ddb3619da4b921aafc11859
+    plugin-retrohunt: plugin-retrohunt:20260430T0038-unstable@sha256:64a8e473c7e811906854197becdce8443a19ea3318332ad36212f883d82b9ade
     plugin-richid: plugin-richid:20260428T1245-unstable@sha256:acfb904f5e6306ee6b7987cda39f887a9ea3d1b313141f775d7029175d789977
     plugin-script-decoder: plugin-script-decoder:20260428T1229-unstable@sha256:1e7d10d35767fc9b67a95c626820386a41101a00f02a4c7c93cc330a8abdd9a1
     plugin-shortcut: plugin-shortcut:20260428T1229-unstable@sha256:989bc9377207011de012a8526f45df6c905e371b47372c451cc4422755f00580
