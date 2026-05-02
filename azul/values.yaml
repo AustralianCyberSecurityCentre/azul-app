@@ -1974,7 +1974,7 @@ images:
     plugin-assemblyline: plugin-assemblyline:20260502T0025-unstable@sha256:d00fde53a0896dc7cd4de1fea17164d84318672e7607f47b87a1d74c2f0c1db8
     plugin-build-time-strings: plugin-build-time-strings:20260502T0026-unstable@sha256:e44dac2e09bd08c1a9d76f0bdebf3a9296ebdda895784d8a877e0fd03b348cbb
     plugin-mandiant-capa: plugin-mandiant-capa:20260501T0519-unstable@sha256:61740cdfe675c0649bb4a346fd147dc50bcc52aab569e08d8d48c76205c1c2e8
-    plugin-cape: plugin-cape:20260428T1238-unstable@sha256:80f1c812c6ee276f5efa07168342fa9b54f86dee940f27a8543f63abd8a20e59
+    plugin-cape: plugin-cape:20260502T0027-unstable@sha256:c82f10642eea8334ca3f9719a7ef6d9c6ab6cdbbd82b0ce6d22648b2a355bb05
     plugin-de4dot: plugin-de4dot:20260502T0031-unstable@sha256:54ef12988c2054b577ba192eb43d35bb050d8a2170da9af5d95f211475f83131
     plugin-dotnet-decompiler: plugin-dotnet-decompiler:20260502T0018-unstable@sha256:0063df8a1359a733a77e765a48340557d045cb7b6282cf89b5794d276548e2e3
     plugin-dotnet-deob: plugin-dotnet-deob:20260502T0021-unstable@sha256:2b013753bf2d1d06a3010b2ce250d13ca219ff941637ff23058164af258762d6
