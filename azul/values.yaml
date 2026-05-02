@@ -1967,7 +1967,7 @@ images:
     client: client:20260502T0016-unstable@sha256:c4e348f7d3dab2d6a1f3ebfc350051451f7779bb7db2bd51d707522d39276ba1
     dispatcher: dispatcher:20260502T1428-unstable@sha256:5f02bd8ef57c64cf8d9b5cad93cd20590d0e71fd5800cd86b66a7dee1d3a2ccb
     docs: docs:20260502T0001-unstable@sha256:6bed4b4a1fe4b47838cfed9e74d8de9091fccc50c0b6119939e9a0b00e291483
-    restapi-server: restapi-server:20260502T0053-unstable@sha256:ed52e5650a8fb902f43939d345c45ae02985e4c19329a622eb2e26e9548decf7
+    restapi-server: restapi-server:20260502T1433-unstable@sha256:968fd531aa684b689732c41a4b24c5d8f1305fa241ca4c8f18572283e1abca68
     webui: webui:20260502T1419-unstable@sha256:04fb537ecf1d199a0ac10e92537559b66f5e34ddedeafc352cd70a7eb38ebbe1
     plugin-alphabets: plugin-alphabets:20260502T0018-unstable@sha256:cb3f743ac030d58783b6ebdb4ef6790d7f44b516fa28fba024119f28ee4ae496
     plugin-android-parser: plugin-android-parser:20260502T0025-unstable@sha256:594855da10648d0b0b4130c11d4ca358810ad2def5807433cda93828b7e8f703
