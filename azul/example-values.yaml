@@ -72,6 +72,11 @@ pluginHPA:
   # If using the internal scaler, the maximum backlog for a plugin before scaling occurs
   maxQueueLength: 50
 
+pluginSyncHPA:
+  minReplicas: 2
+  maxReplicas: 15
+  averageUtilization: 80
+
 scaler:
   # Use in conjunction with useSmartScaler - see above
   enabled: true
@@ -478,11 +483,15 @@ plugins:
         syncPeriod: 600 # Interval to poll the remote repo for changes, in seconds.
 
   yara-x:
+    hpa:
+      maxReplicas: 22
     image: plugin-yara
     livenessProbeInitialDelaySeconds: 60 # initial delay for liveness probe in seconds
     livenessProbePeriodSeconds: 30 # period for liveness probe in seconds
     sources:
       example:
+        hpa:
+          minReplicas: 11
         enabled: true
         repo: pass
         branch: pass

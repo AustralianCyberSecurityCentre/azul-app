@@ -2671,6 +2671,9 @@
         "blacklist": {
           "description": "A comma separated string of files or filepaths to ignore.",
           "type": "string"
+        },
+        "hpa": {
+          "$ref": "#/definitions/hpa"
         }
       },
       "required": ["enabled"],

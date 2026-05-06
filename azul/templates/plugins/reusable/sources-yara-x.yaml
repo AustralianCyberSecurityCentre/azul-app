@@ -156,7 +156,14 @@ spec:
           defaultMode: 0400
           secretName: {{ $source.secretSSH }}
       {{- end }}
-  {{- include "hpa" (dict "root" $ "name" $plugin "min" $root.pluginSyncHPA.minReplicas "max" $root.pluginSyncHPA.maxReplicas "avgUtil" $root.pluginSyncHPA.averageUtilization "useSmartScaler" $.Values.pluginSyncHPA.useSmartScaler "includeHistoric" $.Values.pluginSyncHPA.includeHistoric "maxQueueLength" $.Values.pluginSyncHPA.maxQueueLength) | nindent 0 }}
+
+  {{- /* Merge all the HPAs first do the default then override with any values from group then override from source */ -}}
+  {{- $defaultHpa := $root.pluginSyncHPA | default dict }}
+  {{- $groupHpa := (hasKey $group "hpa") | ternary $group.hpa dict }}
+  {{- $sourceHpa := (hasKey $source "hpa") | ternary $source.hpa dict }}
+  {{- $mergedHpa := merge $sourceHpa $groupHpa $defaultHpa }}
+
+  {{- include "hpa" (dict "root" $ "name" $plugin "min" $mergedHpa.minReplicas "max" $mergedHpa.maxReplicas "avgUtil" $mergedHpa.averageUtilization "useSmartScaler" $mergedHpa.useSmartScaler "includeHistoric" $mergedHpa.includeHistoric "maxQueueLength" $mergedHpa.maxQueueLength) | nindent 0 }}
   {{- end }}
 {{- end }}
 {{- end }}
