@@ -970,6 +970,23 @@ metastore:
         limits:
           memory: "2Gi"
           cpu: "1200m"
+    # Status event ingestion for download events.
+    ingest-download:
+      error_log: true
+      logLevel: "WARN"
+      minReplicas: 1
+      maxReplicas: 5
+      command:
+        - azul-metastore
+        - ingest-download
+      resources:
+        requests:
+          memory: "500Mi"
+          cpu: "300m"
+        limits:
+          memory: "2Gi"
+          cpu: "1000m"
+
 
 # API server configuration
 restapi:
