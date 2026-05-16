@@ -2008,7 +2008,7 @@ images:
     stats: stats:20260509T1613-unstable@sha256:d93284f44c94495804a6be95e8817b69b2cf8a08170f3481e8952731fe76f64b
     nsrl-lookup-server: nsrl-lookup-server:20260509T1416-unstable@sha256:8bdf24306b46d208e0808941ba2b06e9faa4fef4db18f87f97686b11b15a9d77
     plugin-suricata: plugin-suricata:20260512T0657-unstable@sha256:6369f3fbd66466c11695accb448e3f012711338dd7f013af3f5f8dd9a922c010
-    scaler: scaler:20260509T0004-unstable@sha256:1eb83cc3b4d8498a09ed0df0bea1869120fb385efc000958940c25df78856945
+    scaler: scaler:20260516T0003-unstable@sha256:291b9a8f60366d5240ec3388638f81cda0a0d2e38e97fe25897b30ddccc73059
     plugin-debloat: plugin-debloat:20260512T0648-unstable@sha256:a8e9e3caa9d7184d4f166915b3ef44f149dba3e3e8bf361eede38aa2880d35e8
     plugin-yara: plugin-yara:20260509T1437-unstable@sha256:07ebc6d2d3c8fedd5fe51898f6130e227dbe63c36e29a99be29f7d891f80633b
     plugin-portex: plugin-portex:20260512T0654-unstable@sha256:ad553dde7caa421c51825defccd78a03e6cc18725d2d5a673582975c055dca52
