@@ -1694,6 +1694,7 @@ plugins:
       # server for pushing metadata feed to (alternative to pullFromApi)
       vtfilefeedserver:
         enabled: false
+        enableLivenessProbe: false
         additionalLabels:
           allow-ingress-virustotal-file-feed-server: "true"
           allow-egress-prometheus-push-gateway: "true"
@@ -1736,6 +1737,7 @@ plugins:
       # lookup azul binaries in virustotal to enrich with metadata
       vtfilelookup:
         enabled: false
+        enableLivenessProbe: false
         # Allow contact out to virustotal
         additionalLabels:
           allow-egress-https-http: "true"
@@ -1758,6 +1760,7 @@ plugins:
       # perform vt downloads for interesting files marked by plugin-vtfilefeed
       vtdownload:
         enabled: false
+        enableLivenessProbe: false
         # Allow contact out to virustotal
         additionalLabels:
           allow-egress-https-http: "true"
