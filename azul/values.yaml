@@ -606,6 +606,8 @@ global:
     Cross-Origin-Opener-Policy: "unsafe-none"
     # 'X-XSS-Protection' is old & broken: https://bugzilla.mozilla.org/show_bug.cgi?id=528661
     X-XSS-Protection: "0"
+    # prevent storing potentially malicious files in cache.
+    Cache-Control: "no-store"
 
 # Web UI configuration
 web:
