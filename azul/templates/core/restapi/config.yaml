@@ -54,7 +54,8 @@ data:
   # Headers
   {{- if .Values.web.ingress.security.enableHarden }}
   RESTAPI_HEADERS: |-
-    {{- include "server.headers.envs" (dict "Values" .Values "inputCsp" .Values.web.ingress.security.csp.api ) | nindent 4 }}  {{- range $k, $v := .Values.restapi.env }}
+    {{- include "server.headers.envs" (dict "Values" .Values "inputCsp" .Values.web.ingress.security.csp.api "extraHeaders" .Values.restapi.additional_headers ) | nindent 4 }}
+{{- end }}
+{{- range $k, $v := .Values.restapi.env }}
   {{ $k }}: "{{ $v }}"
-  {{- end }}
-  {{- end }}
+{{- end }}
