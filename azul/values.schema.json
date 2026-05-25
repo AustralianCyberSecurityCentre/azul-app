@@ -915,6 +915,9 @@
             }
           }
         },
+        "additional_headers": {
+          "type": "object"
+        },
         "minReplicas": {
           "type": "integer"
         },

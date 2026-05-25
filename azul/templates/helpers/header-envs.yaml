@@ -8,5 +8,9 @@
 {{- range $k, $v := .Values.global.headers -}}
   {{- $_ := set $outputdict (print $k) (print $v) -}}
 {{- end -}}
+{{- range $k, $v := .extraHeaders -}}
+  {{- $_ := set $outputdict (print $k) (print $v) -}}
+{{- end -}}
+
 {{- $outputdict | mustToJson -}}
 {{- end -}}

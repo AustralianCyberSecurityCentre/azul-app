@@ -1029,6 +1029,9 @@ restapi:
     processWorkers: 2
     asyncioWorkers: 2
     logLevel: "INFO"
+  additional_headers:
+    # prevent storing potentially malicious files in cache.
+    Cache-Control: "no-store"
   env: {}
 
 # Access control configuration.
