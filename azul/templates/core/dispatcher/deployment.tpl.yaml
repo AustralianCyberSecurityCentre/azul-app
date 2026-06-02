@@ -81,6 +81,8 @@ spec:
         envFrom:
           - configMapRef:
               name: dispatcher
+          - configMapRef:
+              name: metastore
           {{- if .reprocess }}
           - configMapRef:
               name: dispatcher-reprocess
