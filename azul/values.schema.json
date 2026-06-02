@@ -510,6 +510,9 @@
             "banner_dismissable": {
               "type": "boolean"
             },
+            "retrohunt_enabled": {
+              "type": "boolean"
+            },
             "binary_external_links": {
               "type": "array",
               "items": {

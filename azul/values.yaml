@@ -682,6 +682,9 @@ web:
     # This supports basic Markdown for e.g. links and email addresses.
     unauthorized_help: Please contact your system administrator for assistance.
 
+    # Enable/disable the retrohunt page. 
+    retrohunt_enabled: true
+
     # Optional message to display to users to inform them about something - e.g. patching in progress, system is read-only,
     # etc.
     # banner_message: The system will be going down for patching at 00:00 UTC.
