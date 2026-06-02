@@ -2,6 +2,7 @@
 {{- define "config.web" -}}
 # catch-all generic config options
 {{ .Values.web.config | toYaml}}
+retrohunt_enabled: {{ .Values.plugins.retrohunt.enabled | quote }}
 # ensure oidc configured correctly from custom fields
 {{- if .Values.security.oidc.enabled }}
 oauth_enabled: true
