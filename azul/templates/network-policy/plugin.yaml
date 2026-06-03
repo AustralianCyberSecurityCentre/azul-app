@@ -101,46 +101,6 @@ spec:
 ---
 {{ end }}
 {{ end }}
-{{ if not (has "allow-ingress-retrohunt-server" .Values.disableNetworkPolicies) }}
-# --------------------------- Retrohunt Policies ---------------------------
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-ingress-retrohunt-server
-spec:
-  podSelector:
-    matchLabels:
-      allow-ingress-retrohunt-server: "true"
-  policyTypes:
-    - Ingress
-  ingress:
-    - ports:
-        - port: 8852
-          protocol: TCP
-        {{- if .Values.istioEnabled }}
-        - port: 15008
-        {{- end }}
----
-{{- if .Values.istioEnabled }}
-apiVersion: security.istio.io/v1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-ingress-retrohunt-server
-spec:
-  action: ALLOW
-  selector:
-    matchLabels:
-      allow-ingress-retrohunt-server: "true"
-  rules:
-  - to:
-    - operation:
-        ports: ["8852"]
-    when:
-    - key: destination.port
-      values: ["8852"]
----
-{{ end }}
-{{ end }}
 {{ if not (has "allow-ingress-nsrl-lookup-server" .Values.disableNetworkPolicies) }}
 # --------------------------- NSRL Lookup Policies ---------------------------
 apiVersion: networking.k8s.io/v1
