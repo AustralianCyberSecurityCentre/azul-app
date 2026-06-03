@@ -24,6 +24,7 @@ spec:
             app: plugin-retrohunt
             allow-egress-dispatcher: "true"
             allow-egress-https: "true"
+            allow-egress-redis: "true"
             part-of: azul
             section: plugins
             component: retrohunt
