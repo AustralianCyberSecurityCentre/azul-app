@@ -13,7 +13,6 @@ pipconfig: |
 # List any of the existing network policies by name that shouldn't be created.
 # This is useful for replacing policies or if there is a policy that isn't applicable to your environment.
 disableNetworkPolicies:
-  - allow-ingress-retrohunt-server
   - allow-ingress-nsrl-lookup-server
   - allow-egress-nsrl-lookup-server
 # Define any custom network policy here

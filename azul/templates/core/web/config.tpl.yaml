@@ -17,9 +17,6 @@ deployment_text: "{{ .Values.web.config.deployment_text }} {{ .Chart.Version }}"
 deployment_text: "{{ .Chart.Version }}"
 {{- end }}
 global_external_links:
-  {{- if .Values.plugins.retrohunt.enabled }}
-  retrohunt_url: https://{{ index .Values.plugins.retrohunt.plugins "retrohunt-server" "ingress" "host" }}
-  {{- end }}
   {{- if .Values.plugins.nsrl.enabled }}
   nsrl_url: https://{{ .Values.plugins.nsrl.server.ingress.host }}
   {{- end }}

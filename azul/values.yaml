@@ -1471,61 +1471,6 @@ plugins:
           # Allow failed index directories to be split in half and then deleted if they fail to index twice in a row.
           allow_splitting_and_deletion: "true"
     plugins:
-      retrohunt-server:
-        envFrom:
-          - configMapRef:
-              name: retrohunt
-        baseEnv:
-          - name: REDIS_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: "{{ .Values.secrets.redis }}"
-                key: redis-username
-          - name: REDIS_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: "{{ .Values.secrets.redis }}"
-                key: redis-password
-        ingress:
-          name: plugin-retrohunt-server
-          serviceName: plugin-retrohunt-server
-          servicePort: 8852
-          host: ""
-          secretName: ""
-          annotations: {}
-          security:
-            enableHarden: true
-            # Overrides
-            csp:
-              # Swagger uses inline JS:
-              script-src: "'self' 'unsafe-inline'"
-        image: plugin-retrohunt
-        minReplicas: 1
-        maxReplicas: 1
-        averageUtilization: 300
-        # Not able to be detected via the scaler
-        useSmartScaler: false
-        resources:
-          requests:
-            cpu: "500m"
-            memory: "500Mi"
-          limits:
-            cpu: "1500m"
-            memory: "2Gi"
-        additionalLabels:
-          allow-ingress-retrohunt-server: "true"
-          allow-egress-redis: "true"
-        promMetricsEnabled: true
-        promPort: "8852"
-        args:
-          - --events-url
-          - $(PLUGIN_EVENTS_URL)
-          - --data-url
-          - $(PLUGIN_DATA_URL)
-          - --host
-          - 0.0.0.0
-          - --port
-          - "8852"
       retrohunt-worker:
         additionalLabels:
           allow-egress-redis: "true"

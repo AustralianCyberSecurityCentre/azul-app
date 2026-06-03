@@ -105,7 +105,6 @@ Here is the table of values
 | 8111      | Dispatcher,lost-tasks                 | Internal communication between dispatcher and everything else | Both           |
 | 8850      | Assemblyline Receiver                 | Receive data from Assemblyline and hosts stats                | Ingress        |
 | 8851      | Smart string finder                   | Filter strings for restapi and hosts stats                    | Both           |
-| 8852      | Retrohunt-server                      | Hosts the retrohunt server                                    | Ingress        |
 | 8853      | NSRL lookup Server                    | Hosts the Nsrl lookup server                                  | Ingress        |
 | 8854      | Virustotal Server                     | Hosts the Virustotal push server.                             | Ingress        |
 | 8855      | Audit Forwarder                       | Audit forwarder health probe.                                 | Ingress        |
