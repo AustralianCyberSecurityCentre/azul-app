@@ -1173,6 +1173,7 @@ plugins:
     plugins:
       assemblyline-receiver:
         enabled: true
+        enableLivenessProbe: false
         image: plugin-assemblyline
         # This doesn't have a trackable queue
         useSmartScaler: false
