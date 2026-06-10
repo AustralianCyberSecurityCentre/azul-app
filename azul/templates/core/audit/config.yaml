@@ -23,4 +23,5 @@ data:
   audit_last_sent_file: "/state/last_sent.txt"
   audit_http_client_timeout_seconds: "{{ .Values.auditForwarder.client_timeout }}"
   logger_log_file: "/logs/audit_fwd.log"
+  logger_log_level: "{{ .Values.auditForwarder.log_level }}"
 {{- end }}
