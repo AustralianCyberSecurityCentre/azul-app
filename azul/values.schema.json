@@ -1462,6 +1462,9 @@
         "client_timeout": {
           "type": "number"
         },
+        "log_level": {
+          "type": "string"
+        },
         "cloudwatch_log_group": {
           "type": "string"
         },
