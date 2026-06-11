@@ -1,6 +1,6 @@
 {{- if .Values.kafka.enable }}
 ---
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: KafkaNodePool
 metadata:
   name: nodes
@@ -57,7 +57,7 @@ spec:
       {{- include "harden.container" . | nindent 6 }}
 
 ---
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: Kafka
 metadata:
   name: {{ .Values.kafka.name }}
