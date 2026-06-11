@@ -152,7 +152,7 @@ opensearch:
   harden: false
 
   general:
-    version: 3.2.0
+    version: 3.7.0
     replicas: 3
     setVMMaxMapCount: true
     # defaultRepo: docker.io/opensearchproject
@@ -206,7 +206,7 @@ opensearch:
       nginx.org/client-max-body-size: "600m"
 
   dashboard:
-    version: 3.2.0
+    version: 3.7.0
 
     ingress:
       enable: true
@@ -719,8 +719,8 @@ opensearch:
 kafka:
   enable: true
   name: azul-kafka
-  version: 4.0.0
-  metadataVersion: 4.0-IV3
+  version: 4.2.0
+  metadataVersion: 4.2-IV1
 
   replicas: 3
   resources:
@@ -749,7 +749,7 @@ kafka:
   # Helper pod to enable debugging in-cluster
   kafkactl:
     enable: true
-    image: deviceinsight/kafkactl:v5.13.0-ubuntu
+    image: deviceinsight/kafkactl:v5.19.0
 
   storage:
     type: persistent-claim

@@ -150,7 +150,7 @@ spec:
 {{- end }}
 
 ---
-apiVersion: opensearch.opster.io/v1
+apiVersion: opensearch.org/v1
 kind: OpenSearchCluster
 metadata:
   name: {{ .Values.opensearch.name }}
@@ -204,12 +204,17 @@ spec:
       transport:
         generate: false
         perNode: false
+        enableHotReload: true
         secret:
           name: {{ .Values.opensearch.name }}-certs
         nodesDn: ["CN=Opensearch_Node.{{ .Values.opensearch.certificateSuffix }}", ] 
+        # Deprecated should be removed.
         adminDn: ["CN=OpenSearch_Admin.{{ .Values.opensearch.certificateSuffix }}", ]
       http:
+        enabled: true
         generate: false
+        adminDn: ["CN=OpenSearch_Admin.{{ .Values.opensearch.certificateSuffix }}", ]
+        enableHotReload: true
         secret:
           name: {{ .Values.opensearch.name }}-certs
 
@@ -272,7 +277,7 @@ spec:
         {{- range .Values.opensearch.topologySpreadConstraints }}
         - labelSelector:
             matchLabels:
-              opster.io/opensearch-nodepool: nodes
+              opensearch.org/opensearch-nodepool: nodes
           {{- . | toYaml | nindent 10 }}
         {{- end }}
       {{- end }}

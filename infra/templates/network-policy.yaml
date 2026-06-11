@@ -335,7 +335,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      opster.io/opensearch-cluster: azul-opensearch
+      opensearch.org/opensearch-cluster: azul-opensearch
   policyTypes:
     - Egress
     - Ingress
@@ -343,7 +343,7 @@ spec:
     - to:
       - podSelector:
           matchLabels:
-            opster.io/opensearch-cluster: azul-opensearch
+            opensearch.org/opensearch-cluster: azul-opensearch
       - podSelector:
           matchLabels:
             job-name: azul-opensearch-securityconfig-update
@@ -363,7 +363,7 @@ spec:
     - from:
       - podSelector:
           matchLabels:
-            opster.io/opensearch-cluster: azul-opensearch
+            opensearch.org/opensearch-cluster: azul-opensearch
       - podSelector:
           matchLabels:
             job-name: azul-opensearch-securityconfig-update
@@ -389,7 +389,7 @@ spec:
   action: ALLOW
   selector:
     matchLabels:
-      opster.io/opensearch-cluster: azul-opensearch
+      opensearch.org/opensearch-cluster: azul-opensearch
   rules:
   - to:
     - operation:
@@ -425,7 +425,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      opster.io/opensearch-cluster: azul-opensearch
+      opensearch.org/opensearch-cluster: azul-opensearch
   policyTypes:
     - Egress
   egress:
@@ -445,7 +445,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      opster.io/opensearch-cluster: azul-opensearch
+      opensearch.org/opensearch-cluster: azul-opensearch
   policyTypes:
     - Ingress
   ingress:
@@ -465,7 +465,7 @@ spec:
   action: ALLOW
   selector:
     matchLabels:
-      opster.io/opensearch-cluster: azul-opensearch
+      opensearch.org/opensearch-cluster: azul-opensearch
   rules:
   - to:
     - operation:
