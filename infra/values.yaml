@@ -720,7 +720,7 @@ kafka:
   enable: true
   name: azul-kafka
   version: 4.2.0
-  metadataVersion: 4.2
+  metadataVersion: 4.2-IV1
 
   replicas: 3
   resources:
