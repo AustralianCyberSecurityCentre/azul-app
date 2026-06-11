@@ -749,7 +749,7 @@ kafka:
   # Helper pod to enable debugging in-cluster
   kafkactl:
     enable: true
-    image: deviceinsight/kafkactl:v5.13.0-ubuntu
+    image: deviceinsight/kafkactl:v5.19.0
 
   storage:
     type: persistent-claim
