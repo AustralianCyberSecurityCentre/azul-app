@@ -214,7 +214,7 @@ spec:
         enabled: true
         generate: false
         adminDn: ["CN=OpenSearch_Admin.{{ .Values.opensearch.certificateSuffix }}", ]
-        enabledHotReload: true
+        enableHotReload: true
         secret:
           name: {{ .Values.opensearch.name }}-certs
 
