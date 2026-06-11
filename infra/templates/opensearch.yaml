@@ -151,7 +151,7 @@ spec:
 
 ---
 apiVersion: opensearch.org
-kind: OpenSearchCluster
+kind: OpenSearchCluster/1
 metadata:
   name: {{ .Values.opensearch.name }}
 spec:
