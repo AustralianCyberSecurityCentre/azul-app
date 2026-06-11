@@ -152,7 +152,7 @@ opensearch:
   harden: false
 
   general:
-    version: 3.2.0
+    version: 3.7.0
     replicas: 3
     setVMMaxMapCount: true
     # defaultRepo: docker.io/opensearchproject
@@ -206,7 +206,7 @@ opensearch:
       nginx.org/client-max-body-size: "600m"
 
   dashboard:
-    version: 3.2.0
+    version: 3.7.0
 
     ingress:
       enable: true
