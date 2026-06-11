@@ -150,7 +150,7 @@ spec:
 {{- end }}
 
 ---
-apiVersion: opensearch.opster.io/v1
+apiVersion: opensearch.org/v1
 kind: OpenSearchCluster
 metadata:
   name: {{ .Values.opensearch.name }}
@@ -272,7 +272,7 @@ spec:
         {{- range .Values.opensearch.topologySpreadConstraints }}
         - labelSelector:
             matchLabels:
-              opster.io/opensearch-nodepool: nodes
+              opensearch.org/opensearch-nodepool: nodes
           {{- . | toYaml | nindent 10 }}
         {{- end }}
       {{- end }}
