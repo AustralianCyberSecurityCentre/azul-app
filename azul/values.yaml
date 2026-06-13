@@ -1973,7 +1973,7 @@ images:
     plugin-certificates: plugin-certificates:20260613T0028-unstable@sha256:483750f5d0fac108474ae1f1d6111c6d2c4cae36fdc1359cd138cbbd35c819d0
     plugin-qrcode: plugin-qrcode:20260613T0020-unstable@sha256:92918df1085db8e0fda70fed3b0f071e9576356f32f90c2675a3ba6327fc9286
     smart-string-filter: smart-string-filter:20260613T0008-unstable@sha256:b1ac841add37730939607274faac272d9fbaa09db0b5442733b8adf51b4b08bb
-    plugin-ghidra: plugin-ghidra:20260612T1448-unstable@sha256:3554e05ba6bb84453031dc21e47cba9fd948a1407b0785bae98a157d771d8a1f
+    plugin-ghidra: plugin-ghidra:20260613T0020-unstable@sha256:dc43b2a80d16f7ef3b5f3f14e2175af726cdf2ba4ab3d6120ed7b09141492e76
     # plugin-report-feeds: dummy
     plugin-report-feeds: plugin-report-feeds:20260613T0021-unstable@sha256:cf0f585747d11b00d7b1bd36a0dca57aa91ce964f60f90e55c88e5aa63bd068b
     plugin-jadx: plugin-jadx:20260612T1452-unstable@sha256:262264bef50d63801ba8a1d2612d89af0f8a612da7e0b6c59e64b8c1bb48e712
