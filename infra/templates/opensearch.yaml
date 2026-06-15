@@ -358,8 +358,6 @@ spec:
     key: {{ $.Values.opensearch.name }}
   {{- if $roleList.backendRoles }}
   backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
-  {{- else }}
-  backendRoles: []
   {{- end }}
 {{- end }}
 
@@ -374,13 +372,9 @@ spec:
     name: {{ $.Values.opensearch.name }}
   {{- if $roleMap.users }}
   users: {{ $roleMap.users | toYaml | nindent 4 }}
-  {{- else }}
-  users: []
   {{- end }}
   {{- if $roleMap.backendRoles }}
   backendRoles: {{ $roleMap.backendRoles | toYaml | nindent 4 }}
-  {{- else }}
-  backendRoles: []
   {{- end }}
   roles:
     - {{ $role }}
