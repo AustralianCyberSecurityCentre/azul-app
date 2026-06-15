@@ -342,40 +342,40 @@ spec:
         pathType: Prefix
 {{- end }}
 
-{{- range $user, $roleList :=  .Values.opensearch.internalUsers }}
----
-apiVersion: opensearch.org/v1
-kind: OpensearchUser
-metadata:
-  name: {{ regexReplaceAll "\\W+|_" $user "-" }}
-spec:
-  opensearchCluster:
-    name: {{ $.Values.opensearch.name }}
-  passwordFrom:
-    name: {{ $.Values.opensearch.usersPasswordsSecretName }}
-    key: {{ $.Values.opensearch.name }}
-  {{- if $roleList.backendRoles }}
-  backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
-  {{- end }}
-{{- end }}
+# {{- range $user, $roleList :=  .Values.opensearch.internalUsers }}
+# ---
+# apiVersion: opensearch.org/v1
+# kind: OpensearchUser
+# metadata:
+#   name: {{ regexReplaceAll "\\W+|_" $user "-" }}
+# spec:
+#   opensearchCluster:
+#     name: {{ $.Values.opensearch.name }}
+#   passwordFrom:
+#     name: {{ $.Values.opensearch.usersPasswordsSecretName }}
+#     key: {{ $.Values.opensearch.name }}
+#   {{- if $roleList.backendRoles }}
+#   backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
+#   {{- end }}
+# {{- end }}
 
-{{- range $role, $roleMap := .Values.opensearch.roleMapping }}
----
-apiVersion: opensearch.org/v1
-kind: OpensearchUserRoleBinding
-metadata:
-  name: {{ regexReplaceAll "\\W+|_" $role "-" }}-mappings
-spec:
-  opensearchCluster:
-    name: {{ $.Values.opensearch.name }}
-  {{- if $roleMap.users }}
-  users: {{ $roleMap.users | toYaml | nindent 4 }}
-  {{- end }}
-  {{- if $roleMap.backendRoles }}
-  backendRoles: {{ $roleMap.backendRoles | toYaml | nindent 4 }}
-  {{- end }}
-  roles:
-    - {{ $role }}
-{{- end }}
+# {{- range $role, $roleMap := .Values.opensearch.roleMapping }}
+# ---
+# apiVersion: opensearch.org/v1
+# kind: OpensearchUserRoleBinding
+# metadata:
+#   name: {{ regexReplaceAll "\\W+|_" $role "-" }}-mappings
+# spec:
+#   opensearchCluster:
+#     name: {{ $.Values.opensearch.name }}
+#   {{- if $roleMap.users }}
+#   users: {{ $roleMap.users | toYaml | nindent 4 }}
+#   {{- end }}
+#   {{- if $roleMap.backendRoles }}
+#   backendRoles: {{ $roleMap.backendRoles | toYaml | nindent 4 }}
+#   {{- end }}
+#   roles:
+#     - {{ $role }}
+# {{- end }}
 
 {{- end }}
