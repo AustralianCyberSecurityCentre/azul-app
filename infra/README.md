@@ -34,7 +34,20 @@ functionality.
 
 Requirements:
 
-- The Strimzi operator must be installed, the one currently used by the azul team is 1.0.0.
+- The Strimzi operator must be installed, the one currently used by the azul team is 1.0.0
+  To protect from data loss the following settings are recommended when installing strimzi:
+  - In install/cluster-operator/060-Deployment-\*.yaml, _add_ an environmental variable with
+    the following:
+    - `STRIMZI_LABELS_EXCLUSION_PATTERN` = `argocd.argoproj.io/instance`
+    - **If you are using ArgoCD**, this is required to avoid it deleting your data - if this
+      is not set Strimzi will copy ArgoCD's annotations from the Strimzi deployment to the PVCs
+      and Argo, not being aware of these PVCs will try to continually delete them.
+  - In install/cluster-operator/060-Deployment-\*.yaml, _replace_ an environmental variable with
+    the following:
+    - `STRIMZI_NAMEPSACE` = `"*"` (or the name of the namespace you want Strimzi to watch - i.e. where you are deploying this chart)
+    - This is required if you are deploying Azul in a namespace outside of where Strimzi is
+      deployed, which is required to avoid conflicts with namespaced restrictions that Azul has
+      such as network policies.
 
 For upgrades and full install instructions of kafka refer to the strimzi kafka documentation about version and compatibility of upgrades.
 
@@ -133,7 +146,8 @@ kubectl apply -f creds.yaml
   secret) to Azul's namespace and append to your CA cert list.
 
   To pull this certificate, fetch the crt from the secret
-  (`kubectl get secret azul-cluster-ca -o yaml`), and base64 decode.
+  (`kubectl get secret azul-opensearch-ca-cert -o yaml`), and base64 decode.
+  Single command `kubectl get secret azul-opensearch-ca-cert -o jsonpath="{.data['ca\.crt']}" | base64 -d`
 
 - Finally, append to the secret pointed to by `CACertificateConfigMap` in your core
   values.yaml.
