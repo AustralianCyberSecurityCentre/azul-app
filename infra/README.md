@@ -85,6 +85,8 @@ helm install opensearch-operator opensearch-operator/opensearch-operator
   - azul-cluster-dashboardcredentials (optional, set the secretName `adminCredentialsSecret` to an empty string and this will be generated)
     Username/password combination containing credentials matching internalUsers
   - azul-cluster-admincredentials (optional, set the secretName `dashboardCredentialsSecret` to an empty string and this will be generated)
+  - azul-opensearch-user-passwords
+    Contains all the internalUsers and their corresponding passwords. (ignoring built in users like admin an kibanaserver)
 
 For example:
 
@@ -96,23 +98,29 @@ kind: Secret
 metadata:
   name: azul-cluster-admincredentials
 type: Opaque
-data:
-  # admin
-  username: YWRtaW4=
-  # adminpassword
-  password: YWRtaW5wYXNzd29yZA==
-
+stringData:
+  username: admin
+  password: adminpassword
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: azul-cluster-dashboardcredentials
 type: Opaque
-data:
-  # kibanaserver
-  username: a2liYW5hc2VydmVy
-  # kibanaserverpassword
-  password: a2liYW5hc2VydmVycGFzc3dvcmQ=
+stringData:
+  username: kibanaserver
+  password: kibanaserverpassword
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: azul-opensearch-user-passwords
+type: Opaque
+stringData:
+  monitor: monitorpassword
+  azul_writer: azulwriterpassword
+
+
 ```
 
 Apply with:

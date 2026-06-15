@@ -194,7 +194,6 @@ spec:
         name: {{ .Values.opensearch.name }}-admin-certs
       securityConfigSecret:
         name: {{ .Values.opensearch.name }}-securityconfig
-      {{- end }}
       {{- if .Values.opensearch.adminCredentialsSecret }}
       adminCredentialsSecret:
         name: {{ .Values.opensearch.adminCredentialsSecret }}
