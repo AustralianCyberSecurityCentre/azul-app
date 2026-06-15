@@ -349,12 +349,13 @@ spec:
 apiVersion: opensearch.org/v1
 kind: OpensearchUser
 metadata:
-  name: {{ $user }}
+  name: {{ regexReplaceAll "\\W+|_" $user "-" }}
 spec:
   opensearchCluster:
-    name: {{ regexReplaceAll "\\W+|_" $.Values.opensearch.name "-" }}
+    name: {{ $.Values.opensearch.name }}
   passwordFrom:
     name: {{ $.Values.opensearch.usersPasswordsSecretName }}
+    key: {{ $.Values.opensearch.name }}
   {{- if $roleList.backendRoles }}
   backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
   {{- else }}
