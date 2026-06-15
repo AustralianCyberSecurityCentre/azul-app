@@ -13,6 +13,9 @@ Product deployments included:
 - OpenSearch
 - Minio
 - Kafka
+- keycloak
+- prometheus/grafana
+- loki
 
 By default, this chart will deploy everything (for a turn-key solution), but individual
 components can be disabled as required, particularly if you have better alternatives for
@@ -31,21 +34,9 @@ functionality.
 
 Requirements:
 
-- The Strimzi operator must be installed, with the following parameters set:
-  - In install/cluster-operator/060-Deployment-\*.yaml, _add_ an environmental variable with
-    the following:
-    - `STRIMZI_LABELS_EXCLUSION_PATTERN` = `argocd.argoproj.io/instance`
-    - **If you are using ArgoCD**, this is required to avoid it deleting your data - if this
-      is not set Strimzi will copy ArgoCD's annotations from the Strimzi deployment to the PVCs
-      and Argo, not being aware of these PVCs will try to continually delete them.
-  - In install/cluster-operator/060-Deployment-\*.yaml, _replace_ an environmental variable with
-    the following:
-    - `STRIMZI_NAMEPSACE` = `"*"` (or the name of the namespace you want Strimzi to watch - i.e. where you are deploying this chart)
-    - This is required if you are deploying Azul in a namespace outside of where Strimzi is
-      deployed, which is required to avoid conflicts with namespaced restrictions that Azul has
-      such as network policies.
+- The Strimzi operator must be installed, the one currently used by the azul team is 1.0.0.
 
-For upgrades of kafka refer to the strimzi kafka documentation about version and compatibility of upgrades.
+For upgrades and full install instructions of kafka refer to the strimzi kafka documentation about version and compatibility of upgrades.
 
 As well as updating strimzi operators(https://strimzi.io/)
 
@@ -90,11 +81,10 @@ helm install opensearch-operator opensearch-operator/opensearch-operator
     helm upgrade opensearch-operator opensearch-operator/opensearch-operator
     ```
 
-- Setup the following secrets:
-  - azul-cluster-dashboardcredentials
-    Username/password combination containing credentials matching internalUsers (see
-    values.yaml for an example)
-  - azul-cluster-admincredentials
+- Setup the following secrets (examples below):
+  - azul-cluster-dashboardcredentials (optional, set the secretName `adminCredentialsSecret` to an empty string and this will be generated)
+    Username/password combination containing credentials matching internalUsers
+  - azul-cluster-admincredentials (optional, set the secretName `dashboardCredentialsSecret` to an empty string and this will be generated)
 
 For example:
 

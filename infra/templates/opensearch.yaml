@@ -22,8 +22,6 @@ stringData:
     _meta:
       type: "actiongroups"
       config_version: 2
-  internal_users.yml: |-
-{{ .Values.opensearch.internalUsers | toYaml | indent 4 }}
   nodes_dn.yml: |-
     _meta:
       type: "nodesdn"
@@ -39,8 +37,6 @@ stringData:
     azul:
       reserved: false
       description: "Basic Azul tenant"
-  roles_mapping.yml: |-
-{{ .Values.opensearch.roleMapping | toYaml | indent 4 }}
   roles.yml: |-
 {{ .Values.opensearch.roles | toYaml | indent 4 }}
   config.yml: |-
@@ -198,8 +194,11 @@ spec:
         name: {{ .Values.opensearch.name }}-admin-certs
       securityConfigSecret:
         name: {{ .Values.opensearch.name }}-securityconfig
+      {{- end }}
+      {{- if .Values.opensearch.adminCredentialsSecret }}
       adminCredentialsSecret:
         name: {{ .Values.opensearch.adminCredentialsSecret }}
+      {{- end }}
     tls:
       transport:
         generate: false
@@ -228,8 +227,10 @@ spec:
     enable: true
     version: {{ .Values.opensearch.dashboard.version }}
     replicas: 1
+    {{- if .Values.opensearch.dashboardCredentialsSecret }}
     opensearchCredentialsSecret:
       name: {{ .Values.opensearch.dashboardCredentialsSecret }}
+    {{- end }}
     {{- with .Values.imagePullSecrets }}
     imagePullSecrets:
       {{- toYaml . | nindent 8 }}
@@ -342,6 +343,47 @@ spec:
               number: 9200
         path: /
         pathType: Prefix
+{{- end }}
+
+{{- range $user, $roleList :=  .Values.opensearch.internalUsers }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchUser
+metadata:
+  name: {{ $user }}
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  passwordFrom:
+    name: {{ $.Values.opensearch.usersPasswordsSecretName }}
+  {{- if $roleList.backendRoles }}
+  backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
+  {{- else }}
+  backendRoles: []
+  {{- end }}
+{{- end }}
+
+{{- range $role, $roleMap := .Values.opensearch.roleMapping }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchUserRoleBinding
+metadata:
+  name: {{ $role }}-mappings
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  {{- if $roleMap.users }}
+  users: {{ $roleMap.users | toYaml | nindent 4 }}
+  {{- else }}
+  users: []
+  {{- end }}
+  {{- if $roleMap.backendRoles }}
+  backendRoles: {{ $roleMap.backendRoles | toYaml | nindent 4 }}
+  {{- else }}
+  backendRoles: []
+  {{- end }}
+  roles:
+    - {{ $role }}
 {{- end }}
 
 {{- end }}
