@@ -352,7 +352,7 @@ metadata:
   name: {{ $user }}
 spec:
   opensearchCluster:
-    name: {{ $.Values.opensearch.name }}
+    name: {{ regexReplaceAll "\\W+|_" $.Values.opensearch.name "-" }}
   passwordFrom:
     name: {{ $.Values.opensearch.usersPasswordsSecretName }}
   {{- if $roleList.backendRoles }}
@@ -367,7 +367,7 @@ spec:
 apiVersion: opensearch.org/v1
 kind: OpensearchUserRoleBinding
 metadata:
-  name: {{ $role }}-mappings
+  name: {{ regexReplaceAll "\\W+|_" $role "-" }}-mappings
 spec:
   opensearchCluster:
     name: {{ $.Values.opensearch.name }}
