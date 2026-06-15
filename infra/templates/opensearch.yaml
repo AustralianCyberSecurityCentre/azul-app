@@ -37,8 +37,6 @@ stringData:
     azul:
       reserved: false
       description: "Basic Azul tenant"
-  roles.yml: |-
-{{ .Values.opensearch.roles | toYaml | indent 4 }}
   config.yml: |-
 {{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
 

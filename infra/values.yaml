@@ -318,7 +318,7 @@ opensearch:
       backendRoles:
         - "snapshotrestore"
 
-  # roles.yml
+  # roles.yml - TODO re-enable this.
   roles:
     _meta:
       type: "roles"
