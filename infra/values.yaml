@@ -222,7 +222,7 @@ opensearch:
       opensearch_security.multitenancy.tenants.preferred: '["Private", "Global"]'
       opensearch_security.readonly_mode.roles: '["kibana_read_only"]'
 
-   # internal_users.yml
+  # internal_users.yml
   internalUsers:
     # This is the internal user database
     # The hash value is a bcrypt hash and can be generated with:
