@@ -29,8 +29,6 @@ stringData:
     _meta:
       type: "actiongroups"
       config_version: 2
-  internal_users.yml: |-
-{{ .Values.opensearch.internalUsers | toYaml | indent 4 }}
   nodes_dn.yml: |-
     _meta:
       type: "nodesdn"
