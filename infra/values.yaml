@@ -222,158 +222,103 @@ opensearch:
       opensearch_security.multitenancy.tenants.preferred: '["Private", "Global"]'
       opensearch_security.readonly_mode.roles: '["kibana_read_only"]'
 
-  # internal_users.yml
+  # Internal user creation (admin and kibanaserver are separate)
+  # They are managed via dashboardCredentialsSecret and adminCredentialsSecret
+  # Secret that Maps all users to passwords as key value pairs like this:
+  # admin: adminpassword
+  # azul_writer: writerpassword
+  usersPasswordsSecretName: "azul-opensearch-user-passwords"
+
+  # Maps users to their backend roles, uses the above secret to get passwords
+  # In the secret, the key needs to be the username and the value the password
   internalUsers:
-    # This is the internal user database
-    # The hash value is a bcrypt hash and can be generated with:
-    # python -c 'import bcrypt; print(bcrypt.hashpw("admin123".encode("utf-8"), bcrypt.gensalt(12, prefix=b"2a")).decode("utf-8"))'
-
-    _meta:
-      type: "internalusers"
-      config_version: 2
-
     admin:
-      # adminpassword
-      #hash: "$2y$12$H8ozJHFFeSQsXQ7Gm/2dhOBsCQNO01vNrjC1trrAoPzEKW.pc2DSW"
-      reserved: true
-      backend_roles:
-        - "admin"
-      description: "admin user"
-
+      backendRoles: ["admin"]
     kibanaserver:
-      # kibanaserverpassword
-      #hash: "$2y$12$bHlG9Bvlbfyn7ipQSkdVxeEKX.T5Xu2tti76GtcJ9QCRXEosoyqCq"
-      reserved: true
-
+      backendRoles: []
     monitor:
-      #monitorpassword
-      #hash: $2y$12$Wl2JrXSNgwUyzckKlz8K3uD2Xp8oxVtTM/r7O0jyCSGBeZsgp1ruG
-      description: "Exporter monitoring"
-
+      backendRoles: []
     azul_writer:
-      #azulwriterpassword
-      #hash: $2y$12$GzoEXpS7eGW5N4yAhygQrue32wYZ7w5T3r03PRqHZnunEPnZC7yxm
-      backend_roles:
-        - "azul_write"
-      description: "Service account for metastore writer testing"
+      backendRoles: ["azul_write"]
 
-  # roles_mapping.yml
   roleMapping:
-    _meta:
-      type: "rolesmapping"
-      config_version: 2
-
-    ##### azul #####
     azul_read:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_read"
         - "azul_read_indirect"
         - "azul-access"
-      description: "Maps azul_read role"
-
-    # these roles need to be mapped to azul users to prevent SG 900D errors
-    # 4 seems the minimum required, add 5 for safety
+    # Used to fix  SG 900D error, ref https://github.com/opensearch-project/security/pull/5482
+    # Currently this is being kept for backwards compatibility.
     azul-fill1:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_read"
-      description: "fix SG 900D error"
     azul-fill2:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_read"
-      description: "fix SG 900D error"
     azul-fill3:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_read"
-      description: "fix SG 900D error"
     azul-fill4:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_read"
-      description: "fix SG 900D error"
     azul-fill5:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_read"
-      description: "fix SG 900D error"
-
     s-any:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_read"
         - "azul-access"
-      description: "Map"
-
     s-official:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_read"
         - "azul-access"
-      description: "Map"
-
     azul_admin:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_admin"
-      description: "Maps azul_admin role"
-
     azul_write:
-      reserved: false
-      hidden: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "azul_write"
-      description: "Maps azul_write role"
-
     ##### misc #####
-
     monitor:
-      reserved: false
-      hidden: false
       users:
         - "monitor"
-      description: "Maps monitor user to monitor role"
-
+      backendRoles: []
     all_access:
-      reserved: true
-      backend_roles:
+      users: []  
+      backendRoles:
         - "admin"
-      description: "Maps admin to all_access"
     readall:
-      reserved: true
-      backend_roles:
+      users: []
+      backendRoles:
         - "readall"
     kibana_server:
-      reserved: true
       users:
         - "kibanaserver"
-
+      backendRoles: []
     logstash:
-      reserved: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "logstash"
     kibana_user:
-      reserved: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "kibanauser"
-      description: "Maps kibanauser to kibana_user"
     manage_snapshots:
-      reserved: false
-      backend_roles:
+      users: []
+      backendRoles:
         - "snapshotrestore"
 
-  # roles.yml
+  # roles.yml - TODO re-enable this.
   roles:
     _meta:
       type: "roles"

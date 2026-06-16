@@ -18,31 +18,6 @@ metadata:
   name: {{ .Values.opensearch.name }}-securityconfig
 type: Opaque
 stringData:
-  action_groups.yml: |-
-    _meta:
-      type: "actiongroups"
-      config_version: 2
-  internal_users.yml: |-
-{{ .Values.opensearch.internalUsers | toYaml | indent 4 }}
-  nodes_dn.yml: |-
-    _meta:
-      type: "nodesdn"
-      config_version: 2
-  whitelist.yml: |-
-    _meta:
-      type: "whitelist"
-      config_version: 2
-  tenants.yml: |-
-    _meta:
-      type: "tenants"
-      config_version: 2
-    azul:
-      reserved: false
-      description: "Basic Azul tenant"
-  roles_mapping.yml: |-
-{{ .Values.opensearch.roleMapping | toYaml | indent 4 }}
-  roles.yml: |-
-{{ .Values.opensearch.roles | toYaml | indent 4 }}
   config.yml: |-
 {{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
 
@@ -347,5 +322,42 @@ spec:
         path: /
         pathType: Prefix
 {{- end }}
+
+{{- range $user, $roleList :=  .Values.opensearch.internalUsers }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchUser
+metadata:
+  name: {{ regexReplaceAll "\\W+|_" $user "-" }}
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  passwordFrom:
+    name: {{ $.Values.opensearch.usersPasswordsSecretName }}
+    key: {{ $.Values.opensearch.name }}
+  {{- if $roleList.backendRoles }}
+  backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
+  {{- end }}
+{{- end }}
+
+{{- range $role, $roleMap := .Values.opensearch.roleMapping }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchUserRoleBinding
+metadata:
+  name: {{ regexReplaceAll "\\W+|_" $role "-" }}-mappings
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  {{- if $roleMap.users }}
+  users: {{ $roleMap.users | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if $roleMap.backendRoles }}
+  backendRoles: {{ $roleMap.backendRoles | toYaml | nindent 4 }}
+  {{- end }}
+  roles:
+    - {{ $role }}
+{{- end }}
+
 
 {{- end }}
