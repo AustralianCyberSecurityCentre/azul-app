@@ -52,6 +52,17 @@ stringData:
 {{ .Values.opensearch.roles | toYaml | indent 4 }}
   config.yml: |-
 {{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
+---
+# alternative version of securityconfig secret that allows users to only update config.yml
+# useful if you want to manually add users/roles and mappings and not have the security operator update after initial install.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.opensearch.name }}-securityconfig-simple
+type: Opaque
+stringData:
+  config.yml: |-
+{{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
 
 # Self-signed CA (if required)
 {{- if .Values.opensearch.selfSigned }}
@@ -203,8 +214,10 @@ spec:
     config:
       adminSecret:
         name: {{ .Values.opensearch.name }}-admin-certs
-      {{- if eq .Values.opensearch.disableSecurityConfigUpdates false }}
       securityConfigSecret:
+      {{- if eq .Values.opensearch.disableSecurityConfigUpdates false }}
+        name: {{ .Values.opensearch.name }}-securityconfig
+      {{- else }}
         name: {{ .Values.opensearch.name }}-securityconfig
       {{- end }}
       {{- if .Values.opensearch.adminCredentialsSecret }}
@@ -355,23 +368,6 @@ spec:
               number: 9200
         path: /
         pathType: Prefix
-{{- end }}
-
-{{- range $user, $roleList :=  .Values.opensearch.internalUsersAlt }}
----
-apiVersion: opensearch.org/v1
-kind: OpensearchUser
-metadata:
-  name: {{ regexReplaceAll "\\W+|_" $user "-" }}
-spec:
-  opensearchCluster:
-    name: {{ $.Values.opensearch.name }}
-  passwordFrom:
-    name: {{ $.Values.opensearch.usersPasswordsSecretName }}
-    key: {{ $user }}
-  {{- if $roleList.backendRoles }}
-  backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
-  {{- end }}
 {{- end }}
 
 {{- end }}
