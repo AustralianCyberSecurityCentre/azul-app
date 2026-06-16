@@ -12,7 +12,7 @@ data:
 {{- end }}
 
 ---
-# NOTE - CRDs are not used for multiple reasons as of (Opensearch 3.7.0, operator 3.0.0-alpha)
+# NOTE - CRDs are not used for multiple reasons as of (Opensearch 3.7.0, operator 3.0.2)
 # First role names can't be specified using CRDs because the role name comes from the cluster resource name
 #   and kubernetes doesn't allow names that have underscores.
 # CRD roles require cluster, index or tenant permissions be set which multiple roles don't need.
@@ -355,5 +355,21 @@ spec:
         pathType: Prefix
 {{- end }}
 
+{{- range $user, $roleList :=  .Values.opensearch.internalUsersAlt }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchUser
+metadata:
+  name: {{ regexReplaceAll "\\W+|_" $user "-" }}
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  passwordFrom:
+    name: {{ $.Values.opensearch.usersPasswordsSecretName }}
+    key: {{ $user }}
+  {{- if $roleList.backendRoles }}
+  backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
+  {{- end }}
+{{- end }}
 
 {{- end }}

@@ -257,6 +257,21 @@ opensearch:
         - "azul_write"
       description: "Service account for metastore writer testing"
 
+    # Internal user creation (admin and kibanaserver are separate)
+  # They are managed via dashboardCredentialsSecret and adminCredentialsSecret
+  # Secret that Maps all users to passwords as key value pairs like this:
+  # admin: adminpassword
+  # azul_writer: writerpassword
+  usersPasswordsSecretName: "azul-opensearch-user-passwords"
+
+  # Maps users to their backend roles, uses the above secret to get passwords
+  # In the secret, the key needs to be the username and the value the password
+  internalUsersAlt:
+    monitor:
+      backendRoles: []
+    azul_writer:
+      backendRoles: ["azul_write"]
+
   # roles_mapping.yml
   roleMapping:
     _meta:
