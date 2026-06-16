@@ -373,7 +373,11 @@ spec:
   {{- if $roleVals.indexPermissions }}
   indexPermissions: {{ $roleVals.indexPermissions | toYaml | nindent 4 }}
   {{- else }}
-  indexPermissions: []
+  indexPermissions:
+  - indexPatterns:
+      - "azul.o.*"
+    allowedActions:
+      - "read"
   {{- end }}
   {{- if $roleVals.tenantPermissions }}
   tenantPermissions: {{ $roleVals.tenantPermissions | toYaml | nindent 4 }}
