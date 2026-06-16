@@ -222,105 +222,165 @@ opensearch:
       opensearch_security.multitenancy.tenants.preferred: '["Private", "Global"]'
       opensearch_security.readonly_mode.roles: '["kibana_read_only"]'
 
-  # Internal user creation (admin and kibanaserver are separate)
-  # They are managed via dashboardCredentialsSecret and adminCredentialsSecret
-  # Secret that Maps all users to passwords as key value pairs like this:
-  # admin: adminpassword
-  # azul_writer: writerpassword
-  usersPasswordsSecretName: "azul-opensearch-user-passwords"
-
-  # Maps users to their backend roles, uses the above secret to get passwords
-  # In the secret, the key needs to be the username and the value the password
+   # internal_users.yml
   internalUsers:
-    admin:
-      backendRoles: ["admin"]
-    kibanaserver:
-      backendRoles: []
-    monitor:
-      backendRoles: []
-    azul_writer:
-      backendRoles: ["azul_write"]
+    # This is the internal user database
+    # The hash value is a bcrypt hash and can be generated with:
+    # python -c 'import bcrypt; print(bcrypt.hashpw("admin123".encode("utf-8"), bcrypt.gensalt(12, prefix=b"2a")).decode("utf-8"))'
 
+    _meta:
+      type: "internalusers"
+      config_version: 2
+
+    admin:
+      # adminpassword
+      #hash: "$2y$12$H8ozJHFFeSQsXQ7Gm/2dhOBsCQNO01vNrjC1trrAoPzEKW.pc2DSW"
+      reserved: true
+      backend_roles:
+        - "admin"
+      description: "admin user"
+
+    kibanaserver:
+      # kibanaserverpassword
+      #hash: "$2y$12$bHlG9Bvlbfyn7ipQSkdVxeEKX.T5Xu2tti76GtcJ9QCRXEosoyqCq"
+      reserved: true
+
+    monitor:
+      #monitorpassword
+      #hash: $2y$12$Wl2JrXSNgwUyzckKlz8K3uD2Xp8oxVtTM/r7O0jyCSGBeZsgp1ruG
+      description: "Exporter monitoring"
+
+    azul_writer:
+      #azulwriterpassword
+      #hash: $2y$12$GzoEXpS7eGW5N4yAhygQrue32wYZ7w5T3r03PRqHZnunEPnZC7yxm
+      backend_roles:
+        - "azul_write"
+      description: "Service account for metastore writer testing"
+
+  # roles_mapping.yml
   roleMapping:
+    _meta:
+      type: "rolesmapping"
+      config_version: 2
+
+    ##### azul #####
     azul_read:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_read"
         - "azul_read_indirect"
         - "azul-access"
-    # Used to fix  SG 900D error, ref https://github.com/opensearch-project/security/pull/5482
-    # Currently this is being kept for backwards compatibility.
+      description: "Maps azul_read role"
+
+    # these roles need to be mapped to azul users to prevent SG 900D errors
+    # 4 seems the minimum required, add 5 for safety
     azul-fill1:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_read"
+      description: "fix SG 900D error"
     azul-fill2:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_read"
+      description: "fix SG 900D error"
     azul-fill3:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_read"
+      description: "fix SG 900D error"
     azul-fill4:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_read"
+      description: "fix SG 900D error"
     azul-fill5:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_read"
+      description: "fix SG 900D error"
+
     s-any:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_read"
         - "azul-access"
+      description: "Map"
+
     s-official:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_read"
         - "azul-access"
+      description: "Map"
+
     azul_admin:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_admin"
+      description: "Maps azul_admin role"
+
     azul_write:
-      users: []
-      backendRoles:
+      reserved: false
+      hidden: false
+      backend_roles:
         - "azul_write"
+      description: "Maps azul_write role"
+
     ##### misc #####
+
     monitor:
+      reserved: false
+      hidden: false
       users:
         - "monitor"
-      backendRoles: []
+      description: "Maps monitor user to monitor role"
+
     all_access:
-      users: []  
-      backendRoles:
+      reserved: true
+      backend_roles:
         - "admin"
+      description: "Maps admin to all_access"
     readall:
-      users: []
-      backendRoles:
+      reserved: true
+      backend_roles:
         - "readall"
     kibana_server:
+      reserved: true
       users:
         - "kibanaserver"
-      backendRoles: []
+
     logstash:
-      users: []
-      backendRoles:
+      reserved: false
+      backend_roles:
         - "logstash"
     kibana_user:
-      users: []
-      backendRoles:
+      reserved: false
+      backend_roles:
         - "kibanauser"
+      description: "Maps kibanauser to kibana_user"
     manage_snapshots:
-      users: []
-      backendRoles:
+      reserved: false
+      backend_roles:
         - "snapshotrestore"
 
   # roles.yml
   roles:
+    _meta:
+      type: "roles"
+      config_version: 2
+
     ##### azul #####
+
     s-any:
       reserved: false
       hidden: false
@@ -336,78 +396,97 @@ opensearch:
       reserved: false
       hidden: false
       static: false
-      clusterPermissions:
+      cluster_permissions:
         # users must be permitted to do all complex read operation types (multisearch, multi term vector, etc)
         - "indices:data/read/*"
         - "kibana_user"
-      indexPermissions:
+      index_permissions:
         # allow alias resolution (all azul indices are accessed via aliases)
-        - indexPatterns:
+        - index_patterns:
             - "*"
-          allowedActions:
+          allowed_actions:
             - "indices:admin/resolve/index"
         # assist with getting index mappings and analysing text
-        - indexPatterns:
+        - index_patterns:
             - "azul.*"
-          allowedActions:
+          allowed_actions:
             - "indices:admin/get"
             - "indices:admin/analyze"
         # azul docs that have security restrictions above default access
-        - indexPatterns:
+        - index_patterns:
             - "azul.x.*"
-          allowedActions:
+          allowed_actions:
             - "read"
           dls: '{"bool": {"filter": [{"terms": {"encoded_security.inclusive": [${user.securityRoles}]}}, {"terms_set": {"encoded_security.exclusive": {"terms": [${user.securityRoles}], "minimum_should_match_field": "encoded_security.num_exclusive"}}}]}}'
         # azul docs that anyone with system access can query
-        - indexPatterns:
+        - index_patterns:
             - "azul.o.*"
-          allowedActions:
+          allowed_actions:
             - "read"
-      tenantPermissions:
-        - tenantPatterns:
+      tenant_permissions:
+        - tenant_patterns:
             - "azul"
-          allowedActions:
+          allowed_actions:
             - "kibana_all_write"
 
     # these roles need to be mapped to azul users to prevent SG 900D errors
     # 4 seems the minimum required, add 5 for safety
-    azul-fill1: {}
-    azul-fill2: {}
-    azul-fill3: {}
-    azul-fill4: {}
-    azul-fill5: {}
+    azul-fill1:
+      reserved: false
+      hidden: false
+      static: false
+    azul-fill2:
+      reserved: false
+      hidden: false
+      static: false
+    azul-fill3:
+      reserved: false
+      hidden: false
+      static: false
+    azul-fill4:
+      reserved: false
+      hidden: false
+      static: false
+    azul-fill5:
+      reserved: false
+      hidden: false
+      static: false
 
     azul_admin:
       # https://opensearch.org/docs/latest/security/access-control/permissions
-      clusterPermissions:
+      reserved: false
+      hidden: false
+      static: false
+      cluster_permissions:
         - "cluster_monitor"
         - "cluster:admin/script/*"
         - "indices:admin/index_template/*"
-        - "indices:admin/mapping/*"
-        - "indices:admin/template/*"
         - "indices:data/read/*"
         - "indices:data/write/bulk"
         - "kibana_user"
-      indexPermissions:
-        - indexPatterns:
+      index_permissions:
+        - index_patterns:
             - "azul.*"
-          allowedActions:
+          allowed_actions:
             - "unlimited"
-        - indexPatterns:
+        - index_patterns:
             - "virustotal*"
-          allowedActions:
+          allowed_actions:
             - "unlimited"
-      tenantPermissions:
-        - tenantPatterns:
+      tenant_permissions:
+        - tenant_patterns:
             - "azul"
             - "global_tenant"
-          allowedActions:
+          allowed_actions:
             - "kibana_all_write"
 
     azul_write:
       # https://opensearch.org/docs/latest/security/access-control/permissions
+      reserved: false
+      hidden: false
+      static: false
       # these index permissions don't work when specified on indices :(
-      clusterPermissions:
+      cluster_permissions:
         - "cluster_monitor"
         - "cluster:admin/script/*"
         - "indices:admin/index_template/*"
@@ -416,23 +495,194 @@ opensearch:
         - "indices:data/read/*"
         - "indices:data/write/bulk"
         - "kibana_user"
-      indexPermissions:
-        - indexPatterns:
+      index_permissions:
+        - index_patterns:
             - "azul.*"
-          allowedActions:
+          allowed_actions:
             - "unlimited"
 
     ##### misc #####
 
     monitor:
-      clusterPermissions:
+      reserved: false
+      hidden: false
+      static: false
+      cluster_permissions:
         - "cluster_monitor"
-      indexPermissions:
-        - indexPatterns:
+      index_permissions:
+        - index_patterns:
             - "*"
-          allowedActions:
+          allowed_actions:
             - "indices_monitor"
 
+    # Restrict users so they can only view visualization and dashboard on OpenSearchDashboards
+    kibana_read_only:
+      reserved: true
+
+    # The security REST API access role is used to assign specific users access to change the security settings through the REST API.
+    security_rest_api_access:
+      reserved: true
+
+    # Allows users to view monitors, destinations and alerts
+    alerting_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/alerting/alerts/get"
+        - "cluster:admin/opendistro/alerting/destination/get"
+        - "cluster:admin/opendistro/alerting/monitor/get"
+        - "cluster:admin/opendistro/alerting/monitor/search"
+
+    # Allows users to view and acknowledge alerts
+    alerting_ack_alerts:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/alerting/alerts/*"
+
+    # Allows users to use all alerting functionality
+    alerting_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster_monitor"
+        - "cluster:admin/opendistro/alerting/*"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices_monitor"
+            - "indices:admin/aliases/get"
+            - "indices:admin/mappings/get"
+
+    # Allow users to read Anomaly Detection detectors and results
+    anomaly_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/ad/detector/info"
+        - "cluster:admin/opendistro/ad/detector/search"
+        - "cluster:admin/opendistro/ad/detectors/get"
+        - "cluster:admin/opendistro/ad/result/search"
+        - "cluster:admin/opendistro/ad/tasks/search"
+
+    # Allows users to use all Anomaly Detection functionality
+    anomaly_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster_monitor"
+        - "cluster:admin/opendistro/ad/*"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices_monitor"
+            - "indices:admin/aliases/get"
+            - "indices:admin/mappings/get"
+
+    # Allows users to read Notebooks
+    notebooks_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/notebooks/list"
+        - "cluster:admin/opendistro/notebooks/get"
+
+    # Allows users to all Notebooks functionality
+    notebooks_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/notebooks/create"
+        - "cluster:admin/opendistro/notebooks/update"
+        - "cluster:admin/opendistro/notebooks/delete"
+        - "cluster:admin/opendistro/notebooks/get"
+        - "cluster:admin/opendistro/notebooks/list"
+
+    # Allows users to read and download Reports
+    reports_instances_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/reports/instance/list"
+        - "cluster:admin/opendistro/reports/instance/get"
+        - "cluster:admin/opendistro/reports/menu/download"
+
+    # Allows users to read and download Reports and Report-definitions
+    reports_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/reports/definition/get"
+        - "cluster:admin/opendistro/reports/definition/list"
+        - "cluster:admin/opendistro/reports/instance/list"
+        - "cluster:admin/opendistro/reports/instance/get"
+        - "cluster:admin/opendistro/reports/menu/download"
+
+    # Allows users to all Reports functionality
+    reports_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/reports/definition/create"
+        - "cluster:admin/opendistro/reports/definition/update"
+        - "cluster:admin/opendistro/reports/definition/on_demand"
+        - "cluster:admin/opendistro/reports/definition/delete"
+        - "cluster:admin/opendistro/reports/definition/get"
+        - "cluster:admin/opendistro/reports/definition/list"
+        - "cluster:admin/opendistro/reports/instance/list"
+        - "cluster:admin/opendistro/reports/instance/get"
+        - "cluster:admin/opendistro/reports/menu/download"
+
+    # Allows users to use all asynchronous-search functionality
+    asynchronous_search_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/asynchronous_search/*"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:data/read/search*"
+
+    # Allows users to read stored asynchronous-search results
+    asynchronous_search_read_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/asynchronous_search/get"
+
+    # Allows user to use all index_management actions - ism policies, rollups, transforms
+    index_management_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/opendistro/ism/*"
+        - "cluster:admin/opendistro/rollup/*"
+        - "cluster:admin/opendistro/transform/*"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:admin/opensearch/ism/*"
+
+    # Allows users to use all cross cluster replication functionality at leader cluster
+    cross_cluster_replication_leader_full_access:
+      reserved: true
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:admin/plugins/replication/index/setup/validate"
+            - "indices:data/read/plugins/replication/changes"
+            - "indices:data/read/plugins/replication/file_chunk"
+
+    # Allows users to use all cross cluster replication functionality at follower cluster
+    cross_cluster_replication_follower_full_access:
+      reserved: true
+      cluster_permissions:
+        - "cluster:admin/plugins/replication/autofollow/update"
+      index_permissions:
+        - index_patterns:
+            - "*"
+          allowed_actions:
+            - "indices:admin/plugins/replication/index/setup/validate"
+            - "indices:data/write/plugins/replication/changes"
+            - "indices:admin/plugins/replication/index/start"
+            - "indices:admin/plugins/replication/index/pause"
+            - "indices:admin/plugins/replication/index/resume"
+            - "indices:admin/plugins/replication/index/stop"
+            - "indices:admin/plugins/replication/index/update"
+            - "indices:admin/plugins/replication/index/status_check"
 
   # config.yml
   securityConfig:
