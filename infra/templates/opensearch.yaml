@@ -334,7 +334,7 @@ spec:
     name: {{ $.Values.opensearch.name }}
   passwordFrom:
     name: {{ $.Values.opensearch.usersPasswordsSecretName }}
-    key: {{ $.Values.opensearch.name }}
+    key: {{ $user }}
   {{- if $roleList.backendRoles }}
   backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
   {{- end }}
