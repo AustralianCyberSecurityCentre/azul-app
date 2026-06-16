@@ -98,8 +98,6 @@ helm install opensearch-operator opensearch-operator/opensearch-operator
   - azul-cluster-dashboardcredentials (optional, set the secretName `adminCredentialsSecret` to an empty string and this will be generated)
     Username/password combination containing credentials matching internalUsers
   - azul-cluster-admincredentials (optional, set the secretName `dashboardCredentialsSecret` to an empty string and this will be generated)
-  - azul-opensearch-user-passwords
-    Contains all the internalUsers and their corresponding passwords. (ignoring built in users like admin an kibanaserver)
 
 For example:
 
@@ -123,16 +121,6 @@ type: Opaque
 stringData:
   username: kibanaserver
   password: kibanaserverpassword
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: azul-opensearch-user-passwords
-type: Opaque
-stringData:
-  monitor: monitorpassword
-  azul_writer: azulwriterpassword
-
 
 ```
 
@@ -141,6 +129,11 @@ Apply with:
 ```bash
 kubectl apply -f creds.yaml
 ```
+
+- IMPORTANT! - After the cluster is created users listed in the internalUser list won't create due to this bug
+  with the opensearch operator https://github.com/opensearch-project/opensearch-k8s-operator/issues/1371
+  This means you need to manually create all the users in opensearch that aren't admin and kibanaserver through the
+  opensearch dashboards user interface and map them to the appropriate backend roles and roles
 
 - After activating the Helm chart, copy the CA certificate (stored in the ca-cert
   secret) to Azul's namespace and append to your CA cert list.
