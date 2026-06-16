@@ -203,8 +203,10 @@ spec:
     config:
       adminSecret:
         name: {{ .Values.opensearch.name }}-admin-certs
+      {{- if eq .Values.opensearch.disableSecurityConfigUpdates false }}
       securityConfigSecret:
         name: {{ .Values.opensearch.name }}-securityconfig
+      {{- end }}
       {{- if .Values.opensearch.adminCredentialsSecret }}
       adminCredentialsSecret:
         name: {{ .Values.opensearch.adminCredentialsSecret }}
