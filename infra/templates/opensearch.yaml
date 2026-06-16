@@ -372,6 +372,8 @@ spec:
   {{- end }}
   {{- if $roleVals.indexPermissions }}
   indexPermissions: {{ $roleVals.indexPermissions | toYaml | nindent 4 }}
+  {{- else }}
+  indexPermissions: []
   {{- end }}
   {{- if $roleVals.tenantPermissions }}
   tenantPermissions: {{ $roleVals.tenantPermissions | toYaml | nindent 4 }}
