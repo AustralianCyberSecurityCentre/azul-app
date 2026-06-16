@@ -133,7 +133,9 @@ kubectl apply -f creds.yaml
 - IMPORTANT! - After the cluster is created users listed in the internalUser list won't create due to this bug
   with the opensearch operator https://github.com/opensearch-project/opensearch-k8s-operator/issues/1371
   This means you need to manually create all the users in opensearch that aren't admin and kibanaserver through the
-  opensearch dashboards user interface and map them to the appropriate backend roles and roles
+  opensearch dashboards user interface and map them to the appropriate backend roles and roles.
+  The main user that must be created is the `azul_writer` user.
+  The `monitor` user is also important.
 
 - After activating the Helm chart, copy the CA certificate (stored in the ca-cert
   secret) to Azul's namespace and append to your CA cert list.
