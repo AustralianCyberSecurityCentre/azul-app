@@ -318,14 +318,9 @@ opensearch:
       backendRoles:
         - "snapshotrestore"
 
-  # roles.yml - TODO re-enable this.
+  # roles.yml
   roles:
-    _meta:
-      type: "roles"
-      config_version: 2
-
     ##### azul #####
-
     s-any:
       reserved: false
       hidden: false
@@ -341,68 +336,50 @@ opensearch:
       reserved: false
       hidden: false
       static: false
-      cluster_permissions:
+      clusterPermissions:
         # users must be permitted to do all complex read operation types (multisearch, multi term vector, etc)
         - "indices:data/read/*"
         - "kibana_user"
-      index_permissions:
+      indexPermissions:
         # allow alias resolution (all azul indices are accessed via aliases)
-        - index_patterns:
+        - indexPatterns:
             - "*"
-          allowed_actions:
+          allowedActions:
             - "indices:admin/resolve/index"
         # assist with getting index mappings and analysing text
-        - index_patterns:
+        - indexPatterns:
             - "azul.*"
-          allowed_actions:
+          allowedActions:
             - "indices:admin/get"
             - "indices:admin/analyze"
         # azul docs that have security restrictions above default access
-        - index_patterns:
+        - indexPatterns:
             - "azul.x.*"
-          allowed_actions:
+          allowedActions:
             - "read"
           dls: '{"bool": {"filter": [{"terms": {"encoded_security.inclusive": [${user.securityRoles}]}}, {"terms_set": {"encoded_security.exclusive": {"terms": [${user.securityRoles}], "minimum_should_match_field": "encoded_security.num_exclusive"}}}]}}'
         # azul docs that anyone with system access can query
-        - index_patterns:
+        - indexPatterns:
             - "azul.o.*"
-          allowed_actions:
+          allowedActions:
             - "read"
-      tenant_permissions:
-        - tenant_patterns:
+      tenantPermissions:
+        - tenantPatterns:
             - "azul"
-          allowed_actions:
+          allowedActions:
             - "kibana_all_write"
 
     # these roles need to be mapped to azul users to prevent SG 900D errors
     # 4 seems the minimum required, add 5 for safety
-    azul-fill1:
-      reserved: false
-      hidden: false
-      static: false
-    azul-fill2:
-      reserved: false
-      hidden: false
-      static: false
-    azul-fill3:
-      reserved: false
-      hidden: false
-      static: false
-    azul-fill4:
-      reserved: false
-      hidden: false
-      static: false
-    azul-fill5:
-      reserved: false
-      hidden: false
-      static: false
+    azul-fill1: {}
+    azul-fill2: {}
+    azul-fill3: {}
+    azul-fill4: {}
+    azul-fill5: {}
 
     azul_admin:
       # https://opensearch.org/docs/latest/security/access-control/permissions
-      reserved: false
-      hidden: false
-      static: false
-      cluster_permissions:
+      clusterPermissions:
         - "cluster_monitor"
         - "cluster:admin/script/*"
         - "indices:admin/index_template/*"
@@ -411,29 +388,26 @@ opensearch:
         - "indices:data/read/*"
         - "indices:data/write/bulk"
         - "kibana_user"
-      index_permissions:
-        - index_patterns:
+      indexPermissions:
+        - indexPatterns:
             - "azul.*"
-          allowed_actions:
+          allowedActions:
             - "unlimited"
-        - index_patterns:
+        - indexPatterns:
             - "virustotal*"
-          allowed_actions:
+          allowedActions:
             - "unlimited"
-      tenant_permissions:
-        - tenant_patterns:
+      tenantPermissions:
+        - tenantPatterns:
             - "azul"
             - "global_tenant"
-          allowed_actions:
+          allowedActions:
             - "kibana_all_write"
 
     azul_write:
       # https://opensearch.org/docs/latest/security/access-control/permissions
-      reserved: false
-      hidden: false
-      static: false
       # these index permissions don't work when specified on indices :(
-      cluster_permissions:
+      clusterPermissions:
         - "cluster_monitor"
         - "cluster:admin/script/*"
         - "indices:admin/index_template/*"
@@ -442,194 +416,23 @@ opensearch:
         - "indices:data/read/*"
         - "indices:data/write/bulk"
         - "kibana_user"
-      index_permissions:
-        - index_patterns:
+      indexPermissions:
+        - indexPatterns:
             - "azul.*"
-          allowed_actions:
+          allowedActions:
             - "unlimited"
 
     ##### misc #####
 
     monitor:
-      reserved: false
-      hidden: false
-      static: false
-      cluster_permissions:
+      clusterPermissions:
         - "cluster_monitor"
-      index_permissions:
-        - index_patterns:
+      indexPermissions:
+        - indexPatterns:
             - "*"
-          allowed_actions:
+          allowedActions:
             - "indices_monitor"
 
-    # Restrict users so they can only view visualization and dashboard on OpenSearchDashboards
-    kibana_read_only:
-      reserved: true
-
-    # The security REST API access role is used to assign specific users access to change the security settings through the REST API.
-    security_rest_api_access:
-      reserved: true
-
-    # Allows users to view monitors, destinations and alerts
-    alerting_read_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/alerting/alerts/get"
-        - "cluster:admin/opendistro/alerting/destination/get"
-        - "cluster:admin/opendistro/alerting/monitor/get"
-        - "cluster:admin/opendistro/alerting/monitor/search"
-
-    # Allows users to view and acknowledge alerts
-    alerting_ack_alerts:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/alerting/alerts/*"
-
-    # Allows users to use all alerting functionality
-    alerting_full_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster_monitor"
-        - "cluster:admin/opendistro/alerting/*"
-      index_permissions:
-        - index_patterns:
-            - "*"
-          allowed_actions:
-            - "indices_monitor"
-            - "indices:admin/aliases/get"
-            - "indices:admin/mappings/get"
-
-    # Allow users to read Anomaly Detection detectors and results
-    anomaly_read_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/ad/detector/info"
-        - "cluster:admin/opendistro/ad/detector/search"
-        - "cluster:admin/opendistro/ad/detectors/get"
-        - "cluster:admin/opendistro/ad/result/search"
-        - "cluster:admin/opendistro/ad/tasks/search"
-
-    # Allows users to use all Anomaly Detection functionality
-    anomaly_full_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster_monitor"
-        - "cluster:admin/opendistro/ad/*"
-      index_permissions:
-        - index_patterns:
-            - "*"
-          allowed_actions:
-            - "indices_monitor"
-            - "indices:admin/aliases/get"
-            - "indices:admin/mappings/get"
-
-    # Allows users to read Notebooks
-    notebooks_read_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/notebooks/list"
-        - "cluster:admin/opendistro/notebooks/get"
-
-    # Allows users to all Notebooks functionality
-    notebooks_full_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/notebooks/create"
-        - "cluster:admin/opendistro/notebooks/update"
-        - "cluster:admin/opendistro/notebooks/delete"
-        - "cluster:admin/opendistro/notebooks/get"
-        - "cluster:admin/opendistro/notebooks/list"
-
-    # Allows users to read and download Reports
-    reports_instances_read_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/reports/instance/list"
-        - "cluster:admin/opendistro/reports/instance/get"
-        - "cluster:admin/opendistro/reports/menu/download"
-
-    # Allows users to read and download Reports and Report-definitions
-    reports_read_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/reports/definition/get"
-        - "cluster:admin/opendistro/reports/definition/list"
-        - "cluster:admin/opendistro/reports/instance/list"
-        - "cluster:admin/opendistro/reports/instance/get"
-        - "cluster:admin/opendistro/reports/menu/download"
-
-    # Allows users to all Reports functionality
-    reports_full_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/reports/definition/create"
-        - "cluster:admin/opendistro/reports/definition/update"
-        - "cluster:admin/opendistro/reports/definition/on_demand"
-        - "cluster:admin/opendistro/reports/definition/delete"
-        - "cluster:admin/opendistro/reports/definition/get"
-        - "cluster:admin/opendistro/reports/definition/list"
-        - "cluster:admin/opendistro/reports/instance/list"
-        - "cluster:admin/opendistro/reports/instance/get"
-        - "cluster:admin/opendistro/reports/menu/download"
-
-    # Allows users to use all asynchronous-search functionality
-    asynchronous_search_full_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/asynchronous_search/*"
-      index_permissions:
-        - index_patterns:
-            - "*"
-          allowed_actions:
-            - "indices:data/read/search*"
-
-    # Allows users to read stored asynchronous-search results
-    asynchronous_search_read_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/asynchronous_search/get"
-
-    # Allows user to use all index_management actions - ism policies, rollups, transforms
-    index_management_full_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/opendistro/ism/*"
-        - "cluster:admin/opendistro/rollup/*"
-        - "cluster:admin/opendistro/transform/*"
-      index_permissions:
-        - index_patterns:
-            - "*"
-          allowed_actions:
-            - "indices:admin/opensearch/ism/*"
-
-    # Allows users to use all cross cluster replication functionality at leader cluster
-    cross_cluster_replication_leader_full_access:
-      reserved: true
-      index_permissions:
-        - index_patterns:
-            - "*"
-          allowed_actions:
-            - "indices:admin/plugins/replication/index/setup/validate"
-            - "indices:data/read/plugins/replication/changes"
-            - "indices:data/read/plugins/replication/file_chunk"
-
-    # Allows users to use all cross cluster replication functionality at follower cluster
-    cross_cluster_replication_follower_full_access:
-      reserved: true
-      cluster_permissions:
-        - "cluster:admin/plugins/replication/autofollow/update"
-      index_permissions:
-        - index_patterns:
-            - "*"
-          allowed_actions:
-            - "indices:admin/plugins/replication/index/setup/validate"
-            - "indices:data/write/plugins/replication/changes"
-            - "indices:admin/plugins/replication/index/start"
-            - "indices:admin/plugins/replication/index/pause"
-            - "indices:admin/plugins/replication/index/resume"
-            - "indices:admin/plugins/replication/index/stop"
-            - "indices:admin/plugins/replication/index/update"
-            - "indices:admin/plugins/replication/index/status_check"
 
   # config.yml
   securityConfig:

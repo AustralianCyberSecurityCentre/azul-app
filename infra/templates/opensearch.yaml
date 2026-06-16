@@ -358,6 +358,33 @@ spec:
   roles:
     - {{ $role }}
 {{- end }}
-
+{{- range $role, $roleVals := .Values.opensearch.roles }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchRole
+metadata:
+  name: {{ $role }}
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  {{- if $roleVals.clusterPermissions }}
+  clusterPermissions: {{ $roleVals.clusterPermissions | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if $roleVals.indexPermissions }}
+  indexPermissions: {{ $roleVals.indexPermissions | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if $roleVals.tenantPermissions }}
+  tenantPermissions: {{ $roleVals.tenantPermissions | toYaml | nindent 4 }}
+  {{- end }}
+{{- end }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchTenant
+metadata:
+  name: azul
+spec:
+  opensearchCluster:
+    name: {{ .Values.opensearch.name }}
+  description: "Basic Azul tenant"
 
 {{- end }}
