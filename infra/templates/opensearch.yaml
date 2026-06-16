@@ -363,7 +363,7 @@ spec:
 apiVersion: opensearch.org/v1
 kind: OpensearchRole
 metadata:
-  name: {{ $role }}
+  name: {{ regexReplaceAll "\\W+|_" $role "-" }}-role
 spec:
   opensearchCluster:
     name: {{ $.Values.opensearch.name }}
