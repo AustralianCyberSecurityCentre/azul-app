@@ -176,7 +176,7 @@ spec:
         {{- end }}
         {{- if $source.secretSSH }}
         - name: ssh
-          mountPath: /etc/git-secret/ssh
+          mountPath: /etc/git-secret/ssh/id_rsa
           subPath: id_rsa
         {{- end }}
       volumes:

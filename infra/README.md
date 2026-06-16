@@ -13,6 +13,9 @@ Product deployments included:
 - OpenSearch
 - Minio
 - Kafka
+- keycloak
+- prometheus/grafana
+- loki
 
 By default, this chart will deploy everything (for a turn-key solution), but individual
 components can be disabled as required, particularly if you have better alternatives for
@@ -31,7 +34,8 @@ functionality.
 
 Requirements:
 
-- The Strimzi operator must be installed, with the following parameters set:
+- The Strimzi operator must be installed, the one currently used by the azul team is 1.0.0
+  To protect from data loss the following settings are recommended when installing strimzi:
   - In install/cluster-operator/060-Deployment-\*.yaml, _add_ an environmental variable with
     the following:
     - `STRIMZI_LABELS_EXCLUSION_PATTERN` = `argocd.argoproj.io/instance`
@@ -45,7 +49,7 @@ Requirements:
       deployed, which is required to avoid conflicts with namespaced restrictions that Azul has
       such as network policies.
 
-For upgrades of kafka refer to the strimzi kafka documentation about version and compatibility of upgrades.
+For upgrades and full install instructions of kafka refer to the strimzi kafka documentation about version and compatibility of upgrades.
 
 As well as updating strimzi operators(https://strimzi.io/)
 
@@ -90,11 +94,10 @@ helm install opensearch-operator opensearch-operator/opensearch-operator
     helm upgrade opensearch-operator opensearch-operator/opensearch-operator
     ```
 
-- Setup the following secrets:
-  - azul-cluster-dashboardcredentials
-    Username/password combination containing credentials matching internalUsers (see
-    values.yaml for an example)
-  - azul-cluster-admincredentials
+- Setup the following secrets (examples below):
+  - azul-cluster-dashboardcredentials (optional, set the secretName `adminCredentialsSecret` to an empty string and this will be generated)
+    Username/password combination containing credentials matching internalUsers
+  - azul-cluster-admincredentials (optional, set the secretName `dashboardCredentialsSecret` to an empty string and this will be generated)
 
 For example:
 
@@ -106,23 +109,19 @@ kind: Secret
 metadata:
   name: azul-cluster-admincredentials
 type: Opaque
-data:
-  # admin
-  username: YWRtaW4=
-  # adminpassword
-  password: YWRtaW5wYXNzd29yZA==
-
+stringData:
+  username: admin
+  password: adminpassword
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: azul-cluster-dashboardcredentials
 type: Opaque
-data:
-  # kibanaserver
-  username: a2liYW5hc2VydmVy
-  # kibanaserverpassword
-  password: a2liYW5hc2VydmVycGFzc3dvcmQ=
+stringData:
+  username: kibanaserver
+  password: kibanaserverpassword
+
 ```
 
 Apply with:
@@ -131,11 +130,20 @@ Apply with:
 kubectl apply -f creds.yaml
 ```
 
+- IMPORTANT! - After the cluster is created users listed in the internalUser list won't create due to this bug
+  with the opensearch operator https://github.com/opensearch-project/opensearch-k8s-operator/issues/1371
+  This means you need to manually create all the users in opensearch that aren't admin and kibanaserver through the
+  opensearch dashboards user interface and map them to the appropriate backend roles and roles.
+  The main user that must be created is the `azul_writer` user.
+  The `monitor` user is also important.
+
 - After activating the Helm chart, copy the CA certificate (stored in the ca-cert
   secret) to Azul's namespace and append to your CA cert list.
 
   To pull this certificate, fetch the crt from the secret
-  (`kubectl get secret azul-cluster-ca -o yaml`), and base64 decode.
+  (`kubectl get secret azul-opensearch-ca-cert -o yaml`), and base64 decode.
+  Single command `kubectl get secret azul-opensearch-ca-cert -o jsonpath="{.data['ca\.crt']}" | base64 -d`
+  Note - secret name is dependent on cluster name (format is <cluster-name>-ca-cert)
 
 - Finally, append to the secret pointed to by `CACertificateConfigMap` in your core
   values.yaml.

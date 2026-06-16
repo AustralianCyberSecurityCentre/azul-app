@@ -461,8 +461,6 @@ opensearch:
         - "cluster_monitor"
         - "cluster:admin/script/*"
         - "indices:admin/index_template/*"
-        - "indices:admin/mapping/*"
-        - "indices:admin/template/*"
         - "indices:data/read/*"
         - "indices:data/write/bulk"
         - "kibana_user"

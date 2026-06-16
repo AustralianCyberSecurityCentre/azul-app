@@ -12,6 +12,13 @@ data:
 {{- end }}
 
 ---
+# NOTE - CRDs are not used for multiple reasons as of (Opensearch 3.7.0, operator 3.0.0-alpha)
+# First role names can't be specified using CRDs because the role name comes from the cluster resource name
+#   and kubernetes doesn't allow names that have underscores.
+# CRD roles require cluster, index or tenant permissions be set which multiple roles don't need.
+# The CRDs also tend to be hard to debug, they have continually issues when contacting the cluster operator and will often be in a fail state.
+# If you attempt to use CRDs the only configuration allowed in the below is config.yml
+# ALL other configuration must be moved to CRDs or nothing will works.
 apiVersion: v1
 kind: Secret
 metadata:
@@ -198,8 +205,10 @@ spec:
         name: {{ .Values.opensearch.name }}-admin-certs
       securityConfigSecret:
         name: {{ .Values.opensearch.name }}-securityconfig
+      {{- if .Values.opensearch.adminCredentialsSecret }}
       adminCredentialsSecret:
         name: {{ .Values.opensearch.adminCredentialsSecret }}
+      {{- end }}
     tls:
       transport:
         generate: false
@@ -228,8 +237,10 @@ spec:
     enable: true
     version: {{ .Values.opensearch.dashboard.version }}
     replicas: 1
+    {{- if .Values.opensearch.dashboardCredentialsSecret }}
     opensearchCredentialsSecret:
       name: {{ .Values.opensearch.dashboardCredentialsSecret }}
+    {{- end }}
     {{- with .Values.imagePullSecrets }}
     imagePullSecrets:
       {{- toYaml . | nindent 8 }}
@@ -343,5 +354,6 @@ spec:
         path: /
         pathType: Prefix
 {{- end }}
+
 
 {{- end }}
