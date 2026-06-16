@@ -143,7 +143,7 @@ kubectl apply -f creds.yaml
   To pull this certificate, fetch the crt from the secret
   (`kubectl get secret azul-opensearch-ca-cert -o yaml`), and base64 decode.
   Single command `kubectl get secret azul-opensearch-ca-cert -o jsonpath="{.data['ca\.crt']}" | base64 -d`
-  Note - secret name is dependent on cluster name
+  Note - secret name is dependent on cluster name (format is <cluster-name>-ca-cert)
 
 - Finally, append to the secret pointed to by `CACertificateConfigMap` in your core
   values.yaml.
