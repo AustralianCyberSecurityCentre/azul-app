@@ -22,6 +22,8 @@ stringData:
     _meta:
       type: "actiongroups"
       config_version: 2
+  internal_users.yml: |-
+{{ .Values.opensearch.internalUsers | toYaml | indent 4 }}
   nodes_dn.yml: |-
     _meta:
       type: "nodesdn"
@@ -37,6 +39,10 @@ stringData:
     azul:
       reserved: false
       description: "Basic Azul tenant"
+  roles_mapping.yml: |-
+{{ .Values.opensearch.roleMapping | toYaml | indent 4 }}
+  roles.yml: |-
+{{ .Values.opensearch.roles | toYaml | indent 4 }}
   config.yml: |-
 {{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
 
