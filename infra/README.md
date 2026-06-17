@@ -159,7 +159,8 @@ kubectl apply -f creds.yaml
     name: azul-opensearch-user-passwords
   type: Opaque
   stringData:
-    monitor: monitorpassword
+    # Note - password must be complex enough or opensearch-operator will reject it (you need to check the operator logs for debugging)
+    monitor: monitorpassword1!
     azul-writer: azulwriterpassword
   ```
   Finally you need to update the azul-app chart (section `external.opensearch.username` to `azul-writer`)
