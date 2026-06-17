@@ -370,4 +370,21 @@ spec:
         pathType: Prefix
 {{- end }}
 
+{{- range $user, $roleList :=  .Values.opensearch.internalUsersAlt }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchUser
+metadata:
+  name: {{ $user }}
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  passwordFrom:
+    name: {{ $.Values.opensearch.usersPasswordsSecretName }}
+    key: {{ $user }}
+  {{- if $roleList.backendRoles }}
+  backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
+  {{- end }}
+{{- end }}
+
 {{- end }}
