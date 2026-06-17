@@ -250,12 +250,12 @@ opensearch:
 
     monitor:
       #monitorpassword
-      hash: $2y$12$Wl2JrXSNgwUyzckKlz8K3uD2Xp8oxVtTM/r7O0jyCSGBeZsgp1ruG
+      # hash: $2y$12$Wl2JrXSNgwUyzckKlz8K3uD2Xp8oxVtTM/r7O0jyCSGBeZsgp1ruG
       description: "Exporter monitoring"
 
     azul_writer:
       #azulwriterpassword
-      hash: $2y$12$GzoEXpS7eGW5N4yAhygQrue32wYZ7w5T3r03PRqHZnunEPnZC7yxm
+      # hash: $2y$12$GzoEXpS7eGW5N4yAhygQrue32wYZ7w5T3r03PRqHZnunEPnZC7yxm
       backend_roles:
         - "azul_write"
       description: "Service account for metastore writer testing"
