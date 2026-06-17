@@ -81,17 +81,19 @@ management of the tool.
 - This will automatically provision a self-signed CA for the purposes of inter-node
   communication and for the internal service. You can also supply your own Cert Manager
   CA if you have one available.
-- Install the OpenSearch Operator (if you haven't disabled OpenSearch):
+- Install the OpenSearch Operator (if you haven't disabled OpenSearch) recommended version is 3.0.2
 
 ```bash
-helm repo add opensearch-operator https://opensearch-project.github.io/opensearch-k8s-operator/
-helm install opensearch-operator opensearch-operator/opensearch-operator
+
+helm repo add opensearch https://opensearch-project.github.io/opensearch-k8s-operator/
+helm repo update
+helm install opensearch-operator opensearch-operator/opensearch-operator --version 3.0.2
 ```
 
-  - To upgrade for OpenSearch 3.x or later, run a Helm upgrade:
+  - To upgrade the operator run the following command:
 
     ```bash
-    helm upgrade opensearch-operator opensearch-operator/opensearch-operator
+    helm upgrade opensearch-operator opensearch-operator/opensearch-operator --version 3.0.2
     ```
 
 - Setup the following secrets (examples below):
@@ -130,12 +132,19 @@ Apply with:
 kubectl apply -f creds.yaml
 ```
 
-- IMPORTANT! - After the cluster is created users listed in the internalUser list won't create due to this bug
-  with the opensearch operator https://github.com/opensearch-project/opensearch-k8s-operator/issues/1371
+- IMPORTANT! - you need to manually create internal users in opensearch because there is a bug with the opensearch
+  operator (2.8.2+)
+  https://github.com/opensearch-project/opensearch-k8s-operator/issues/1371
   This means you need to manually create all the users in opensearch that aren't admin and kibanaserver through the
   opensearch dashboards user interface and map them to the appropriate backend roles and roles.
   The main user that must be created is the `azul_writer` user.
   The `monitor` user is also important.
+  Also, Opensearch operator 3+ deletes all internal users every time the securityconfig job runs.
+  When this job runs it also clears any roles and role mappings you've added manually.
+
+- To prevent roles and role mappings being deleted you can set the values `opensearch.disableSecurityConfigUpdates` to  true.
+  This flag means only config.yml updates apply which are updates to your OIDC configuration
+  Roles and role mappings will no longer be removed, however internal users will still be cleared everytime the securityconfig job runs (note this will occur when you disable this option)
 
 - After activating the Helm chart, copy the CA certificate (stored in the ca-cert
   secret) to Azul's namespace and append to your CA cert list.

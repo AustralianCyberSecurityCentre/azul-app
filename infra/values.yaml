@@ -223,7 +223,7 @@ opensearch:
       opensearch_security.readonly_mode.roles: '["kibana_read_only"]'
 
   # Disable security configuration updates for everything but config.yml
-  disableSecurityConfigUpdates: true
+  disableSecurityConfigUpdates: false
 
   # internal_users.yml
   internalUsers:
