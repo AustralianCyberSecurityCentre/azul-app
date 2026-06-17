@@ -12,7 +12,7 @@ data:
 {{- end }}
 
 ---
-# NOTE - CRDs are not used for multiple reasons as of (Opensearch 3.7.0, operator 3.0.0-alpha)
+# NOTE - CRDs are not used for multiple reasons as of (Opensearch 3.7.0, operator 3.0.2)
 # First role names can't be specified using CRDs because the role name comes from the cluster resource name
 #   and kubernetes doesn't allow names that have underscores.
 # CRD roles require cluster, index or tenant permissions be set which multiple roles don't need.
@@ -35,9 +35,9 @@ stringData:
     _meta:
       type: "nodesdn"
       config_version: 2
-  whitelist.yml: |-
+  allowlist.yml: |-
     _meta:
-      type: "whitelist"
+      type: "allowlist"
       config_version: 2
   tenants.yml: |-
     _meta:
@@ -50,6 +50,17 @@ stringData:
 {{ .Values.opensearch.roleMapping | toYaml | indent 4 }}
   roles.yml: |-
 {{ .Values.opensearch.roles | toYaml | indent 4 }}
+  config.yml: |-
+{{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
+---
+# alternative version of securityconfig secret that allows users to only update config.yml
+# useful if you want to manually add users/roles and mappings and not have the security operator update after initial install.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.opensearch.name }}-securityconfig-simple
+type: Opaque
+stringData:
   config.yml: |-
 {{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
 
@@ -204,7 +215,11 @@ spec:
       adminSecret:
         name: {{ .Values.opensearch.name }}-admin-certs
       securityConfigSecret:
+      {{- if eq .Values.opensearch.disableSecurityConfigUpdates false }}
         name: {{ .Values.opensearch.name }}-securityconfig
+      {{- else }}
+        name: {{ .Values.opensearch.name }}-securityconfig-simple
+      {{- end }}
       {{- if .Values.opensearch.adminCredentialsSecret }}
       adminCredentialsSecret:
         name: {{ .Values.opensearch.adminCredentialsSecret }}
@@ -355,5 +370,21 @@ spec:
         pathType: Prefix
 {{- end }}
 
+{{- range $user, $roleList :=  .Values.opensearch.internalUsersAlt }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchUser
+metadata:
+  name: {{ $user }}
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  passwordFrom:
+    name: {{ $.Values.opensearch.usersPasswordsSecretName }}
+    key: {{ $user }}
+  {{- if $roleList.backendRoles }}
+  backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
+  {{- end }}
+{{- end }}
 
 {{- end }}

@@ -222,6 +222,9 @@ opensearch:
       opensearch_security.multitenancy.tenants.preferred: '["Private", "Global"]'
       opensearch_security.readonly_mode.roles: '["kibana_read_only"]'
 
+  # Disable security configuration updates for everything but config.yml and internalUsersAlt
+  disableSecurityConfigUpdates: false
+
   # internal_users.yml
   internalUsers:
     # This is the internal user database
@@ -256,6 +259,22 @@ opensearch:
       backend_roles:
         - "azul_write"
       description: "Service account for metastore writer testing"
+
+
+  # Key to a secret that maps users to passwords
+  # Secret that Maps all users to passwords as key value pairs like this:
+  # admin: adminpassword
+  # azul_writer: writerpassword
+  usersPasswordsSecretName: "azul-opensearch-user-passwords"
+
+  # Maps users to their backend roles, uses the above secret to get passwords
+  # In the secret, the key needs to be the username and the value the password
+  # Note users must have dashes and not underscores in their names for this to work.
+  internalUsersAlt: {}
+    # monitor:
+    #   backendRoles: []
+    # azul-writer:
+    #   backendRoles: ["azul_write"]
 
   # roles_mapping.yml
   roleMapping:
