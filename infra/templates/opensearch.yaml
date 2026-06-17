@@ -12,6 +12,13 @@ data:
 {{- end }}
 
 ---
+# NOTE - CRDs are not used for multiple reasons as of (Opensearch 3.7.0, operator 3.0.2)
+# First role names can't be specified using CRDs because the role name comes from the cluster resource name
+#   and kubernetes doesn't allow names that have underscores.
+# CRD roles require cluster, index or tenant permissions be set which multiple roles don't need.
+# The CRDs also tend to be hard to debug, they have continually issues when contacting the cluster operator and will often be in a fail state.
+# If you attempt to use CRDs the only configuration allowed in the below is config.yml
+# ALL other configuration must be moved to CRDs or nothing will works.
 apiVersion: v1
 kind: Secret
 metadata:
@@ -28,9 +35,9 @@ stringData:
     _meta:
       type: "nodesdn"
       config_version: 2
-  whitelist.yml: |-
+  allowlist.yml: |-
     _meta:
-      type: "whitelist"
+      type: "allowlist"
       config_version: 2
   tenants.yml: |-
     _meta:
@@ -43,6 +50,17 @@ stringData:
 {{ .Values.opensearch.roleMapping | toYaml | indent 4 }}
   roles.yml: |-
 {{ .Values.opensearch.roles | toYaml | indent 4 }}
+  config.yml: |-
+{{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
+---
+# alternative version of securityconfig secret that allows users to only update config.yml
+# useful if you want to manually add users/roles and mappings and not have the security operator update after initial install.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.opensearch.name }}-securityconfig-simple
+type: Opaque
+stringData:
   config.yml: |-
 {{ .Values.opensearch.securityConfig | toYaml | indent 4 }}
 
@@ -150,7 +168,7 @@ spec:
 {{- end }}
 
 ---
-apiVersion: opensearch.opster.io/v1
+apiVersion: opensearch.org/v1
 kind: OpenSearchCluster
 metadata:
   name: {{ .Values.opensearch.name }}
@@ -197,19 +215,30 @@ spec:
       adminSecret:
         name: {{ .Values.opensearch.name }}-admin-certs
       securityConfigSecret:
+      {{- if eq .Values.opensearch.disableSecurityConfigUpdates false }}
         name: {{ .Values.opensearch.name }}-securityconfig
+      {{- else }}
+        name: {{ .Values.opensearch.name }}-securityconfig-simple
+      {{- end }}
+      {{- if .Values.opensearch.adminCredentialsSecret }}
       adminCredentialsSecret:
         name: {{ .Values.opensearch.adminCredentialsSecret }}
+      {{- end }}
     tls:
       transport:
         generate: false
         perNode: false
+        enableHotReload: true
         secret:
           name: {{ .Values.opensearch.name }}-certs
         nodesDn: ["CN=Opensearch_Node.{{ .Values.opensearch.certificateSuffix }}", ] 
+        # Deprecated should be removed.
         adminDn: ["CN=OpenSearch_Admin.{{ .Values.opensearch.certificateSuffix }}", ]
       http:
+        enabled: true
         generate: false
+        adminDn: ["CN=OpenSearch_Admin.{{ .Values.opensearch.certificateSuffix }}", ]
+        enableHotReload: true
         secret:
           name: {{ .Values.opensearch.name }}-certs
 
@@ -223,8 +252,10 @@ spec:
     enable: true
     version: {{ .Values.opensearch.dashboard.version }}
     replicas: 1
+    {{- if .Values.opensearch.dashboardCredentialsSecret }}
     opensearchCredentialsSecret:
       name: {{ .Values.opensearch.dashboardCredentialsSecret }}
+    {{- end }}
     {{- with .Values.imagePullSecrets }}
     imagePullSecrets:
       {{- toYaml . | nindent 8 }}
@@ -272,7 +303,7 @@ spec:
         {{- range .Values.opensearch.topologySpreadConstraints }}
         - labelSelector:
             matchLabels:
-              opster.io/opensearch-nodepool: nodes
+              opensearch.org/opensearch-nodepool: nodes
           {{- . | toYaml | nindent 10 }}
         {{- end }}
       {{- end }}
@@ -337,6 +368,23 @@ spec:
               number: 9200
         path: /
         pathType: Prefix
+{{- end }}
+
+{{- range $user, $roleList :=  .Values.opensearch.internalUsersAlt }}
+---
+apiVersion: opensearch.org/v1
+kind: OpensearchUser
+metadata:
+  name: {{ $user }}
+spec:
+  opensearchCluster:
+    name: {{ $.Values.opensearch.name }}
+  passwordFrom:
+    name: {{ $.Values.opensearch.usersPasswordsSecretName }}
+    key: {{ $user }}
+  {{- if $roleList.backendRoles }}
+  backendRoles: {{ $roleList.backendRoles | toYaml | nindent 4 }}
+  {{- end }}
 {{- end }}
 
 {{- end }}

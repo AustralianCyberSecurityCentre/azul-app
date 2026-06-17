@@ -152,7 +152,7 @@ opensearch:
   harden: false
 
   general:
-    version: 3.2.0
+    version: 3.7.0
     replicas: 3
     setVMMaxMapCount: true
     # defaultRepo: docker.io/opensearchproject
@@ -206,7 +206,7 @@ opensearch:
       nginx.org/client-max-body-size: "600m"
 
   dashboard:
-    version: 3.2.0
+    version: 3.7.0
 
     ingress:
       enable: true
@@ -221,6 +221,9 @@ opensearch:
       opensearch_security.multitenancy.enabled: "true"
       opensearch_security.multitenancy.tenants.preferred: '["Private", "Global"]'
       opensearch_security.readonly_mode.roles: '["kibana_read_only"]'
+
+  # Disable security configuration updates for everything but config.yml and internalUsersAlt
+  disableSecurityConfigUpdates: false
 
   # internal_users.yml
   internalUsers:
@@ -256,6 +259,22 @@ opensearch:
       backend_roles:
         - "azul_write"
       description: "Service account for metastore writer testing"
+
+
+  # Key to a secret that maps users to passwords
+  # Secret that Maps all users to passwords as key value pairs like this:
+  # admin: adminpassword
+  # azul_writer: writerpassword
+  usersPasswordsSecretName: "azul-opensearch-user-passwords"
+
+  # Maps users to their backend roles, uses the above secret to get passwords
+  # In the secret, the key needs to be the username and the value the password
+  # Note users must have dashes and not underscores in their names for this to work.
+  internalUsersAlt: {}
+    # monitor:
+    #   backendRoles: []
+    # azul-writer:
+    #   backendRoles: ["azul_write"]
 
   # roles_mapping.yml
   roleMapping:
@@ -461,8 +480,6 @@ opensearch:
         - "cluster_monitor"
         - "cluster:admin/script/*"
         - "indices:admin/index_template/*"
-        - "indices:admin/mapping/*"
-        - "indices:admin/template/*"
         - "indices:data/read/*"
         - "indices:data/write/bulk"
         - "kibana_user"
@@ -719,8 +736,8 @@ opensearch:
 kafka:
   enable: true
   name: azul-kafka
-  version: 4.0.0
-  metadataVersion: 4.0-IV3
+  version: 4.2.0
+  metadataVersion: 4.2-IV1
 
   replicas: 3
   resources:
@@ -749,7 +766,7 @@ kafka:
   # Helper pod to enable debugging in-cluster
   kafkactl:
     enable: true
-    image: deviceinsight/kafkactl:v5.13.0-ubuntu
+    image: deviceinsight/kafkactl:v5.19.0
 
   storage:
     type: persistent-claim

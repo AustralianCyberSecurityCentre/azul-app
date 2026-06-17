@@ -13,6 +13,9 @@ Product deployments included:
 - OpenSearch
 - Minio
 - Kafka
+- keycloak
+- prometheus/grafana
+- loki
 
 By default, this chart will deploy everything (for a turn-key solution), but individual
 components can be disabled as required, particularly if you have better alternatives for
@@ -31,7 +34,8 @@ functionality.
 
 Requirements:
 
-- The Strimzi operator must be installed, with the following parameters set:
+- The Strimzi operator must be installed, the one currently used by the azul team is 1.0.0
+  To protect from data loss the following settings are recommended when installing strimzi:
   - In install/cluster-operator/060-Deployment-\*.yaml, _add_ an environmental variable with
     the following:
     - `STRIMZI_LABELS_EXCLUSION_PATTERN` = `argocd.argoproj.io/instance`
@@ -45,7 +49,7 @@ Requirements:
       deployed, which is required to avoid conflicts with namespaced restrictions that Azul has
       such as network policies.
 
-For upgrades of kafka refer to the strimzi kafka documentation about version and compatibility of upgrades.
+For upgrades and full install instructions of kafka refer to the strimzi kafka documentation about version and compatibility of upgrades.
 
 As well as updating strimzi operators(https://strimzi.io/)
 
@@ -77,24 +81,25 @@ management of the tool.
 - This will automatically provision a self-signed CA for the purposes of inter-node
   communication and for the internal service. You can also supply your own Cert Manager
   CA if you have one available.
-- Install the OpenSearch Operator (if you haven't disabled OpenSearch):
+- Install the OpenSearch Operator (if you haven't disabled OpenSearch) recommended version is 3.0.2
 
 ```bash
-helm repo add opensearch-operator https://opensearch-project.github.io/opensearch-k8s-operator/
-helm install opensearch-operator opensearch-operator/opensearch-operator
+
+helm repo add opensearch https://opensearch-project.github.io/opensearch-k8s-operator/
+helm repo update
+helm install opensearch-operator opensearch-operator/opensearch-operator --version 3.0.2
 ```
 
-  - To upgrade for OpenSearch 3.x or later, run a Helm upgrade:
+  - To upgrade the operator run the following command:
 
     ```bash
-    helm upgrade opensearch-operator opensearch-operator/opensearch-operator
+    helm upgrade opensearch-operator opensearch-operator/opensearch-operator --version 3.0.2
     ```
 
-- Setup the following secrets:
-  - azul-cluster-dashboardcredentials
-    Username/password combination containing credentials matching internalUsers (see
-    values.yaml for an example)
-  - azul-cluster-admincredentials
+- Setup the following secrets (examples below):
+  - azul-cluster-dashboardcredentials (optional, set the secretName `adminCredentialsSecret` to an empty string and this will be generated)
+    Username/password combination containing credentials matching internalUsers
+  - azul-cluster-admincredentials (optional, set the secretName `dashboardCredentialsSecret` to an empty string and this will be generated)
 
 For example:
 
@@ -106,23 +111,19 @@ kind: Secret
 metadata:
   name: azul-cluster-admincredentials
 type: Opaque
-data:
-  # admin
-  username: YWRtaW4=
-  # adminpassword
-  password: YWRtaW5wYXNzd29yZA==
-
+stringData:
+  username: admin
+  password: adminpassword
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: azul-cluster-dashboardcredentials
 type: Opaque
-data:
-  # kibanaserver
-  username: a2liYW5hc2VydmVy
-  # kibanaserverpassword
-  password: a2liYW5hc2VydmVycGFzc3dvcmQ=
+stringData:
+  username: kibanaserver
+  password: kibanaserverpassword
+
 ```
 
 Apply with:
@@ -131,11 +132,53 @@ Apply with:
 kubectl apply -f creds.yaml
 ```
 
+- IMPORTANT! - you need to manually create internal users in opensearch because there is a bug with the opensearch
+  operator (2.8.2+)
+  https://github.com/opensearch-project/opensearch-k8s-operator/issues/1371
+  This means you need to manually create all the users in opensearch that aren't admin and kibanaserver through the
+  opensearch dashboards user interface and map them to the appropriate backend roles and roles.
+  The main user that must be created is the `azul_writer` user.
+  The `monitor` user is also important.
+  Also, Opensearch operator 3+ deletes all internal users every time the securityconfig job runs.
+  When this job runs it also clears any roles and role mappings you've added manually.
+
+- Alternative option: if you don't want to manually create the azul_writer user you can instead use the `internalUsersAlt`
+  value and set it to
+  ```yaml
+  internalUsersAlt: {}
+    monitor:
+      backendRoles: []
+    azul-writer:
+      backendRoles: ["azul_write"]
+  ```
+  and then also create the `azul-opensearch-user-passwords` secret witha  spec similar to this:
+  ```yaml
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: azul-opensearch-user-passwords
+  type: Opaque
+  stringData:
+    # Note - password must be complex enough or opensearch-operator will reject it (you need to check the operator logs for debugging)
+    monitor: dummyNotTooSimilarPass1!
+    azul-writer: azulwriterpassword
+  ```
+  Finally you need to update the azul-app chart (section `external.opensearch.username` to `azul-writer`)
+  This method uses a CRD instead of a the `internal_users.yml` but is limited in that usernames must have dashes and
+  not underscores as the name is used for the username and the kubernetes resource.
+  And kubernetes resources can't have `_` in their name.
+
+- To prevent roles and role mappings being deleted you can set the values `opensearch.disableSecurityConfigUpdates` to  true.
+  This flag means only config.yml updates apply which are updates to your OIDC configuration
+  Roles and role mappings will no longer be removed, however internal users will still be cleared everytime the securityconfig job runs (note this will occur when you disable this option)
+
 - After activating the Helm chart, copy the CA certificate (stored in the ca-cert
   secret) to Azul's namespace and append to your CA cert list.
 
   To pull this certificate, fetch the crt from the secret
-  (`kubectl get secret azul-cluster-ca -o yaml`), and base64 decode.
+  (`kubectl get secret azul-opensearch-ca-cert -o yaml`), and base64 decode.
+  Single command `kubectl get secret azul-opensearch-ca-cert -o jsonpath="{.data['ca\.crt']}" | base64 -d`
+  Note - secret name is dependent on cluster name (format is \<cluster-name\>-ca-cert)
 
 - Finally, append to the secret pointed to by `CACertificateConfigMap` in your core
   values.yaml.
