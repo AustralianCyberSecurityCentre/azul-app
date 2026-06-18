@@ -1924,7 +1924,7 @@ images:
     client: client:20260618T2109-unstable@sha256:571235282a57bfb47f5f667fcc9bbd0ead913ab61372788cf3c90e271915560c
     dispatcher: dispatcher:20260618T2110-unstable@sha256:5187bae8f33215c9f0d0202306ae8474b8d6acc234c048a6f2e9b4ab2df27642
     docs: docs:20260617T0125-unstable@sha256:7f7a7013a3f39cef3607a468256b070dfc4ac76b414dd8fe10c75fad672a4cd5
-    restapi-server: restapi-server:20260613T1454-unstable@sha256:bdfc6bc68b2fe6261ef91ae0c756ad283c015c6669fd6355ce381e2270fa557d
+    restapi-server: restapi-server:20260618T2136-unstable@sha256:1b20d38becd12d56ee32554cc20ac116af1c71032e1292d4985dff55a87db105
     webui: webui:20260614T1414-unstable@sha256:7e4f67848dbb6cbb93b1e0090324b6efa3aa6f6c5aa6c14f0564d58ac177e553
     plugin-alphabets: plugin-alphabets:20260618T2121-unstable@sha256:6109664912672aa37980a114c0e8c00c596256a33e5e6e3d922288d825c4c203
     plugin-android-parser: plugin-android-parser:20260618T2121-unstable@sha256:7a2bb72e6268e5a835c3cd5eb50f16779eb4113c6cf422464bde754e57a984d4
