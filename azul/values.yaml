@@ -1968,7 +1968,7 @@ images:
     scaler: scaler:20260613T0003-unstable@sha256:5b2cdac592c319679c83ca9bb2765937394d4255839ab4478041ebcfa81d3d96
     plugin-debloat: plugin-debloat:20260613T0024-unstable@sha256:fac5fcfe2df29df891aaf9c2c5dca72cb710278fb472b672d7a34d14c61cb593
     plugin-yara: plugin-yara:20260613T0028-unstable@sha256:1f424727dbc98641f42da427c0bf34a4bf9c1815b743be652b4128d588bbf71e
-    plugin-portex: plugin-portex:20260613T0021-unstable@sha256:58b759e86719a27850f9f4dbb9df5206d7195867ddd6d379fccba4184aa5bb50
+    plugin-portex: plugin-portex:20260618T2114-unstable@sha256:bb34e0c212e215283f908286da35ad5556e7c6772c76da8b6f0b8a9e03bf6636
     plugin-truncated: plugin-truncated:20260613T0023-unstable@sha256:19bdece2efb34d32fd909ebbf1994d94ecd9b96c35660e165455985afbeed6fd
     plugin-certificates: plugin-certificates:20260613T0028-unstable@sha256:483750f5d0fac108474ae1f1d6111c6d2c4cae36fdc1359cd138cbbd35c819d0
     plugin-qrcode: plugin-qrcode:20260618T2114-unstable@sha256:0271efb9030598a5fb42bf826c5892e10c10b2960be9709ea22360bde0afc0ce
