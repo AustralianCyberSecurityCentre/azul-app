@@ -51,6 +51,8 @@ data:
   CORS_ALLOW_CREDENTIALS: "{{ .Values.restapi.cors.allowCredentials }}"
   CORS_ALLOW_METHODS: "{{ .Values.restapi.cors.allowMethods }}"
   CORS_ALLOW_HEADERS: "{{ .Values.restapi.cors.allowHeaders }}"
+  # Readonly mode
+  METASTORE_READONLY_MODE: "{{ .Values.restapi.readonlyMode }}"
   # Headers
   {{- if .Values.web.ingress.security.enableHarden }}
   RESTAPI_HEADERS: |-

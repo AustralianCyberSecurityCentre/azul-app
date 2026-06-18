@@ -978,6 +978,8 @@ metastore:
 
 # API server configuration
 restapi:
+  # TODO - false by default
+  readonlyMode: true
   minReplicas: 1
   maxReplicas: 4
   # requires >1 replica
