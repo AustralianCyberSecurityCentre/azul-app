@@ -1971,7 +1971,7 @@ images:
     plugin-portex: plugin-portex:20260613T0021-unstable@sha256:58b759e86719a27850f9f4dbb9df5206d7195867ddd6d379fccba4184aa5bb50
     plugin-truncated: plugin-truncated:20260613T0023-unstable@sha256:19bdece2efb34d32fd909ebbf1994d94ecd9b96c35660e165455985afbeed6fd
     plugin-certificates: plugin-certificates:20260613T0028-unstable@sha256:483750f5d0fac108474ae1f1d6111c6d2c4cae36fdc1359cd138cbbd35c819d0
-    plugin-qrcode: plugin-qrcode:20260613T0020-unstable@sha256:92918df1085db8e0fda70fed3b0f071e9576356f32f90c2675a3ba6327fc9286
+    plugin-qrcode: plugin-qrcode:20260618T2114-unstable@sha256:0271efb9030598a5fb42bf826c5892e10c10b2960be9709ea22360bde0afc0ce
     smart-string-filter: smart-string-filter:20260618T2106-unstable@sha256:2216d896765d7f247785cbd56f6f1639619e4f076c34f3ae8dc071d5e017f5d6
     plugin-ghidra: plugin-ghidra:20260613T0020-unstable@sha256:dc43b2a80d16f7ef3b5f3f14e2175af726cdf2ba4ab3d6120ed7b09141492e76
     # plugin-report-feeds: dummy
