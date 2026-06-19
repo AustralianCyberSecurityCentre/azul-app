@@ -828,6 +828,9 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "readonlyMode": {
+          "type": "boolean"
+        },
         "env": {
           "type": "object",
           "patternProperties": {
