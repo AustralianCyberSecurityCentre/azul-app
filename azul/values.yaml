@@ -1968,7 +1968,7 @@ images:
     plugin-suricata: plugin-suricata:20260622T0501-unstable@sha256:7ac881dd4e5f4c927da87f0f9745e89ddfee7bd47de79526789d1e7bc0da90f1
     scaler: scaler:20260620T0002-unstable@sha256:3e768eb1b369f3b16a391b104ec0897061c3e4805566d0a6fc63609ddba43338
     plugin-debloat: plugin-debloat:20260622T0456-unstable@sha256:bbf9b5d54eba7147be3d80b84e6b79537fb976fe64e789e3a649063e0dd1ef20
-    plugin-yara: plugin-yara:20260622T0501-unstable@sha256:7ab3b2e1e6cd539da4b290f7517c4c1b37d2c4c02169bf7415f7e04399197ff3
+    plugin-yara: plugin-yara:20260623T0043-unstable@sha256:28a6e7e1a8080da9b5f47131d957a4c3f78741ee3c60dda989222c98b1d40cf1
     plugin-portex: plugin-portex:20260622T0459-unstable@sha256:c13adc879c70b11e1cc3d550543d07523921bf31d455b53dabab66009311e638
     plugin-truncated: plugin-truncated:20260622T0458-unstable@sha256:911752e58b93021c5d01adbb4e2ca773c000f603a173bfdc4048243e3a8f3e71
     plugin-certificates: plugin-certificates:20260622T0506-unstable@sha256:83d73a8253b380bf8987c6ecbc465fce5315c30cdfc04f908e519eac1e53e6a8
