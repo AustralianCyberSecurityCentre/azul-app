@@ -1009,7 +1009,7 @@ restapi:
   oidc:
     rolesKey: "roles"
     usernameKey: "preferred_username"
-    cacheTTL: "600"
+    cacheTTL: "3600"
     swaggerRedirectUrl: "/api/oauth2-redirect"
   config:
     ca_bundle: "/cafile/ca.crt"
