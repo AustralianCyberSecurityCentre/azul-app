@@ -1919,13 +1919,13 @@ images:
   customRegistry: docker.io/asdazul/
   # images that form part of an azul release
   custom:
-    audit-forwarder: audit-forwarder:11.1.0@sha256:468e7d6b98c84f6f789572bfb94b41cb601d6589d7d18152eab9c6b6058fde54
+    audit-forwarder: audit-forwarder:20260626T0356-unstable@sha256:84190618d1b224dd69f92e5fc1c79a7dc3ed9daf086db02b0f4292346242cedd
     backup: backup:11.1.0@sha256:392fb88ef57ce5401dbefce80afabee7530982f9921c981efd244f8cac685f35
     client: client:11.1.0@sha256:842be779da41d8c6ff61e3ae4703b4bdb252a3df545c3192d15855ef53d154b9
     dispatcher: dispatcher:11.1.0@sha256:84616e81191ffcd64d07345335eb33204c6abe195fefcd546801bdfe7a38e24b
     docs: docs:11.1.0@sha256:7f7a7013a3f39cef3607a468256b070dfc4ac76b414dd8fe10c75fad672a4cd5
-    restapi-server: restapi-server:11.1.0@sha256:5aca669cd46cc55d0b66aa57761ef121af87bc56a7136e1da263032db2adf350
-    webui: webui:11.1.0@sha256:374f1cbc36e55a74a68a2e28a9eff3efa39a9d8751b9b6f8f50f21095b4c847c
+    restapi-server: restapi-server:20260626T0427-unstable@sha256:f580ef3c3c772a714036bb6df78ee05b178f75bec6146d0936a882b1ce7ad5e3
+    webui: webui:20260626T0440-unstable@sha256:5cc300e99db72ce639446a09fd603ef14fe932559f28b2f0af7883f34a6b37f4
     plugin-alphabets: plugin-alphabets:11.1.0@sha256:d4f4b32a8d48e0b24e51ad2ac44a78430db65c8d8fe176193cc14e66e64c88de
     plugin-android-parser: plugin-android-parser:11.1.0@sha256:d79fcaef02e9173afca663ad8b12b3b277902c18a86add66256374636d8f78f8
     plugin-assemblyline: plugin-assemblyline:11.1.0@sha256:a5e0e6d00fb8530cfd2ce3bda82d636dae46b961df6b6312e9790920f3103111
@@ -1967,7 +1967,7 @@ images:
     plugin-suricata: plugin-suricata:11.1.0@sha256:312c347c059b70124b260237ff22bd581ea72a1b0196d340232836246b0b4685
     scaler: scaler:11.1.0@sha256:d40755000959c97fcbb70bd975895bc97dbae59b1ed148c68db8c9ba0076e29c
     plugin-debloat: plugin-debloat:11.1.0@sha256:84c5e9420bbdfe005eaba44921d353453b5c5f627fc8ce20e8fb3fffb0035b0a
-    plugin-yara: plugin-yara:11.1.0@sha256:9841d31254807c4e493315e9c1474f2018f3cad2d84c809ae686f4473789d9e0
+    plugin-yara: plugin-yara:20260626T0422-unstable@sha256:d848923fda5414e21930c82b7273ae40e3563147a8879910e60453db88fc5114
     plugin-portex: plugin-portex:11.1.0@sha256:524ed0a8da408011d6c95026075b4817b608966c337eda6fcdf601be73e8eb25
     plugin-truncated: plugin-truncated:11.1.0@sha256:fff9a7589b2918dd5111cca33dd52792e75ce7387d5604a41cb7ae2c19018b2e
     plugin-certificates: plugin-certificates:11.1.0@sha256:414d59b074af027a28208f0955e1603ae2cd3966c3f702da8a1d315de8ce79f7
