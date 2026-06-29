@@ -1963,7 +1963,7 @@ images:
     plugin-tika: plugin-tika:20260627T0032-unstable@sha256:a7a55e7c51416ace49300dc22efef85c704f2a4dc6457e83ffc485f85590221b
     plugin-unbox: plugin-unbox:20260627T0022-unstable@sha256:e83c28a717adf32ef12cfaccba2ec6e3f14ae00e060aabd46f8c2f7c3a410e23
     plugin-virustotal: plugin-virustotal:20260627T0010-unstable@sha256:e1de6514ae2acdb225134cc66849aad9ed05d2d1a09781e2aa0712835c46c415
-    stats: stats:20260627T0005-unstable@sha256:36df29bab59a43b003410a6126cedbd3281c49b860a933da542364a674f6da02
+    stats: stats:20260629T0407-unstable@sha256:2f308138c35600892069af34bda7af53b510782880389372e1c198fb5b04a2f1
     nsrl-lookup-server: nsrl-lookup-server:20260627T0004-unstable@sha256:47763d0e6e85f8dd146cf3634539ebd7421e783e16a709c65f445758f9f4cc09
     plugin-suricata: plugin-suricata:20260627T0024-unstable@sha256:3536d3d4799ce1bdbee414d002f2fafb88ef4427c41e408cad7d12aa87e925dd
     scaler: scaler:20260627T0004-unstable@sha256:bc884377de866abe3356c1f15257d97c6775869404e4af7552f2edff92750a84
