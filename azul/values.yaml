@@ -1965,7 +1965,7 @@ images:
     plugin-virustotal: plugin-virustotal:20260630T0510-unstable@sha256:18334839d418c114b575eccd6bc8d0a74866961292ac30bb785a491a5f01bd9e
     stats: stats:20260629T0407-unstable@sha256:2f308138c35600892069af34bda7af53b510782880389372e1c198fb5b04a2f1
     nsrl-lookup-server: nsrl-lookup-server:20260627T0004-unstable@sha256:47763d0e6e85f8dd146cf3634539ebd7421e783e16a709c65f445758f9f4cc09
-    plugin-suricata: plugin-suricata:20260627T0024-unstable@sha256:3536d3d4799ce1bdbee414d002f2fafb88ef4427c41e408cad7d12aa87e925dd
+    plugin-suricata: plugin-suricata:20260630T0527-unstable@sha256:f0ac98b195abb2b2412d8c56a3fd83001fa89b4d2ed8a4a91d396a127a04d4e6
     scaler: scaler:20260627T0004-unstable@sha256:bc884377de866abe3356c1f15257d97c6775869404e4af7552f2edff92750a84
     plugin-debloat: plugin-debloat:20260630T0518-unstable@sha256:a98896f4828ea396712b650281b7ecbdd88b9349bfef26b97b0a9e07a1da88a8
     plugin-yara: plugin-yara:20260627T0028-unstable@sha256:5b72384a27bf7339ccdda86327a7bbb6872c8788f47448783642926da3ae3106
