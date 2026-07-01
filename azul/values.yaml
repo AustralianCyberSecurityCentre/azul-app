@@ -1530,9 +1530,16 @@ plugins:
                 cpu: "1000m"
             command:
               - azul-plugin-retroworker
+            volumes:
+            - name: shm-ramdisk
+              emptyDir:
+                medium: Memory
+                sizeLimit: 16Gi
             volumeMounts:
               - name: indices
                 mountPath: "/indices"
+              - name: shm-ramdisk
+                mountPath: "/dev/shm"
           content-indexer:
             template: "plugin.container.main"
             promMetricsEnabled: true
