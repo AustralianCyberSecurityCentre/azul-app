@@ -137,6 +137,13 @@ spec:
                 optional: true
           {{- end }}
           {{- end }}
+          {{- if or (eq "enabled" (.root.Values.external.filestore.aesEnabled | lower)) (eq "readonly" (.root.Values.external.filestore.aesEnabled | lower)) }}
+          - name: DP.STREAMS.AES_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .root.Values.secrets.filestore }}
+                key: aeskey
+          {{- end }}
           - name: DP.EVENTS.REDIS.USERNAME
             valueFrom:
               secretKeyRef:

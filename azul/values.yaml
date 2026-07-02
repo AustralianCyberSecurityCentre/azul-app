@@ -248,9 +248,20 @@ external:
     # storage region if applicable
     region: ""
     # XOR encode content to avoid AV detections
-    # Once this is enabled, you MUST NOT turn this off or otherwise binary data will become
-    # inaccessible.
+    # It is recommended to turn this on or off and then not change it.
+    # There is an overhead with having enabled and then disabling this feature.
     xorEncoding: false
+    # AES encode content
+    # Uses AES counter to encode the content when storing it in storage.
+    # (aeskey is required if state enabled or readonly is used)
+    # An AES key must also be added to the filestore secret under the key aeskey
+    # The AES key must be exactly 24 characters long or dispatcher will fail to boot.
+    # Can also be "enabled" or "readonly"
+    # Enabled - All incoming files are AES encrypted and all outgoing files are decrypted as required.
+    # Readonly - All outgoing AES files are decrypted, no files are AES encrypted.
+    # Disabled - no AES encryption is performed
+    aesEnabled: "disabled"
+    
   # Details of kafka.
   kafka:
     endpoint: ""
@@ -730,6 +741,7 @@ dispatcher:
   config:
     # Default log level for dispatcher which can be overridden explicitly in the env, sections per instance.
     defaultLogLevel: "INFO"
+
     # Dispatcher instances dedicated to processing metadata related content.
     metastore:
       events:
