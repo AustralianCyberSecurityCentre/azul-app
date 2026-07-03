@@ -32,3 +32,4 @@ data:
   DP.EVENTS.REDIS.ENDPOINT: "{{ .Values.external.redis.endpoint | required "external.redis.endpoint not set" }}"
   DP.LOG_PATH: "/logs/dispatcher/"
   BED.LOG_LEVEL: "{{ .Values.dispatcher.config.defaultLogLevel }}"
+  DP.STREAMS.AES_ENABLED: "{{ .Values.external.filestore.aesEnabled }}"
