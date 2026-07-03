@@ -1981,7 +1981,7 @@ images:
     plugin-debloat: plugin-debloat:20260703T1431-unstable@sha256:eb94cca52d69ce31b98edd37d4ceee7d7467e27c46db15097dff7052e988a642
     plugin-yara: plugin-yara:20260703T0313-unstable@sha256:36c3fa167bafdff45cafc08d5f5da3d1f12c030a9b42aba91e5afba41814e3d9
     plugin-portex: plugin-portex:20260703T0316-unstable@sha256:622b3a997e5c6bf5e49eb428c7b03e47309f35acb361340168fa45ca7868d004
-    plugin-truncated: plugin-truncated:20260703T0317-unstable@sha256:0530d793eae17c513d3e4b414d259e034baf58a6b3fddd8cf095daaf69781a03
+    plugin-truncated: plugin-truncated:20260703T1432-unstable@sha256:4075b75e5139e832dbb624813e7d60bba89ddcdefed853984921bfcce978a09e
     plugin-certificates: plugin-certificates:20260703T0311-unstable@sha256:2970b2d95881ac3e2fc0af6af42f606269dd5e2261dde04ee175ae4715d78109
     plugin-qrcode: plugin-qrcode:20260703T0318-unstable@sha256:6e6025188f3e52d04ebb017eaacbe6700878cdbf2a62a9a1ae813f7f268053e9
     smart-string-filter: smart-string-filter:20260703T1418-unstable@sha256:7ee340aff247a763531f62e20a09b6d4be0b47fd6ea205c2bc69d6d2cbdcfd4e
