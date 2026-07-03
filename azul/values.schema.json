@@ -1491,6 +1491,12 @@
           "additionalProperties": {
             "type": ["string"]
           }
+        },
+        "excludedLogSubstrings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": ["enabled"],
