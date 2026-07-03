@@ -374,8 +374,8 @@ auditForwarder:
   # log lines containing any of these substrings are dropped before forwarding
   # (filtered server-side in Loki)
   excludedLogSubstrings:
-    - "kube-probe"
-    - "Blackbox Exporter"
+    - 'user_agent="kube-probe'
+    - 'user_agent="Blackbox Exporter'
   # send to destination every x seconds
   sendInterval: 30
   # Timeout for the http client that get logs from loki and forwards to the audit server.
