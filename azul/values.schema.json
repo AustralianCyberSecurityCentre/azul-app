@@ -293,6 +293,9 @@
             },
             "xorEncoding": {
               "type": "boolean"
+            },
+            "aesEnabled": {
+              "enum": ["disabled", "enabled", "readonly"]
             }
           },
           "required": ["backend", "endpoint", "location", "xorEncoding"],
