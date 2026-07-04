@@ -1493,7 +1493,7 @@ plugins:
           - name: shm-ramdisk
             emptyDir:
               medium: Memory
-              sizeLimit: 16Gi
+              sizeLimit: 32Gi
         volumeMounts:
           - name: indices
             mountPath: "/indices"
