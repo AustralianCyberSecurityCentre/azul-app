@@ -1982,7 +1982,7 @@ images:
     plugin-yara: plugin-yara:20260706T0552-unstable@sha256:6024627d019736f5d0dc787ac33d2818a37649e09af48bbc00bb540b1d29ae10
     plugin-portex: plugin-portex:20260706T0553-unstable@sha256:8b3204b2dba85e65af79d33d03e360afc31e55da94066582fa0f1cd221b4cf2f
     plugin-truncated: plugin-truncated:20260706T0553-unstable@sha256:c6cc348f41087345c361a4014c6e46f12a3f6a400096038cdc0de5a75d48d4e0
-    plugin-certificates: plugin-certificates:20260706T0529-unstable@sha256:7a28f6d9e16e52f4e6b63b3078a66a2e3833980963be5280d7af1cb7d6e00206
+    plugin-certificates: plugin-certificates:20260706T0601-unstable@sha256:0759626d9ca77a1113db5c63270ea41ca7d5ab8c0fda13e64ddd169c0269589d
     plugin-qrcode: plugin-qrcode:20260706T0553-unstable@sha256:65edf61fec8dcb3bc96c60163ef8673b7b43a3d68af61688b4f659f29a535654
     smart-string-filter: smart-string-filter:20260706T0546-unstable@sha256:9e8287493c598ae4ca225f248c33971fce8f31bc38e2ace0963e2b78fa439f89
     plugin-ghidra: plugin-ghidra:20260706T0553-unstable@sha256:24c691063a0b133d455a8efe126fba4f8124ce1e3f444d95d7c023a897194270
