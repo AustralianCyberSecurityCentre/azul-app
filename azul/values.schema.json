@@ -743,9 +743,6 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "disable_entropy_similarity": {
-          "type": "boolean"
-        },
         "status_index": { "$ref": "#/definitions/opensearchConfig" },
         "plugin_index": { "$ref": "#/definitions/opensearchConfig" },
         "env": {
