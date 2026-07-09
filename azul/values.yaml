@@ -1970,7 +1970,7 @@ images:
     plugin-script-decoder: plugin-script-decoder:20260706T0603-unstable@sha256:0a514dc1e96b30640b2a6b91dd6665eff25cb4853151fbed89bcfc14997c33b6
     plugin-shortcut: plugin-shortcut:20260709T0438-unstable@sha256:77f510570700d8999729e95edf7273e99192ddfc0bf0df6f2b48be61b1189fb3
     plugin-tika: plugin-tika:20260706T0608-unstable@sha256:3dbd116d9c92fd74b300275fc5aa2b16ba194e0c0bd1700943820da66d6a86eb
-    plugin-unbox: plugin-unbox:20260706T0553-unstable@sha256:29b0bd58b01d6030617f22ab6d41163c614cecb324a2ac9e4968aac33e91ea44
+    plugin-unbox: plugin-unbox:20260709T0438-unstable@sha256:3c1d2ca58fd970b4e5c41bf716d3e8ef4f745c41eab4d9e665546bc082080fe3
     plugin-virustotal: plugin-virustotal:20260709T0431-unstable@sha256:db2f1e3ca6d0637087069e6563773121d5f4208594a967799a83673e2c56310c
     stats: stats:20260704T0005-unstable@sha256:5e10f5f810c87dec34cbc3c106b72c6b63daf1132299b860ca0d67d794469933
     nsrl-lookup-server: nsrl-lookup-server:20260704T0004-unstable@sha256:dd36b828da0845c7dc459d4144ce8fd84d584feff8006453e72b89f45f2a74c4
