@@ -1207,6 +1207,9 @@
                 },
                 "highlight": {
                   "type": "boolean"
+                },
+                "priority": {
+                  "type": "boolean"
                 }
               },
               "required": ["description", "name", "required"],
