@@ -679,6 +679,7 @@ web:
     # A message displayed to users who do not meet the minimumRequiredAccess parameter.
     # This supports basic Markdown for e.g. links and email addresses.
     unauthorized_help: Please contact your system administrator for assistance.
+    unavailable_help: Please contact your system administrator for assistance.
 
     # Optional message to display to users to inform them about something - e.g. patching in progress, system is read-only,
     # etc.

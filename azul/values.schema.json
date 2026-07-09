@@ -501,6 +501,9 @@
             "unauthorized_help": {
               "type": "string"
             },
+            "unavailable_help": {
+              "type":"string"
+            },
             "banner_message": {
               "type": "string"
             },
@@ -558,7 +561,8 @@
             "motd_footer",
             "motd_header",
             "motd_hours",
-            "unauthorized_help"
+            "unauthorized_help",
+            "unavailable_help"
           ],
           "additionalProperties": false
         },
