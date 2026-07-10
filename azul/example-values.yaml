@@ -270,6 +270,7 @@ sources:
       - description: Local submitter or point of contact for samples
         name: user
         required: false
+        priority: false
   reporting:
     partition_unit: all
     description: Malware reports and blogs from public, partner and commercial sources
