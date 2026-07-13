@@ -2659,7 +2659,7 @@
           "type": "string"
         },
         "watchPath": {
-          "description": "Subdirectory under /code/dest to be watched. If git watch_type==git, this is the directory to which the repo will be cloned. If watch_type==plain, this is the path that is watched for changes to file.",
+          "description": "Subdirectory under /code/dest to be watched. If git watch_type==git, this is the directory to which the repo will be cloned. If watch_type==plain, this is the path that is watched for changes to files.",
           "type": "string"
         },
         "includeSubmodules": {
