@@ -2658,8 +2658,8 @@
           "description": "The path in the remote repo to where the plugin data is located.",
           "type": "string"
         },
-        "syncPath": {
-          "description": "The subdirectory under /code/dest to which git repo will be cloned (e.g. syncPath: sigs clones repo to /code/dest/sigs).",
+        "watchPath": {
+          "description": "Subdirectory under /code/dest to be watched. If git watch_type==git, this is the directory to which the repo will be cloned. If watch_type==plain, this is the path that is watched for changes to file.",
           "type": "string"
         },
         "includeSubmodules": {
