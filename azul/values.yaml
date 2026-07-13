@@ -1485,13 +1485,19 @@ plugins:
         useSmartScaler: false
         command:
           - azul-plugin-retroingestor
-        volumeMounts:
-          - name: indices
-            mountPath: "/indices"
         volumes:
           - name: indices
             persistentVolumeClaim:
               claimName: plugin-retrohunt
+          - name: shm-ramdisk
+            emptyDir:
+              medium: Memory
+              sizeLimit: 64Gi
+        volumeMounts:
+          - name: indices
+            mountPath: "/indices"
+          - name: shm-ramdisk
+            mountPath: "/dev/shm"
         envFrom:
           - configMapRef:
               name: retrohunt
@@ -1533,16 +1539,18 @@ plugins:
             image: plugin-retrohunt
             resources:
               requests:
-                memory: "4Gi"
+                memory: "32Gi"
                 cpu: "100m"
               limits:
-                memory: "4Gi"
+                memory: "32Gi"
                 cpu: "1000m"
             command:
               - azul-plugin-retroworker
             volumeMounts:
               - name: indices
                 mountPath: "/indices"
+              - name: shm-ramdisk
+                mountPath: "/dev/shm"
           content-indexer:
             template: "plugin.container.main"
             promMetricsEnabled: true
