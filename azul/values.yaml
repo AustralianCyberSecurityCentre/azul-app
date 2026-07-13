@@ -1638,6 +1638,10 @@ plugins:
       VIRUSTOTAL_APIVERSION: "v3"
       # Set to allow metric collection via push gateway.
       PLUGIN_PROMETHEUS_PUSH_GATEWAY: ""
+      # Security classification for which download requests will be processed.
+      #PLUGIN_MAX_SECURITY: "OFFICIAL"
+      # Number of suspicious or malicious AV hits required to pull a files metadata from VT.
+      #PLUGIN_MINIMUM_AV_HITS: "0"
     plugins:
       # server for pushing metadata feed to (alternative to pullFromApi)
       vtfilefeedserver:
