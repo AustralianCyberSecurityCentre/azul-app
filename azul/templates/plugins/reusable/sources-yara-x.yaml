@@ -104,6 +104,8 @@ spec:
           value: "{{ $plugin }}"
         - name: PLUGIN_GIT_SYNC_REPO
           value: {{ $source.repo}}
+        - name: PLUGIN_GIT_SYNC_PATH
+          value: /code/dest/{{ $source.syncPath | default "" }}
         - name: PLUGIN_GIT_SYNC_REF
           value: {{ $source.branch }}
         - name: PLUGIN_GIT_SYNC_DEPTH

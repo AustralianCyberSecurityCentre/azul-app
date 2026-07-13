@@ -458,6 +458,7 @@ plugins:
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
+        syncPath: "" # can specify subdirectory under /code/dest to which git repo will be cloned (e.g. syncPath: "sigs" clones repo to /code/dest/sigs)
         maxSyncFailures: 0 # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
         syncPeriod: 600 # Interval to poll the remote repo for changes, in seconds.
         env:
@@ -479,6 +480,7 @@ plugins:
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
+        syncPath: "" # can specify subdirectory under /code/dest to which git repo will be cloned (e.g. syncPath: "sigs" clones repo to /code/dest/sigs)
         maxSyncFailures: 0 # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
         syncPeriod: 600 # Interval to poll the remote repo for changes, in seconds.
 
@@ -500,6 +502,7 @@ plugins:
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
+        syncPath: "" # can specify subdirectory under /code/dest to which git repo will be cloned (e.g. `syncPath: "sigs"` clones repo to /code/dest/sigs)
         maxSyncFailures: 0 # number of consecutive sync failures before the plugin is restarted. defaults to 0 (no failures permitted) if not provided.
         syncPeriod: 600 # Interval to poll the remote repo for changes, in seconds.
 
