@@ -85,7 +85,7 @@ spec:
         - name: PLUGIN_SECURITY_OVERRIDE
           value: {{ $source.security | default "OFFICIAL" }}
         - name: PLUGIN_WATCH_PATH
-          value: /code/dest/{{ $source.path | default "" }}
+          value: /code/dest/{{ $source.watchPath | default "" }}
         - name: PLUGIN_WATCH_TYPE
           value: git
         - name: PLUGIN_WATCH_WAIT
