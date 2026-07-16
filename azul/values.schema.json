@@ -1711,6 +1711,14 @@
         "enableAutomaticAgeoffCleanup": {
           "type": "boolean"
         },
+        "env": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dispatcherEnv"
+            }
+          ]
+        },
         "backup": {
           "type": "object",
           "allOf": [
