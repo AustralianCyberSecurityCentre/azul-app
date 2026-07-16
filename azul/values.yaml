@@ -511,12 +511,16 @@ recovery:
   # 'streams' will only restore S3 artifacts
   # 'events' will only restore Kafka events
   restoreType: "all"
-  # S3 auth mode. Options are 'keys' or 'service_account'. 
+  # S3 auth mode. Options are 'keys' or 'service_account'.
   s3AuthMode: "keys"
   # This should not be the same s3 instance that Azul uses!
   externalS3Endpoint: ""
   # externalS3Endpoint: "minio-backup.internal" # NOTE - no leading http/https allowed.
   externalS3Secure: "true"
+  # Single shared bucket that holds all backup data. When set, streams and events
+  # live under folders within it, instead of in separate buckets, and externalS3Endpoint must be the plain
+  # regional host (e.g. "s3.<region>.amazonaws.com"). Leave empty for a dedicated bucket per data type.
+  externalS3Bucket: ""
   # Automatically age-off events and streams that are older than the retention of the source they are backing
   enableAutomaticAgeoff: false
   # Cleanup the automatic ageoff policy if enableAutomaticAgeoff is false,
@@ -985,7 +989,6 @@ metastore:
           memory: "2Gi"
           cpu: "1000m"
 
-
 # API server configuration
 restapi:
   readonlyMode: false
@@ -1084,10 +1087,10 @@ security:
       # Also min_priority and max_priority to allow limiting of labels to a range of valid classifications
       options: []
       # - name: FIREBALL
-      #   min_priority: "0" 
+      #   min_priority: "0"
       #   max_priority: "1000"
       # - name: TRUESTRIKE
-      #   min_priority: "0" 
+      #   min_priority: "0"
       #   max_priority: "1000"
 
     # Access control marker which is inclusively applied (ie a user must be a member of at least one to gain access).
@@ -1101,9 +1104,9 @@ security:
       prefix: "REL:"
       # Always add this group even if it was not manually added.
       origin: ""
-      # Origin alternate name. This is used if user filters all but rel:origin in Azul. If this is the case and an origin_alt_name exists 
+      # Origin alternate name. This is used if user filters all but rel:origin in Azul. If this is the case and an origin_alt_name exists
       # the filter label will show the origin_alt_name. Eg: user filters on REL:Australia only and origin_alt_name has a value of AGAO -
-      # AGAO will be the only label shown in the webui security filter. 
+      # AGAO will be the only label shown in the webui security filter.
       origin_alt_name: ""
       # names of this specific security label that can be chosen
       options: []
