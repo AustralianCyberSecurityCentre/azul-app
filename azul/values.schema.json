@@ -1679,6 +1679,9 @@
         "externalS3Secure": {
           "type": "string"
         },
+        "externalS3Bucket": {
+          "type": "string"
+        },
         "label": {
           "type": "string"
         },
