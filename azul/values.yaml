@@ -1534,6 +1534,12 @@ plugins:
                     key: redis-password
               - name: NARROW_SEARCH_PROCESSES
                 value: "5"
+              - name: CONTAINER_MEMORY_LIMIT_MI
+                valueFrom:
+                  resourceFieldRef:
+                    containerName: worker
+                    resource: limits.memory
+                    divisor: 1Mi
             image: plugin-retrohunt
             resources:
               requests:
