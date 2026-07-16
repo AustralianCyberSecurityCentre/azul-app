@@ -12,8 +12,8 @@ data:
   audit_target_proxy: "{{ .Values.auditForwarder.proxy }}"
   audit_static_headers: |-
     {{- .Values.auditForwarder.headers | mustToJson | nindent 4 }}
-  audit_excluded_log_substrings: |-
-    {{- .Values.auditForwarder.excludedLogSubstrings | mustToJson | nindent 4 }}
+  audit_excluded_log_patterns: |-
+    {{- .Values.auditForwarder.excludedLogPatterns | mustToJson | nindent 4 }}
 
   audit_cloudwatch_log_group: "{{ .Values.auditForwarder.cloudwatch_log_group }}"
   audit_cloudwatch_log_stream: "{{ .Values.auditForwarder.cloudwatch_log_stream }}"

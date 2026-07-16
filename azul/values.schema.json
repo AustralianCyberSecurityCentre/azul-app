@@ -1495,10 +1495,20 @@
             "type": ["string"]
           }
         },
-        "excludedLogSubstrings": {
+        "excludedLogPatterns": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "userAgent": {
+                "type": "string"
+              }
+            },
+            "required": ["path", "userAgent"],
+            "additionalProperties": false
           }
         }
       },

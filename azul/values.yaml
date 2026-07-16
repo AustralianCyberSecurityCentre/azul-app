@@ -371,11 +371,16 @@ auditForwarder:
   # additional static http headers to send through
   headers:
     system: "Azul"
-  # log lines containing any of these substrings are dropped before forwarding
-  # (filtered server-side in Loki)
-  excludedLogSubstrings:
-    - 'user_agent="kube-probe'
-    - 'user_agent="Blackbox Exporter'
+  # audit lines are dropped before forwarding only when BOTH the path and userAgent match.
+  # The forwarder matches these against the parsed fields, so a spoofed user_agent/referer
+  # cannot suppress audit records for other endpoints.
+  excludedLogPatterns:
+    - path: "/api/openapi.json"
+      userAgent: "Blackbox Exporter"
+    - path: "/api"
+      userAgent: "kube-probe"
+    - path: "/"
+      userAgent: "kube-probe"
   # send to destination every x seconds
   sendInterval: 30
   # Timeout for the http client that get logs from loki and forwards to the audit server.
