@@ -1549,10 +1549,10 @@ plugins:
             image: plugin-retrohunt
             resources:
               requests:
-                memory: "4Gi"
+                memory: "32Gi"
                 cpu: "100m"
               limits:
-                memory: "4Gi"
+                memory: "32Gi"
                 cpu: "1000m"
             command:
               - azul-plugin-retroworker
