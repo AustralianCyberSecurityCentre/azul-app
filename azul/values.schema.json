@@ -1498,6 +1498,22 @@
           "additionalProperties": {
             "type": ["string"]
           }
+        },
+        "excludedLogPatterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "userAgent": {
+                "type": "string"
+              }
+            },
+            "required": ["path", "userAgent"],
+            "additionalProperties": false
+          }
         }
       },
       "required": ["enabled"],
