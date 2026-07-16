@@ -1508,6 +1508,12 @@ plugins:
                 key: redis-password
           - name: NARROW_SEARCH_PROCESSES
             value: "10"
+          - name: CONTAINER_MEMORY_LIMIT_MI
+            valueFrom:
+              resourceFieldRef:
+                containerName: worker
+                resource: limits.memory
+                divisor: 1Mi
         extraContainers:
           worker:
             template: "plugin.container.main"
