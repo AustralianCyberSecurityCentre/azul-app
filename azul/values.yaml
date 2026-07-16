@@ -1506,6 +1506,8 @@ plugins:
               secretKeyRef:
                 name: "{{ .Values.secrets.redis }}"
                 key: redis-password
+          - name: NARROW_SEARCH_PROCESSES
+            value: "10"
         extraContainers:
           worker:
             template: "plugin.container.main"
@@ -1530,6 +1532,8 @@ plugins:
                   secretKeyRef:
                     name: "{{ .Values.secrets.redis }}"
                     key: redis-password
+              - name: NARROW_SEARCH_PROCESSES
+                value: "10"
             image: plugin-retrohunt
             resources:
               requests:
