@@ -30,6 +30,11 @@ data:
   {{- if ne .Values.recovery.mode "off" }}
   BK.EXTERNAL_BACKUP.ENDPOINT: "{{ .Values.recovery.externalS3Endpoint | required "Required .Values.recovery.externalS3Endpoint not specified"}}"
   BK.EXTERNAL_BACKUP.SECURE: "{{ .Values.recovery.externalS3Secure }}"
+  {{- if .Values.recovery.externalS3Bucket }}
+  # Single shared bucket for all backup data; streams/events become folders within it.
+  # When set, externalS3Endpoint must be the plain regional host (e.g. s3.<region>.amazonaws.com).
+  BK.EXTERNAL_BACKUP.BUCKET: "{{ .Values.recovery.externalS3Bucket }}"
+  {{- end }}
   {{- end }}
   BK.SOURCES: |-
     sources: 
