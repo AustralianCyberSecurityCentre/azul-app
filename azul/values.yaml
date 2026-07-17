@@ -1506,8 +1506,6 @@ plugins:
               secretKeyRef:
                 name: "{{ .Values.secrets.redis }}"
                 key: redis-password
-          - name: NARROW_SEARCH_PROCESSES
-            value: "10"
           - name: CONTAINER_MEMORY_LIMIT_MI
             valueFrom:
               resourceFieldRef:
@@ -1538,8 +1536,6 @@ plugins:
                   secretKeyRef:
                     name: "{{ .Values.secrets.redis }}"
                     key: redis-password
-              - name: NARROW_SEARCH_PROCESSES
-                value: "5"
               - name: CONTAINER_MEMORY_LIMIT_MI
                 valueFrom:
                   resourceFieldRef:
