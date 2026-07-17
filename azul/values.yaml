@@ -550,6 +550,7 @@ recovery:
   bucketRegion: ""
   # log level for backup/restore
   logLevel: "INFO"
+  env: {}
 
   backup:
     resources:
