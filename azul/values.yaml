@@ -1994,7 +1994,7 @@ images:
     stats: stats:20260717T1449-unstable@sha256:966bf31922cd837d385cb645a1f8ca110615d2bb63cc33b7de518886e64a7d62
     nsrl-lookup-server: nsrl-lookup-server:20260718T0004-unstable@sha256:28bd786e661b787b19ed855e26a8eb2d0e84967d5458cadbd88f09194b805d8a
     plugin-suricata: plugin-suricata:20260717T1629-unstable@sha256:e6d2bf994da2bfb62750866bc166921b7ec5ace91e546c4587d033778a00d50e
-    scaler: scaler:20260717T1425-unstable@sha256:01b6520d4d9d99ae7ac18a47b7bd0d88a69a9f5f3a24ecdb379f61ed472d49e1
+    scaler: scaler:20260718T0004-unstable@sha256:9c6ced7323c253c1b1a0e4c6bf4727b5832e64d3564cade958eaafa7d65fa48c
     plugin-debloat: plugin-debloat:20260717T1624-unstable@sha256:04351a36cf030d089c35a48abe150013abaef6ff7a28c8d7bb3260d73e409f0a
     plugin-yara: plugin-yara:20260717T1624-unstable@sha256:f68d3dc462735ed4de37f17c3c2fee0e8f25b21f0269f28000a5370761c95176
     plugin-portex: plugin-portex:20260717T1620-unstable@sha256:06950c993b3be9b82128e1a5d9312d0e785923c13a14e5403695d53b4a06c68b
