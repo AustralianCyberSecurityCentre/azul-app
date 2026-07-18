@@ -1952,7 +1952,7 @@ images:
     backup: backup:20260717T1449-unstable@sha256:cf876df3001cba635b0e4ad53828e50cd5c4e4aaabbccf536ba05dbcff685c31
     client: client:20260717T1506-unstable@sha256:b7160f3876e026bdc8afaf541890228dd6480e637dbab23a7df6fe799c2d891e
     dispatcher: dispatcher:20260717T1532-unstable@sha256:b38856e90a39fc0e92766e07181dbc888e77125f10bbaf4fd9ec52afe3ceb899
-    docs: docs:20260711T0000-unstable@sha256:b8e977094b275b617810b24241764c2d655d8889ef8e6291aafe069ffff58693
+    docs: docs:20260718T0001-unstable@sha256:1a58502389e94c84445509e4ae11009e9b79a6a0af6f90d3eaf89bfa93c97861
     restapi-server: restapi-server:20260717T1653-unstable@sha256:6dc9e9df6c2b4704560e0a8c5c79237fa6286abe3ff5bee28db161035bfa85b1
     webui: webui:20260717T1651-unstable@sha256:a0fc2f4ca17ee7b3a04ce7ab84c007a74121ed7efc1a8806ab20e35198bf742d
     plugin-alphabets: plugin-alphabets:20260717T1634-unstable@sha256:6208fa47faf9f9560639d422fa43ab7a4f3fb58f161161c9cfe341491c352e6b
