@@ -1990,7 +1990,7 @@ images:
     plugin-shortcut: plugin-shortcut:20260717T1629-unstable@sha256:567d73da489d666c96a8e6cdb997680313091ec349c2482c30a36f846dee756b
     plugin-tika: plugin-tika:20260717T1639-unstable@sha256:2f583b711c49426666f559574820d97456980e5f62b511d004532d39e36b0b0f
     plugin-unbox: plugin-unbox:20260717T1620-unstable@sha256:13cb6a48fc802f034e6c5e0f6bc6ef3f00574240a1682fb60c14fb1a17e957ce
-    plugin-virustotal: plugin-virustotal:20260717T1522-unstable@sha256:599785b8b9f590ab57eff9b22ab1f95e57bfeb0849711e289726426006d7bc9a
+    plugin-virustotal: plugin-virustotal:20260718T0011-unstable@sha256:e5850018b111b01b4d087db4b3b15ca7c9e7c27f99c05f5404728b29db176558
     stats: stats:20260718T0005-unstable@sha256:7fc74e6d26535b389d561178e6061ffc2d85e3123e1a5aba2c379d4eecaf6175
     nsrl-lookup-server: nsrl-lookup-server:20260718T0004-unstable@sha256:28bd786e661b787b19ed855e26a8eb2d0e84967d5458cadbd88f09194b805d8a
     plugin-suricata: plugin-suricata:20260717T1629-unstable@sha256:e6d2bf994da2bfb62750866bc166921b7ec5ace91e546c4587d033778a00d50e
