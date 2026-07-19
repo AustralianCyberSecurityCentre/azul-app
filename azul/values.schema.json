@@ -1498,6 +1498,22 @@
           "additionalProperties": {
             "type": ["string"]
           }
+        },
+        "excludedLogPatterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "userAgent": {
+                "type": "string"
+              }
+            },
+            "required": ["path", "userAgent"],
+            "additionalProperties": false
+          }
         }
       },
       "required": ["enabled"],
@@ -1689,6 +1705,9 @@
         "externalS3Secure": {
           "type": "string"
         },
+        "externalS3Bucket": {
+          "type": "string"
+        },
         "label": {
           "type": "string"
         },
@@ -1710,6 +1729,14 @@
         },
         "enableAutomaticAgeoffCleanup": {
           "type": "boolean"
+        },
+        "env": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/dispatcherEnv"
+            }
+          ]
         },
         "backup": {
           "type": "object",
