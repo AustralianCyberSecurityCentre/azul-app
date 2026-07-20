@@ -1963,7 +1963,7 @@ images:
     plugin-cape: plugin-cape:20260720T0128-unstable@sha256:a0010e6a4843c5c1dac3fe5a861a10e5f1f119680720d4f624ad9bd85b7b5c52
     plugin-de4dot: plugin-de4dot:20260720T0130-unstable@sha256:8d214240e283d917b2aa00bb34bb5c34def1078a0f70d0fb06092da305350e15
     plugin-dotnet-decompiler: plugin-dotnet-decompiler:20260720T0133-unstable@sha256:cd40cae6382da5f94335187f1aa904a98fbae88c969747f718dafa2ab91005e7
-    plugin-dotnet-deob: plugin-dotnet-deob:20260718T1540-unstable@sha256:d43e4ea0f7d1a63f944b39df5226cf2c78f4a72ae1f243c76997b7fcd871f52b
+    plugin-dotnet-deob: plugin-dotnet-deob:20260720T0137-unstable@sha256:3803c0e8cb0efa00a069811dc671b8a6bfaaa5bfb94f4c60a927843bf1bd6eb9
     plugin-email: plugin-email:20260718T1539-unstable@sha256:074ac5f6e5283fd480961918595bd40d7782ff153412fd5ad917b9e8955261c2
     plugin-entropy: plugin-entropy:20260720T0036-unstable@sha256:25211ebd1c7edeb5d1e06e5771c1872992eb45a591c02161a80a4c33798132b4
     plugin-entrypointcheck: plugin-entrypointcheck:20260720T0128-unstable@sha256:fb9bdb3bdb423470cb328b9c0324a9291a57b2d68a13330bb5a12d88ccec43dc
