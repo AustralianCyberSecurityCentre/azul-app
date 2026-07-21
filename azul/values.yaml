@@ -2004,5 +2004,5 @@ images:
     smart-string-filter: smart-string-filter:20260718T1534-unstable@sha256:8aa0a42fa7ffec06190aa3dad52a5556dbfdca03c3a3de137807999f53b0546a
     plugin-ghidra: plugin-ghidra:20260721T0318-unstable@sha256:81822b2404e641b88cb136c45f08c2188c0feef9caf59d9ac18be3ed25bdb9b3
     # plugin-report-feeds: dummy
-    plugin-report-feeds: plugin-report-feeds:20260718T1542-unstable@sha256:5a23e0f0040885dfa57b5751a347441eb73677a66f61dc072edf708971bfa78e
+    plugin-report-feeds: plugin-report-feeds:20260721T0321-unstable@sha256:63e3edf9db1ba40b70bfd466f5b869454fd4fe89fb74e6c43df44e80fd887a79
     plugin-jadx: plugin-jadx:20260720T0130-unstable@sha256:a8c646ed8f3ba22269a46b56472c2e9cf091b077ae4ee1ed473631d45060127b
