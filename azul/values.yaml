@@ -1464,6 +1464,11 @@ plugins:
     enabled: true
     # cronjob schedule to clean up hunts
     schedule: "0 2 * * *"
+    # Number of narrow-phase worker threads.
+    # Each thread can use up to roughly 512Mi of memory.
+    # if 10 threads are used we recommendation 8GB of memory allocated 
+    # to the worker.
+    max_thread_count: 10
     pvc:
       size: "1000Gi"
     # Group config applied to all retrohunt containers and extraContainers.
@@ -1520,12 +1525,6 @@ plugins:
               secretKeyRef:
                 name: "{{ .Values.secrets.redis }}"
                 key: redis-password
-          - name: CONTAINER_MEMORY_LIMIT_MI
-            valueFrom:
-              resourceFieldRef:
-                containerName: worker
-                resource: limits.memory
-                divisor: 1Mi
         extraContainers:
           worker:
             template: "plugin.container.main"
@@ -1550,12 +1549,6 @@ plugins:
                   secretKeyRef:
                     name: "{{ .Values.secrets.redis }}"
                     key: redis-password
-              - name: CONTAINER_MEMORY_LIMIT_MI
-                valueFrom:
-                  resourceFieldRef:
-                    containerName: worker
-                    resource: limits.memory
-                    divisor: 1Mi
             image: plugin-retrohunt
             resources:
               requests:
