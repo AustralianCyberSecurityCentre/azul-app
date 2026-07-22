@@ -1464,15 +1464,15 @@ plugins:
     enabled: true
     # cronjob schedule to clean up hunts
     schedule: "0 2 * * *"
-    # Number of narrow-phase worker threads.
-    # Each thread can use up to roughly 512Mi of memory.
-    # if 10 threads are used we recommendation 8GB of memory allocated 
-    # to the worker.
-    max_thread_count: 10
     pvc:
       size: "1000Gi"
     # Group config applied to all retrohunt containers and extraContainers.
     config:
+      # Number of narrow-phase worker threads.
+      # Each thread can use up to roughly 512Mi of memory.
+      # if 10 threads are used we recommendation 8GB of memory allocated 
+      # to the worker.
+      max_thread_count: 10
       # Memory limits disabled for this plugin because it causes OOM when it shouldn't due to cgroups misbehaving.
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"
