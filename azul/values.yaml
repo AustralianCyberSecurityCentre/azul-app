@@ -1470,7 +1470,7 @@ plugins:
     config:
       # Number of narrow-phase worker threads.
       # Each thread can use up to roughly 512Mi of memory.
-      # if 10 threads are used we recommendation 8GB of memory allocated 
+      # if 10 threads are used we recommend 8GB of memory allocated 
       # to the worker.
       max_thread_count: "10"
       # Memory limits disabled for this plugin because it causes OOM when it shouldn't due to cgroups misbehaving.
@@ -1552,10 +1552,10 @@ plugins:
             image: plugin-retrohunt
             resources:
               requests:
-                memory: "16Gi"
+                memory: "32Gi"
                 cpu: "100m"
               limits:
-                memory: "16Gi"
+                memory: "32Gi"
                 cpu: "1000m"
             command:
               - azul-plugin-retroworker
