@@ -1472,7 +1472,7 @@ plugins:
       # Each thread can use up to roughly 512Mi of memory.
       # if 10 threads are used we recommend 8GB of memory allocated 
       # to the worker.
-      max_thread_count: "10"
+      max_thread_count: "3"
       # Memory limits disabled for this plugin because it causes OOM when it shouldn't due to cgroups misbehaving.
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"
