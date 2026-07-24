@@ -85,6 +85,9 @@ spec:
             name: ca-cert
             subPath: ca.crt
           {{- end }}
+      {{- if and (eq $.Values.recovery.s3AuthMode "service_account") $.Values.external.filestore.serviceAccountName }}
+      serviceAccountName: {{ $.Values.external.filestore.serviceAccountName }}
+      {{- end }}
       volumes:
       - name: tmp
         emptyDir:
