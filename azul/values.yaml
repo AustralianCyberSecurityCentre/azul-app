@@ -1468,6 +1468,11 @@ plugins:
       size: "1000Gi"
     # Group config applied to all retrohunt containers and extraContainers.
     config:
+      # Number of narrow-phase worker threads.
+      # Recommend at least 4GB of RAM per worker container.
+      # if containers are getting oom-killed then either decrease the number of threads being used
+      # or increase the memory per container.
+      max_thread_count: "10"
       # Memory limits disabled for this plugin because it causes OOM when it shouldn't due to cgroups misbehaving.
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"

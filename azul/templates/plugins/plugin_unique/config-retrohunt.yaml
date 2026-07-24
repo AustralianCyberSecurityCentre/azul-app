@@ -9,5 +9,5 @@ data:
   REDIS_CLEANUP_DELAY: "{{ .Values.external.redis.cleanup_delay }}"
   REDIS_CLEANUP_RUNNING_DELAY: "{{ .Values.external.redis.cleanup_running_delay }}"
   REDIS_TTL: "{{ .Values.external.redis.ttl }}"
-  REDIS_EXCEPTION_WAIT: "{{ .Values.external.redis.exception_wait }}"
-  
+  REDIS_EXCEPTION_WAIT: "{{ .Values.external.redis.exception_wait }}"  
+  MAX_THREAD_COUNT: "{{ .Values.plugins.retrohunt.config.max_thread_count }}"
