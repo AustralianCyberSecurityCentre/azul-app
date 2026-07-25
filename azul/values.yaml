@@ -1964,7 +1964,7 @@ images:
     plugin-android-parser: plugin-android-parser:20260725T1456-unstable@sha256:7f727dc547cf66358a2d90cc3b2dc96b4039aac22a44c7ae90cae8936ce8c8c3
     plugin-assemblyline: plugin-assemblyline:20260725T1456-unstable@sha256:4650b09cea168ce91123d52ce322ca8af08089784851af222f0a8e266bfca018
     plugin-build-time-strings: plugin-build-time-strings:20260725T1520-unstable@sha256:429616245b1cfe5c06017149892720763284c1801b6adfd01c57b3e64394c42b
-    plugin-mandiant-capa: plugin-mandiant-capa:20260725T0043-unstable@sha256:8de558f6ccea82b63e7d32943ed5d4eebca860a0e14e86f0aebd2458cb1e50ef
+    plugin-mandiant-capa: plugin-mandiant-capa:20260725T1519-unstable@sha256:7ca2e2473bdc356504fb0bfb9bd36f0877d69d1e91c0c4b267a93ef49789d6d1
     plugin-cape: plugin-cape:20260725T1456-unstable@sha256:923037a658924ed37389ffd86acab370401a917122111eda8db123cb3a746307
     plugin-de4dot: plugin-de4dot:20260725T1514-unstable@sha256:82f0b74bd35cf2200ca145cf1ecae0bd237151cfa6ba189359a8c5b876eff703
     plugin-dotnet-decompiler: plugin-dotnet-decompiler:20260725T1503-unstable@sha256:6520c6431ea0a1602393303554aa046a4b471c6928056a5a1a81fba4da415ce8
