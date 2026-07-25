@@ -1999,7 +1999,7 @@ images:
     stats: stats:20260725T0012-unstable@sha256:5df401a1aa545b6c8ad450f18c1a88f1a107a735042fcbc9b6a769414d765ca4
     nsrl-lookup-server: nsrl-lookup-server:20260725T0005-unstable@sha256:9690c0528dd4b3332c326adfae253830ee150d0541767022fb240c5fbb5b5ada
     plugin-suricata: plugin-suricata:20260725T0028-unstable@sha256:a437bd5a42f1c09642b149af276e149b2275e0d57f55d5e3ef9d8d9e697d4c30
-    scaler: scaler:20260725T0002-unstable@sha256:fef9a94392d427cef10fa880897184f5e540e4c823b635148fc9f169a02eb258
+    scaler: scaler:20260725T1431-unstable@sha256:47373ad8b6b0d5d1434bb5ebc21beda2d694f13c4e9fc4ef0560fafd480a7263
     plugin-debloat: plugin-debloat:20260725T0032-unstable@sha256:523d596f12dc41584e0d450a940e2eb9ac816c530363088a1f5ade65fa7b1317
     plugin-yara: plugin-yara:20260725T0038-unstable@sha256:ed109bcadc3c8529f1bc6f635b70907e66e92dc1b179c524ef1d2999fb1c4f88
     plugin-portex: plugin-portex:20260725T0038-unstable@sha256:7242e620efcb862ac9981c6f44880a6566cdee33607340f692cd1188ec177cb6
