@@ -1996,7 +1996,7 @@ images:
     plugin-tika: plugin-tika:20260726T1727-unstable@sha256:9b244cbcce944ac6a50d0112dbe013225fedc773e21c61742c541d210a7d0f70
     plugin-unbox: plugin-unbox:20260726T1852-unstable@sha256:0ea4c6e2992cb53c5364d4d032e95665e3d1710b1c804964ce193a37eca01dbd
     plugin-virustotal: plugin-virustotal:20260726T1458-unstable@sha256:bc60a0bb89c430066621bf35500cd0aa59ab392079532e6d95981621e885eac0
-    stats: stats:20260725T1733-unstable@sha256:8b675887b16f5dbc8b094b093e26ab798c81317832fac4cf488685c3406693b9
+    stats: stats:20260726T1856-unstable@sha256:d097ce20f4dfd0d4461216acc96292c8e8fa4d52dc01fa25c23072d5ef88cc70
     nsrl-lookup-server: nsrl-lookup-server:20260726T1818-unstable@sha256:beed2e6a1e5d7b65f190f04ac426a5ee80db9536c512ce25a5830907d7eea2c3
     plugin-suricata: plugin-suricata:20260726T1839-unstable@sha256:be5f779ecc928a3350236536dacd2aafc9aeaa00ff0f6aa68343bcd1d35bcf7b
     scaler: scaler:20260726T1755-unstable@sha256:30b11b93b33cee7ec5571b5d8f71944720ca831d33614614b16d064ea5c18214
