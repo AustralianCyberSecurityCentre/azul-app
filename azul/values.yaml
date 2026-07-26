@@ -1955,7 +1955,7 @@ images:
   custom:
     audit-forwarder: audit-forwarder:20260726T1753-unstable@sha256:adb5a42e9800154e0de1c2ffe421518d7c211f7eaeaf7cc43faea58e3b4768d1
     backup: backup:20260726T1457-unstable@sha256:e6d5af07486957df560e01237ad0c5b1be87a314a5a4733d85db9cfadec46bc0
-    client: client:20260726T1921-unstable@sha256:38955009b4a6972238ef87d9af23fb99d36d346a4a9e1d04ce336192c8405c9d
+    client: client:20260726T1929-unstable@sha256:89cb01285406ae020716529c28699fff9668dd24520a43ecf9e02ea058c427ac
     dispatcher: dispatcher:20260726T1457-unstable@sha256:e3c5dc6d6f8d9e55ba4cb03da8815bcd20d6d6d9cd002acd4bc525cbf95d5ac8
     docs: docs:20260725T0001-unstable@sha256:3ebbd82f8ceb24c9cf266cdad5a35e13f88c6f6a14697f202f91bb26a73fc4c8
     restapi-server: restapi-server:20260726T1828-unstable@sha256:9bea70dcfb5f29297ef4428909545e3038ffd6540dbde0e934b7821f26854bdc
