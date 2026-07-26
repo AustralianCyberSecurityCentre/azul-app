@@ -1986,7 +1986,7 @@ images:
     plugin-netinfo: plugin-netinfo:20260726T1508-unstable@sha256:4c47470d4612633776371f2c8721a274f3bb2d86f68d33499d91021d2bcfc822
     plugin-nsrl: plugin-nsrl:20260726T1507-unstable@sha256:379d455856487778a9310bf37e4e928a38288a5971c6567f5cc084626c4fda79
     plugin-office: plugin-office:20260726T1509-unstable@sha256:9110468ea377b61333bb1c4ec95dce55ad8b775911587f8eb30e24a7230698fa
-    plugin-pdftools: plugin-pdftools:20260725T1744-unstable@sha256:0627f8d35d7a22c40b283ba84442c3dd36df385b8acc57c891952d574f0a79af
+    plugin-pdftools: plugin-pdftools:20260726T1508-unstable@sha256:54d0de612c3dd69590c84f417fbb776544191ca705d690caf5b2c7a062214969
     plugin-python: plugin-python:20260725T1755-unstable@sha256:ff371980139d7011e6599a13a22575433ecf8f21cc7258cebb945de79ce86e91
     plugin-repeated-bytes: plugin-repeated-bytes:20260726T1510-unstable@sha256:cab071b35dac73f5f54fe507eb93040d4ebadb4f9a5eceed57a267c9bc06c773
     plugin-retrohunt: plugin-retrohunt:20260725T1816-unstable@sha256:84eb51a12943a3af227d11543452d7926df012389a8ee6ce910362aa6b1c075c
