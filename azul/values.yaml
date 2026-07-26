@@ -2000,7 +2000,7 @@ images:
     nsrl-lookup-server: nsrl-lookup-server:20260725T1442-unstable@sha256:92ca6438d1a0a44c9e9ff5c3400efb66205e2b61aa4141ba07279f0cbc5ac145
     plugin-suricata: plugin-suricata:20260726T1640-unstable@sha256:459bfaa19178f50a836cdd51794396eb417f82a3a1837414fa19b5ef58311a61
     scaler: scaler:20260726T1755-unstable@sha256:30b11b93b33cee7ec5571b5d8f71944720ca831d33614614b16d064ea5c18214
-    plugin-debloat: plugin-debloat:20260726T1640-unstable@sha256:97f38042464ea6ed36cb01816f70fedb546983b14864ec13373592da1a874717
+    plugin-debloat: plugin-debloat:20260726T1801-unstable@sha256:d01570c56837a36b59adea7a2eb602f8fb647a176730015eb622e0e26e44c57d
     plugin-yara: plugin-yara:20260726T1647-unstable@sha256:907c1b47676735f38acab13187071114289a5c4d8dc7fa7f99dd546b46af8a9a
     plugin-portex: plugin-portex:20260726T1644-unstable@sha256:0d408d5025ecddacd34b4957a8da6ac07862028487d9e324d143bf3517addf07
     plugin-truncated: plugin-truncated:20260726T1645-unstable@sha256:e4d6a42e83fe2087a097ae2b746dafd2be76351d40baceb3f870d29c5b4c5fc7
