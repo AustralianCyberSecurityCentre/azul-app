@@ -112,6 +112,10 @@ spec:
         - name: PLUGIN_GIT_SYNC_SSH_KEY_PATH
           value: /etc/git-secret/ssh/id_rsa
         {{- end }}
+        {{- if $source.secretKnownHostsFile }}
+        - name: PLUGIN_GIT_SYNC_SSH_KNOWN_HOSTS_FILE
+          value: /etc/git-secret/ssh/known_hosts
+        {{- end }}
         {{- if eq ($source.sslVerify | default true) false }}
         - name: PLUGIN_GIT_SYNC_GIT_CONFIG
           value: "http.sslVerify:false"
@@ -133,6 +137,11 @@ spec:
           mountPath: /etc/git-secret/ssh/id_rsa
           subPath: id_rsa
         {{- end }}
+        {{- if $source.secretKnownHostsFile }}
+        - name: ssh_known_hosts
+          mountPath: /etc/git-secret/ssh/known_hosts
+          subPath: known_hosts
+        {{- end }}
       volumes:
       - name: tmp
         emptyDir:
@@ -148,7 +157,12 @@ spec:
           defaultMode: 0400
           secretName: {{ $source.secretSSH }}
       {{- end }}
-      
+      {{- if $source.secretKnownHostsFile}}
+      - name: ssh_known_hosts
+        secret:
+          defaultMode: 0400
+          secretName: {{ $source.secretKnownHostsFile }}
+      {{- end }}
   {{- /* Merge all the HPAs first do the default then override with any values from group then override from source */ -}}
   {{- $defaultHpa := $root.pluginSyncHPA | default dict }}
   {{- $groupHpa := (hasKey $group "hpa") | ternary $group.hpa dict }}

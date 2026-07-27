@@ -458,6 +458,7 @@ plugins:
         branch: pass
         secretEnv: pass # Secret containing HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD)
         secretSSH: blah # if using ssh auth, this is the name of the secret containing the 'id_rsa' key
+        secretKnownHostsFile: pass # if using ssh auth, this is the name of the secret containing the 'known_hosts' file
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
@@ -480,6 +481,7 @@ plugins:
         branch: pass
         secretEnv: pass # HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD)
         secretSSH: blah # if using ssh auth, this is the secret containing the 'id_rsa' key
+        secretKnownHostsFile: pass # if using ssh auth, this is the name of the secret containing the 'known_hosts' file
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
@@ -502,6 +504,7 @@ plugins:
         branch: pass
         secretEnv: pass # HTTP credentials (GITSYNC_USERNAME, GITSYNC_PASSWORD)
         secretSSH: blah # if using ssh auth, this is the secret containing the 'id_rsa' key
+        secretKnownHostsFile: pass # if using ssh auth, this is the name of the secret containing the 'known_hosts' file
         sslVerify: true # sslverify default to true
         path: lion # Path to save the downloaded package to.
         includeSubmodules: "off" # can be one of "recursive", "shallow" or "off". defaults to "off" if not provided.
