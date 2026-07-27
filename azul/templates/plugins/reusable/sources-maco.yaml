@@ -184,7 +184,7 @@ spec:
           subPath: id_rsa
         {{- end }}
         {{- if $source.secretKnownHostsFile }}
-        - name: ssh_known_hosts
+        - name: ssh-known-hosts
           mountPath: /etc/git-secret/ssh/known_hosts
           subPath: known_hosts
         {{- end }}
@@ -219,7 +219,7 @@ spec:
           secretName: {{ $source.secretSSH }}
       {{- end }}
       {{- if $source.secretKnownHostsFile}}
-      - name: ssh_known_hosts
+      - name: ssh-known-hosts
         secret:
           defaultMode: 0400
           secretName: {{ $source.secretKnownHostsFile }}
