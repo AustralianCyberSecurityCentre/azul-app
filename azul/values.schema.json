@@ -2677,6 +2677,10 @@
           "description": "The name of the secret containing the id_rsa private key for SSH clones.",
           "type": "string"
         },
+        "secretKnownHostsFile": {
+          "description": "The name of the secret containing the known_hosts file for SSH clones.",
+          "type": "string"
+        },
         "sslVerify": {
           "description": "sslverify is a boolean variable that indicates whether SSL certificate verification should be performed.",
           "type": "boolean"
