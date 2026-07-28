@@ -525,6 +525,15 @@ recovery:
   s3AuthMode: "keys"
   # This should not be the same s3 instance that Azul uses!
   externalS3Endpoint: ""
+  # Add AES encryption to files so they are encrypted at rest and in transit.
+  # Uses AES counter to encode the content when storing it in storage.
+  # (aeskey is required if state enabled or readonly is used)
+  # An AES key must also be added to the backup filestore secret under the key aeskey
+  # The AES key must be exactly 24 characters long or dispatcher will fail to boot.
+  # enabled - All incoming files are AES encrypted and all outgoing files are decrypted as required.
+  # readonly - All outgoing AES files are decrypted, no files are AES encrypted.
+  # disabled - no AES encryption is performed
+  aesState: "disabled"
   # externalS3Endpoint: "minio-backup.internal" # NOTE - no leading http/https allowed.
   externalS3Secure: "true"
   # Single shared bucket that holds all backup data. When set, streams and events
