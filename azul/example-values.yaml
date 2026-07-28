@@ -82,6 +82,7 @@ scaler:
 
 recovery:
   mode: "backup"
+  aesState: "enabled"
   externalS3Endpoint: "https://fake-s3.net"
   env:
     HTTP_PROXY: "http://not-a-real-proxy.net"
