@@ -77,6 +77,13 @@ spec:
               name: recovery
         {{- if and (eq $.Values.recovery.s3AuthMode "keys") $.Values.secrets.backupS3Keys }}
         env:
+          {{- if or (eq "enabled" ($.Values.recovery.aesState | lower)) (eq "readonly" ($.Values.recovery.aesState | lower)) }}
+          - name: BK.EXTERNAL_BACKUP.AES_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ $.Values.secrets.backupS3Keys }}
+                key: aeskey
+          {{- end }}
           - name: BK.EXTERNAL_BACKUP.ACCESS_KEY
             valueFrom:
               secretKeyRef:

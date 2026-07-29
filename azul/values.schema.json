@@ -1702,6 +1702,9 @@
           "description": "The type of S3 authentication to use.",
           "enum": ["keys", "service_account"]
         },
+        "aesState": {
+          "enum": ["disabled", "enabled", "readonly"]
+        },
         "externalS3Secure": {
           "type": "string"
         },
