@@ -849,7 +849,7 @@ dispatcher:
             cpu: "100m"
           limits:
             memory: "2Gi"
-            cpu: "1000m"
+            cpu: "4000m"
         env:
           # This cache greatly reduces calls dispatcher makes to S3 during plugin processing.
           # NOTE: Additional RAM consumed will equal DP.STREAMS.CACHE.SIZE * 1.5
