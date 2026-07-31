@@ -1485,7 +1485,7 @@ plugins:
       # The number of files processed by a threadpool at any one time during narrow phase.
       # Increasing this number will increase ram usage. If containers are getting oom-killed then
       # decreasing this number will help. 
-      chunk_size: "500"
+      chunk_size: "250"
       # Memory limits disabled for this plugin because it causes OOM when it shouldn't due to cgroups misbehaving.
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"
