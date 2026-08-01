@@ -1969,7 +1969,7 @@ images:
     docs: docs:20260801T0001-unstable@sha256:d53a6acbfe34fd3af470988ad1daaf608bb5e177c6855451769817fe647e73e8
     restapi-server: restapi-server:20260731T1947-unstable@sha256:d4700be7b578bec70d1dd65edaf2a38c230281edc99d36c52949dea48c506e29
     webui: webui:20260731T1929-unstable@sha256:17e678486efdf99344bee183c87ff5c987b00860baf7ce1f5ec0052a664b9db3
-    plugin-alphabets: plugin-alphabets:20260731T1934-unstable@sha256:c67b3f443062ee7c1d4706d1eb9bb19f15324ee73f6511ed7e50245fe722f801
+    plugin-alphabets: plugin-alphabets:20260801T0030-unstable@sha256:f4760851feaa6169ea5c2dacde8b7230db64f2926d3b3516d4bf8d4245985b20
     plugin-android-parser: plugin-android-parser:20260731T1934-unstable@sha256:d4c320be572f357e2a8af47c4d3cbac623fcae84e78ac3aec738adffd9d5228f
     plugin-assemblyline: plugin-assemblyline:20260731T1937-unstable@sha256:9b5aaf113d6499eaff436aa1d1eacd55118e8bbfa57272eb26d06a9c93bd0099
     plugin-build-time-strings: plugin-build-time-strings:20260801T0022-unstable@sha256:b660de6cde6dfb21656c2cd93c36796e543960dadde329eb7caa8006f67401d5
