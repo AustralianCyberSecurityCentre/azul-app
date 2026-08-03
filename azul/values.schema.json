@@ -1741,6 +1741,10 @@
             }
           ]
         },
+        "tmp": {
+          "description": "The /tmp size limit.",
+          "type": "string"
+        },
         "backup": {
           "type": "object",
           "allOf": [

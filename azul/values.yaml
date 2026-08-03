@@ -561,6 +561,7 @@ recovery:
   logLevel: "INFO"
   env: {}
 
+  tmp: "400Mi"
   backup:
     resources:
       requests:

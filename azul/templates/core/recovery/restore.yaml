@@ -98,7 +98,7 @@ spec:
       volumes:
       - name: tmp
         emptyDir:
-          sizeLimit: 200Mi
+          sizeLimit: "{{ .Values.recovery.tmp }}"
       - name: fcache
         persistentVolumeClaim:
           claimName: azul-restore-{{ .Values.recovery.label }}
