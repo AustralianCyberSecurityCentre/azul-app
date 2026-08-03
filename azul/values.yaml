@@ -1999,7 +1999,7 @@ images:
     plugin-pdftools: plugin-pdftools:20260803T0118-unstable@sha256:9acd7fa4b2121f9c23585d185c491355b25681a55f532cbe914eb18013132afd
     plugin-python: plugin-python:20260803T0139-unstable@sha256:89531260677483687da7c3fcce47fc3688a77e3acfbbf76b006d684e97e90f93
     plugin-repeated-bytes: plugin-repeated-bytes:20260803T0118-unstable@sha256:67d16d984d64af86a50b21ad2798899322a68b634dd7e4337b04bf17c0198357
-    plugin-retrohunt: plugin-retrohunt:20260801T1557-unstable@sha256:c345869412167007f3aca4661cbc24337579bbac34ec82242ab4c643fcdb1ffb
+    plugin-retrohunt: plugin-retrohunt:20260803T0146-unstable@sha256:7fd5871dd574722bb206b91343535fa53d7b470199886318945f5d6a883af64d
     plugin-richid: plugin-richid:20260803T0134-unstable@sha256:987561dd74577ff5caddbfb5d1c86aefa2e7800d5ae5441377b4a3019ed3db6c
     plugin-script-decoder: plugin-script-decoder:20260803T0134-unstable@sha256:971de1c546a8b9ae65159f1b5dbd26ab2cdfab4fee1f81708a34adf249542891
     plugin-shortcut: plugin-shortcut:20260803T0126-unstable@sha256:8440df31c1987863c1221c9600924b832b8b8b5475a3122909beea27b41f6f35
