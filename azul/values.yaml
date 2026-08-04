@@ -1968,7 +1968,7 @@ images:
     client: client:20260803T0205-unstable@sha256:a0355a1de9ba5446570ef347670c3dc8906ae90b62fb5b4446f00f8a54a86ac3
     dispatcher: dispatcher:20260803T0709-unstable@sha256:e245ef4f9d6d3ffb99f8bd9996b6fc747b277f849cba322de5ca1bd2275de368
     docs: docs:20260804T0132-unstable@sha256:9be4f5e5fe695f2c590c4de2766b3b803f3499031e5e472b2b9f277185b955f1
-    restapi-server: restapi-server:20260803T0709-unstable@sha256:d0da79a19e6b811817db184905e4c4ce86f63995affe1ea792b605503c339309
+    restapi-server: restapi-server:20260804T0142-unstable@sha256:93d8af1c0a2dc05dea36396a1221d7741d3b6fcaff85959087691d00279eb213
     webui: webui:20260803T0259-unstable@sha256:d4631fbf83a39cbcbe94943c4b4a562a58e4170c2b0656a5dc611ede25805b6f
     plugin-alphabets: plugin-alphabets:20260803T0217-unstable@sha256:23db1c427aba849215ec88614e44e8201eafe2cd18e28b7c426d83fb01575122
     plugin-android-parser: plugin-android-parser:20260803T0217-unstable@sha256:c426e3a2a9e3c020bc57455e94a4b36128c90aa5e63faa9ef0fd4dcc8d6939a9
@@ -1999,7 +1999,7 @@ images:
     plugin-pdftools: plugin-pdftools:20260803T0207-unstable@sha256:455a1094b224e75a983344411658305607414a0f49c73610da2d6c0610474870
     plugin-python: plugin-python:20260803T0224-unstable@sha256:9688e27905efeb4ef20663c1d319c62fb8539bf29a1212a542667e78ff8c334c
     plugin-repeated-bytes: plugin-repeated-bytes:20260803T0214-unstable@sha256:ba9678e7c8f23887800e67dbf258f0f9b977bb4d76b6b5fcfad374656650fc35
-    plugin-retrohunt: plugin-retrohunt:20260804T0130-unstable@sha256:17cb7340f8108c467568463b7dd41f4b1235f320e8fae4c7a650208e6f85a048
+    plugin-retrohunt: plugin-retrohunt:20260804T0138-unstable@sha256:b5e09d3ce8778bbccd8979816dbf92bef43b05366d360ba416fd99eb7388cf16
     plugin-richid: plugin-richid:20260803T0223-unstable@sha256:0927e9ecb0474330608676696a5f567b8921f45d06e52f45eaa4bdc45824490f
     plugin-script-decoder: plugin-script-decoder:20260803T0226-unstable@sha256:037c2aafc673d0880c669fb798b76964f93cd7baf0968787afbc315e24c41a3d
     plugin-shortcut: plugin-shortcut:20260803T0215-unstable@sha256:877a6be0e2d249ce4b4ddb45d74073d58f2e8d1b1bfab5f9f66a98a0b7148dcc
