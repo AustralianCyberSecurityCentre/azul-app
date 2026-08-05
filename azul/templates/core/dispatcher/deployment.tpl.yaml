@@ -237,7 +237,6 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
-      eq "enabled" ($.Values.recovery.aesState | lower)
       {{- if eq "enabled" (.root.Values.external.filestore.aesEnabled | lower) }}
       - name: tmp
         emptyDir:
