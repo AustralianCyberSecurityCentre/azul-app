@@ -237,9 +237,16 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
+      eq "enabled" ($.Values.recovery.aesState | lower)
+      {{- if eq "enabled" (.root.Values.external.filestore.aesEnabled | lower) }}
+      - name: tmp
+        emptyDir:
+          sizeLimit: 10Gi
+      {{- else }}
       - name: tmp
         emptyDir:
           sizeLimit: 200Mi
+      {{- end }}
       - name: tmp-file-cache
         emptyDir:
           sizeLimit: 10Gi
