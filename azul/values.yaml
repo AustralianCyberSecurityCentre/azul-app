@@ -1483,7 +1483,7 @@ plugins:
       # if containers are getting oom-killed then either decrease the number of threads being used
       # or increase the memory per container.
       max_thread_count: "10"
-      max_narrow_phase_inflight_files: "5"
+      max_narrow_phase_inflight_files: "10"
       narrow_phase_cleanup_multiplier: "4"
       max_required_strings_per_and_search: "4"
       max_required_strings_per_index: "64"
