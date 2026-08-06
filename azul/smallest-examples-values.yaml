@@ -8,6 +8,14 @@ external:
   services:
     virustotal: httpx://viruslocal.com
 
+recovery:
+  mode: "restore"
+  aesState: "enabled"
+  externalS3Endpoint: "https://fake-s3.net"
+  env:
+    HTTP_PROXY: "http://not-a-real-proxy.net"
+    HTTPS_PROXY: "http://not-a-real-proxy.net"
+
 sources:
   # a source called 'testing'
   testing:
