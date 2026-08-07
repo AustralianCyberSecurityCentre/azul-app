@@ -2000,7 +2000,7 @@ images:
     plugin-python: plugin-python:20260807T1636-unstable@sha256:02089203db993bb6c5733a91b053686d5cf67545ccd37e0290fc77333b615142
     plugin-repeated-bytes: plugin-repeated-bytes:20260807T1626-unstable@sha256:a8ab27b69d4357e5dd14100352cd356e0fc7b44036abe6aea7bb55e5bf836ab6
     plugin-retrohunt: plugin-retrohunt:20260807T1713-unstable@sha256:db7da6b53fa706b912df2faa74003204e6a0a78706cd40dff7c770c0db369b66
-    plugin-richid: plugin-richid:20260807T1632-unstable@sha256:05306b7e826e7900a380e8ee3bd1408190387cf2fdedd73f4891800bdabbe19e
+    plugin-richid: plugin-richid:20260807T1743-unstable@sha256:7c6f3cf31bff674f81bce7b7467bd363a845ec7d212f22ba1fae03580104a12a
     plugin-script-decoder: plugin-script-decoder:20260807T1747-unstable@sha256:95e14a90b78387a4bc336e9c39462964a277710873a4d03ae3df9a1f90e29895
     plugin-shortcut: plugin-shortcut:20260807T1623-unstable@sha256:9569fc4b9182a64fd2e1879afe4b416c5ae41be089a64742e4b196ac395b18da
     plugin-tika: plugin-tika:20260807T1649-unstable@sha256:6e384bcbc995bd04c9915165f520641272eff3367d2b87561e10802644983891
