@@ -1482,7 +1482,7 @@ plugins:
       # Recommend at least 4GB of RAM per worker container.
       # if containers are getting oom-killed then either decrease the number of threads being used
       # or increase the memory per container.
-      max_thread_count: "20"
+      max_thread_count: "5"
       max_narrow_phase_inflight_files: "10"
       default_narrow_phase_cleanup_multiplier: "5"
       max_required_strings_per_and_search: "16"
