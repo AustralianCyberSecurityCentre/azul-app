@@ -2014,7 +2014,7 @@ images:
     plugin-yara: plugin-yara:20260807T1557-unstable@sha256:185a3360aad99626f3a822ffacc84338325286f8c4e306075d805dd1e01dbc7d
     plugin-portex: plugin-portex:20260807T1553-unstable@sha256:b9371fe4ee36430b97b74f23fdf085fb75540c9f369be5f6305f24eec0f819e8
     plugin-truncated: plugin-truncated:20260807T1554-unstable@sha256:88f23c8a0a54d18536b988ceec6186c6a09c8679f9c250355a9cdfdb3bd633c7
-    plugin-certificates: plugin-certificates:20260807T1530-unstable@sha256:c1e8992a25808989768c9d079cf697aec11fd66846dddcbed41a0254941523e7
+    plugin-certificates: plugin-certificates:20260807T1559-unstable@sha256:8fe819ab94613419f88c326432ef41eb3614f61274c7a9f0220389d32194be31
     plugin-qrcode: plugin-qrcode:20260807T1553-unstable@sha256:4239eab8824f72fb076a3b656c818c7a74e963d77982e8016407ead02f6c4084
     smart-string-filter: smart-string-filter:20260807T1504-unstable@sha256:13dd6f18f6e4efeb47bf2e8f5cb5a9b05785c651dc26d62ae3888ae3cd81e84f
     plugin-ghidra: plugin-ghidra:20260807T1521-unstable@sha256:096ee0bbf168bb8262e4cc85987dec964faac0b01760039bd1d0ba73570c69a0
