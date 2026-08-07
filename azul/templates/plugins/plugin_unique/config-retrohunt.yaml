@@ -14,6 +14,6 @@ data:
   MAX_NARROW_PHASE_INFLIGHT_FILES: "{{ .Values.plugins.retrohunt.config.max_narrow_phase_inflight_files }}"
   DEFAULT_NARROW_PHASE_CLEANUP_MULTIPLIER: "{{ .Values.plugins.retrohunt.config.default_narrow_phase_cleanup_multiplier }}"
   MAX_REQUIRED_STRINGS_PER_AND_SEARCH: "{{ .Values.plugins.retrohunt.config.max_required_strings_per_and_search }}"
-  MAX_REQUIRED_STRING_SEARCHES_PER_INDEX: "{{ .Values.plugins.retrohunt.config.max_required_strings_per_index }}"
+  MAX_REQUIRED_STRING_SEARCHES_PER_INDEX: "{{ .Values.plugins.retrohunt.config.max_required_string_searches_per_index }}"
   MAX_BROAD_PHASE_WORKERS: "{{.Values.plugins.retrohunt.config.max_broad_phase_workers }}"
   MAX_BROAD_PHASE_TASKS: " {{ .Values.plugins.retrohunt.config.max_broad_phase_tasks }}"
