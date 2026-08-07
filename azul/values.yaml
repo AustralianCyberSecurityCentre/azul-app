@@ -1487,7 +1487,7 @@ plugins:
       default_narrow_phase_cleanup_multiplier: "2"
       max_required_strings_per_and_search: "40"
       max_required_string_searches_per_index: "64"
-      max_broad_phase_workers: "5"
+      max_broad_phase_workers: "2"
       max_broad_phase_tasks: "100000"
     
       PLUGIN_ENABLE_MEM_LIMITS: "false"
