@@ -2012,7 +2012,7 @@ images:
     scaler: scaler:20260808T0004-unstable@sha256:0caae3b28240d8409dd81dcd2b0d7ce64e6847c9b107c93e993a4b584d361707
     plugin-debloat: plugin-debloat:20260808T0024-unstable@sha256:b1f3af7a0781af1571315f19d3db557f3d637fb371da7bac72df174aaeab1dbe
     plugin-yara: plugin-yara:20260808T0033-unstable@sha256:42428842f42a13d8725d1ffd5a6c0de6ca3bba0775849ed4eea05750ebb04909
-    plugin-portex: plugin-portex:20260807T1945-unstable@sha256:628b83784444fdbde46181d2e33c19676a1f8f8e56345f65f9403f78a63cbfb9
+    plugin-portex: plugin-portex:20260808T0029-unstable@sha256:547fbbede05329798a7b999957eb05372869cd4465a36bb1b2270829712206d6
     plugin-truncated: plugin-truncated:20260808T0028-unstable@sha256:1edca87dba887c03a4b9c8c61d74e4955bd57e4ab01689ac85450b52f2843704
     plugin-certificates: plugin-certificates:20260808T0035-unstable@sha256:e8a201db19d401d46c4f3cdcb8524d3ce8e4b48693c5ef21483076e984c6dcb7
     plugin-qrcode: plugin-qrcode:20260808T0025-unstable@sha256:857de9de658a728bd4c53d522f04b1abed2e7b34a4c1edabdcfd9212a58a86c3
