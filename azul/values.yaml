@@ -2008,7 +2008,7 @@ images:
     plugin-virustotal: plugin-virustotal:20260808T1827-unstable@sha256:f7d680208b9d34d2b55a98078367f088ae55d4b6e161da0ef534ce29fad6f12a
     stats: stats:20260808T1833-unstable@sha256:f6cef2dc1fbfda493395dab4823d6a258adf6185473b8ea92d5e8a0f868a5c0a
     nsrl-lookup-server: nsrl-lookup-server:20260808T1456-unstable@sha256:f9435e9a48b35d10a87e3fd8bfefa9c8b46df57415655d2a0f2721c434716ee4
-    plugin-suricata: plugin-suricata:20260808T1848-unstable@sha256:0109ce62041321295f157492f16295d474bf79fa49e8005cfd93bbcba35284ca
+    plugin-suricata: plugin-suricata:20260808T1856-unstable@sha256:629409d7d007be16a8ef4716fd031fa0a3c7541cd1615cbf29784670d8b358bc
     scaler: scaler:20260808T1445-unstable@sha256:6645e7297c1d8b554da3e9693d7012383881439fa4b392ffdb82a0005caf5740
     plugin-debloat: plugin-debloat:20260808T1854-unstable@sha256:8719995614a5cf58381713001aa15e7a24fcfcdecd9acfc67fc08b9d1706b2b8
     plugin-yara: plugin-yara:20260808T1744-unstable@sha256:e66e63cfc34ab309c1177d7ca8cb0fa44c8ec8196fc5a9b416157c5f291e8e26
