@@ -1482,8 +1482,14 @@ plugins:
       # Recommend at least 4GB of RAM per worker container.
       # if containers are getting oom-killed then either decrease the number of threads being used
       # or increase the memory per container.
-      max_thread_count: "10"
-      # Memory limits disabled for this plugin because it causes OOM when it shouldn't due to cgroups misbehaving.
+      max_thread_count: "8"
+      max_narrow_phase_inflight_files: "10"
+      default_narrow_phase_cleanup_multiplier: "4"
+      max_required_strings_per_and_search: "40"
+      max_required_string_searches_per_index: "128"
+      max_broad_phase_workers: "5"
+      max_broad_phase_tasks: "100000"
+    
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"
       PLUGIN_INDEXERS:
@@ -1562,11 +1568,11 @@ plugins:
             image: plugin-retrohunt
             resources:
               requests:
-                memory: "4Gi"
-                cpu: "100m"
+                memory: "2Gi"
+                cpu: "500m"
               limits:
                 memory: "4Gi"
-                cpu: "1000m"
+                cpu: "5"
             command:
               - azul-plugin-retroworker
             volumeMounts:
