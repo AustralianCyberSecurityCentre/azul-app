@@ -91,15 +91,15 @@ seaweedfs:
         limits:
           memory: "8Gi"
           cpu: "2"
-      podSecurityContext:
-        enabled: true
-        runAsUser: 1000
-        runAsGroup: 3000
-        fsGroup: 2000
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 2000
-        allowPrivilegeEscalation: false
+      # podSecurityContext:
+      #   enabled: true
+      #   runAsUser: 1000
+      #   runAsGroup: 3000
+      #   fsGroup: 2000
+      # containerSecurityContext:
+      #   enabled: true
+      #   runAsUser: 2000
+      #   allowPrivilegeEscalation: false
     volume:
       enabled: true
       replicas: 1
@@ -128,15 +128,15 @@ seaweedfs:
         limits:
           memory: "8Gi"
           cpu: "2"
-      podSecurityContext:
-        enabled: true
-        runAsUser: 1000
-        runAsGroup: 3000
-        fsGroup: 2000
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 2000
-        allowPrivilegeEscalation: false
+      # podSecurityContext:
+      #   enabled: true
+      #   runAsUser: 1000
+      #   runAsGroup: 3000
+      #   fsGroup: 2000
+      # containerSecurityContext:
+      #   enabled: true
+      #   runAsUser: 2000
+      #   allowPrivilegeEscalation: false
     filer:
       enabled: true
       data:
@@ -156,15 +156,15 @@ seaweedfs:
         limits:
           memory: "8Gi"
           cpu: "2"
-      podSecurityContext:
-        enabled: true
-        runAsUser: 1000
-        runAsGroup: 3000
-        fsGroup: 2000
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 2000
-        allowPrivilegeEscalation: false
+      # podSecurityContext:
+      #   enabled: true
+      #   runAsUser: 1000
+      #   runAsGroup: 3000
+      #   fsGroup: 2000
+      # containerSecurityContext:
+      #   enabled: true
+      #   runAsUser: 2000
+      #   allowPrivilegeEscalation: false
 
     s3:
       enabled: true
@@ -180,15 +180,15 @@ seaweedfs:
         limits:
           memory: "8Gi"
           cpu: "2"
-      podSecurityContext:
-        enabled: true
-        runAsUser: 1000
-        runAsGroup: 3000
-        fsGroup: 2000
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 2000
-        allowPrivilegeEscalation: false
+      # podSecurityContext:
+      #   enabled: true
+      #   runAsUser: 1000
+      #   runAsGroup: 3000
+      #   fsGroup: 2000
+      # containerSecurityContext:
+      #   enabled: true
+      #   runAsUser: 2000
+      #   allowPrivilegeEscalation: false
     worker:
       enabled: true
       data:
@@ -208,15 +208,15 @@ seaweedfs:
         limits:
           memory: "8Gi"
           cpu: "2"
-      podSecurityContext:
-        enabled: true
-        runAsUser: 1000
-        runAsGroup: 3000
-        fsGroup: 2000
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 2000
-        allowPrivilegeEscalation: false
+      # podSecurityContext:
+      #   enabled: true
+      #   runAsUser: 1000
+      #   runAsGroup: 3000
+      #   fsGroup: 2000
+      # containerSecurityContext:
+      #   enabled: true
+      #   runAsUser: 2000
+      #   allowPrivilegeEscalation: false
 
     admin:
       enable: true
@@ -245,15 +245,15 @@ seaweedfs:
         limits:
           memory: "8Gi"
           cpu: "2"
-      podSecurityContext:
-        enabled: true
-        runAsUser: 1000
-        runAsGroup: 3000
-        fsGroup: 2000
-      containerSecurityContext:
-        enabled: true
-        runAsUser: 2000
-        allowPrivilegeEscalation: false
+      # podSecurityContext:
+      #   enabled: true
+      #   runAsUser: 1000
+      #   runAsGroup: 3000
+      #   fsGroup: 2000
+      # containerSecurityContext:
+      #   enabled: true
+      #   runAsUser: 2000
+      #   allowPrivilegeEscalation: false
 
         
   backup:
