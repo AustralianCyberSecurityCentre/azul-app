@@ -63,6 +63,204 @@ customNetworkPolicies: []
 #           - port: 80
 #             protocol: TCP
 
+
+seaweedfs:
+  main:
+    enable: true
+    global:
+      # imageRegistry: 
+      seaweedfs:
+        image:
+          name: "chrislusf/seaweedfs:4.41_large_disk_rocksdb"
+    master:
+      enabled: true
+      data:
+        type: "persistentVolumeClaim"
+        size: "10Gi"
+        storageClass: "default"
+        hostPathPrefix: /storage
+      logs:
+        type: "persistentVolumeClaim"
+        size: "10Gi"
+        storageClass: "default"
+        hostPathPrefix: /logs
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "1"
+        limits:
+          memory: "8Gi"
+          cpu: "2"
+      podSecurityContext:
+        enabled: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 2000
+        allowPrivilegeEscalation: false
+    volume:
+      enabled: true
+      replicas: 1
+      # max 4Gi file size
+      fileSizeLimitMB: 4000
+      minFreeSpacePercent: 5
+      storage: 10Gi
+      dataDirs:
+        - name: data1
+          type: "persistentVolumeClaim"
+          storageClass: "default"
+          size: "200Gi"
+        - name: data2
+          type: "persistentVolumeClaim"
+          storageClass: "default"
+          size: "200Gi"
+        - name: data3
+          type: "persistentVolumeClaim"
+          storageClass: "default"
+          size: "200Gi"
+          # maxVolumes: 7
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "1"
+        limits:
+          memory: "8Gi"
+          cpu: "2"
+      podSecurityContext:
+        enabled: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 2000
+        allowPrivilegeEscalation: false
+    filer:
+      enabled: true
+      data:
+        type: "persistentVolumeClaim"
+        storageClass: "default"
+        size: "100Gi"
+        hostPathPrefix: /storage
+      logs:
+        type: "persistentVolumeClaim"
+        storageClass: "default"
+        size: "100Gi"
+        hostPathPrefix: /logs
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "1"
+        limits:
+          memory: "8Gi"
+          cpu: "2"
+      podSecurityContext:
+        enabled: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 2000
+        allowPrivilegeEscalation: false
+
+    s3:
+      enabled: true
+      logs:
+        type: "persistentVolumeClaim"
+        size: "10Gi"
+        storageClass: "default"
+        hostPathPrefix: /logs
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "1"
+        limits:
+          memory: "8Gi"
+          cpu: "2"
+      podSecurityContext:
+        enabled: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 2000
+        allowPrivilegeEscalation: false
+    worker:
+      enabled: true
+      data:
+        type: "persistentVolumeClaim"
+        size: "10Gi"
+        storageClass: "default"
+        hostPathPrefix: /storage
+      logs:
+        type: "persistentVolumeClaim"
+        size: "10Gi"
+        storageClass: "default"
+        hostPathPrefix: /logs
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "1"
+        limits:
+          memory: "8Gi"
+          cpu: "2"
+      podSecurityContext:
+        enabled: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 2000
+        allowPrivilegeEscalation: false
+
+    admin:
+      enable: true
+      secret:
+        existingSecret: "main-seaweed"
+        userKey: "user"
+        pwKey: "password"
+      ingress:
+        enabled: true
+        className: "nginx"
+        host: "admin.seaweedfs"
+      data:
+        type: "persistentVolumeClaim"
+        size: "10Gi"
+        storageClass: "default"
+        hostPathPrefix: /storage
+      logs:
+        type: "persistentVolumeClaim"
+        size: "10Gi"
+        storageClass: "default"
+        hostPathPrefix: /logs
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "1"
+        limits:
+          memory: "8Gi"
+          cpu: "2"
+      podSecurityContext:
+        enabled: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+      containerSecurityContext:
+        enabled: true
+        runAsUser: 2000
+        allowPrivilegeEscalation: false
+
+        
+  backup:
+    enable: false
+
+
+
 minio:
   # Main instance, used to store files
   main:

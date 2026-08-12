@@ -25,22 +25,27 @@ appVersion: "11.0.0-unstable"
 
 dependencies:
   - name: loki
-    version: "6.41.1"
-    # repository: https://grafana.github.io/helm-charts
-    repository: file://charts/loki-6.41.1.tgz
+    version: "18.8.0"
+    # repository: https://grafana-community.github.io/helm-charts
+    repository: file://charts/loki-18.8.0.tgz
     condition: loki.enable
   - name: kube-prometheus-stack
-    version: "77.12.0"
+    version: "88.3.0"
     # repository: https://prometheus-community.github.io/helm-charts
-    repository: file://charts/kube-prometheus-stack-77.12.0.tgz
+    repository: file://charts/kube-prometheus-stack-88.3.0.tgz
     condition: kube-prometheus-stack.enable
   - name: prometheus-blackbox-exporter
-    version: "11.3.1"
+    version: "11.17.2"
     # repository: https://prometheus-community.github.io/helm-charts
-    repository: file://charts/prometheus-blackbox-exporter-11.3.1.tgz
+    repository: file://charts/prometheus-blackbox-exporter-11.17.2.tgz
     condition: prometheus-blackbox-exporter.enable
   - name: prometheus-pushgateway
-    version: "3.4.1"
+    version: "3.8.0"
     # repository: https://prometheus-community.github.io/helm-charts
-    repository: file://charts/prometheus-pushgateway-3.4.1.tgz
+    repository: file://charts/prometheus-pushgateway-3.8.0.tgz
     condition: prometheus-pushgateway.enable
+  - name: seaweedfs
+    version: 4.41.0
+    # repository: https://seaweedfs.github.io/seaweedfs/helm
+    repository: file://charts/seaweedfs-4.41.0.tgz
+    condition: seaweedfs.main.enable,seaweedfs.backup.enable
