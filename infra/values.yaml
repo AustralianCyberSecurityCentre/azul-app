@@ -64,8 +64,27 @@ customNetworkPolicies: []
 #             protocol: TCP
 
 
-seaweedfs:
+seaweedfsMain: &seaweedDefaults
   enabled: true
+  # common options that are needed but can't be in the default template easily.
+  # certificates:
+  #   commonName: "SeaweedFS CA"
+  #   dnsNames: []
+  #   ipAddresses: []
+  #   keyAlgorithm: RSA
+  #   keySize: 2048
+  #   duration: 2160h  # 90d
+  #   renewBefore: 360h  # 15d
+  #   ca:
+  #     duration: 87600h  # 10 years
+  #     renewBefore: 720h  # 30d
+  #   externalCertificates:
+  #     # This will avoid the need to use cert-manager and will rely on providing your own external certificates and CA
+  #     # you will need to store your provided certificates in the secret read by the different services:
+  #     # seaweedfs-master-cert, seaweedfs-filer-cert, etc. Can see any statefulset definition to see secret names
+  #     enabled: false
+  # networkPolicy:
+  #   enabled: false
   global:
     # imageRegistry: 
     seaweedfs:
@@ -220,7 +239,33 @@ seaweedfs:
       runAsUser: 2000
       allowPrivilegeEscalation: false
 
-        
+# Same as main
+seaweedfsBackup: *seaweedDefaults
+  # master:
+  #   enabled: false
+  # filer:
+  #   enabled: false
+  # volume:
+  #   enabled: false
+  
+  # allInOne:
+  #   enabled: true
+  #   s3:
+  #     enabled: true
+  #     enableAuth: true
+  # data:
+  #   type: "persistentVolumeClaim"
+  #   hostPathPrefix: /mnt/data
+  #   size: 100Gi
+
+  # resources:
+  #   limits:
+  #     cpu: "2"
+  #     memory: "2Gi"
+  #   requests:
+  #     cpu: "500m"
+  #     memory: "1Gi"
+
   # backup:
   #   enable: false
 

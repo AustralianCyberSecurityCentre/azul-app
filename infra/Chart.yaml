@@ -48,5 +48,11 @@ dependencies:
     version: 4.41.0
     # repository: https://seaweedfs.github.io/seaweedfs/helm
     repository: file://charts/seaweedfs-4.41.0.tgz
-    condition: seaweedfs.enabled
-    # alias: seaweefs-main
+    condition: seaweedfsMain.enabled
+    alias: seaweedfsMain
+  - name: seaweedfs
+    version: 4.41.0
+    # repository: https://seaweedfs.github.io/seaweedfs/helm
+    repository: file://charts/seaweedfs-4.41.0.tgz
+    condition: seaweedfsBackup.enabled
+    alias: seaweedfsBackup
