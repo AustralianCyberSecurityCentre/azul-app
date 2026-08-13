@@ -75,6 +75,13 @@ seaweedfs:
     tag: "4.41_large_disk_rocksdb"
   master:
     enabled: true
+    enableReplication: true
+    #  replication type is XYZ:
+    # X number of replica in other data centers
+    # Y number of replica in other racks in the same data center
+    # Z number of replica in other servers in the same rack
+    # effectively 1 replica within cluster
+    replicationPlacement: "001"
     data:
       type: "persistentVolumeClaim"
       size: "10Gi"
@@ -103,7 +110,7 @@ seaweedfs:
     #   allowPrivilegeEscalation: false
   volume:
     enabled: true
-    replicas: 1
+    replicas: 2
     index: "leveldbMedium"
     # max 4Gi file size
     fileSizeLimitMB: 4000
