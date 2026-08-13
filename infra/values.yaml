@@ -140,6 +140,8 @@ seaweedfs:
     #   allowPrivilegeEscalation: false
   filer:
     enabled: true
+    extraEnvironmentVars:
+      WEED_LEVELDB2_ENABLED: "false"
     data:
       type: "persistentVolumeClaim"
       storageClass: "default"
