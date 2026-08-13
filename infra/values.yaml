@@ -69,6 +69,7 @@ seaweedfs:
   global:
     # imageRegistry: 
     seaweedfs:
+      enableSecurity: true
       image:
         name: "chrislusf/seaweedfs"
   image:
@@ -76,6 +77,8 @@ seaweedfs:
   master:
     enabled: true
     enableReplication: true
+    # 200GBi to match the pvc
+    volumeSizeLimitMB: 200000
     #  replication type is XYZ:
     # X number of replica in other data centers
     # Y number of replica in other racks in the same data center
@@ -238,6 +241,7 @@ seaweedfs:
       enabled: true
       className: "nginx"
       host: "admin.seaweedfs"
+      # tls
     data:
       type: "persistentVolumeClaim"
       size: "10Gi"
