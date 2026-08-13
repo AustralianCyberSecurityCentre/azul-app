@@ -104,6 +104,7 @@ seaweedfs:
   volume:
     enabled: true
     replicas: 1
+    index: "leveldbMedium"
     # max 4Gi file size
     fileSizeLimitMB: 4000
     minFreeSpacePercent: 5
