@@ -69,6 +69,13 @@ seaweedfs:
   global:
     # imageRegistry: 
     seaweedfs:
+      enableReplication: true
+      #  replication type is XYZ:
+      # X number of replica in other data centers
+      # Y number of replica in other racks in the same data center
+      # Z number of replica in other servers in the same rack
+      # effectively 1 replica within cluster
+      replicationPlacement: "001"
       enableSecurity: true
       image:
         name: "chrislusf/seaweedfs"
@@ -76,15 +83,8 @@ seaweedfs:
     tag: "4.41_large_disk_rocksdb"
   master:
     enabled: true
-    enableReplication: true
     # 200GBi to match the pvc
     volumeSizeLimitMB: 200000
-    #  replication type is XYZ:
-    # X number of replica in other data centers
-    # Y number of replica in other racks in the same data center
-    # Z number of replica in other servers in the same rack
-    # effectively 1 replica within cluster
-    replicationPlacement: "001"
     data:
       type: "persistentVolumeClaim"
       size: "10Gi"
