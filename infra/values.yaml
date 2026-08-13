@@ -169,7 +169,6 @@ seaweedfs:
     #   enabled: true
     #   runAsUser: 2000
     #   allowPrivilegeEscalation: false
-
   s3:
     enabled: true
     logs:
@@ -195,7 +194,7 @@ seaweedfs:
     #   allowPrivilegeEscalation: false
   worker:
     enabled: true
-    adminServer: "azul-dev-infra-helm-seaweedfs-admin.svc.cluster.local:23646"
+    adminServer: "azul-dev-infra-helm-seaweedfs-admin:23646"
     data:
       type: "persistentVolumeClaim"
       size: "10Gi"
@@ -222,7 +221,6 @@ seaweedfs:
     #   enabled: true
     #   runAsUser: 2000
     #   allowPrivilegeEscalation: false
-
   admin:
     enabled: true
     secret:
