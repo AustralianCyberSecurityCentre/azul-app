@@ -190,7 +190,7 @@ seaweedfs:
     #   allowPrivilegeEscalation: false
   worker:
     enabled: true
-    adminServer: "idk"
+    adminServer: "azul-dev-infra-helm-seaweedfs-admin.svc.cluster.local:23646"
     data:
       type: "persistentVolumeClaim"
       size: "10Gi"
