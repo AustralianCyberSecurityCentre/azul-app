@@ -1483,11 +1483,18 @@ plugins:
       # if containers are getting oom-killed then either decrease the number of threads being used
       # or increase the memory per container.
       max_thread_count: "10"
-      max_narrow_phase_inflight_files: "10"
+      # Controls how frequently Retrohunt performs its explicit memory cleanup during narrow phase.
+      # The cleanup batch size is calculated from the number of active narrow workers:
+      # cleanup batch size = active workers × default_narrow_phase_cleanup_multiplier
       default_narrow_phase_cleanup_multiplier: "6"
+      # limits how many strings can be used in a batched AND biggrep search
       max_required_strings_per_and_search: "15"
+      # Sets the preferred maximum number of atom-group searches performed against each index for a rule.
+      # This is different from the number of YARA strings. One YARA string can generate many atom searches, particularly when modifiers such as nocase are used.
       max_required_string_searches_per_index: "200"
+      # number of concurrent broadphase workers
       max_broad_phase_workers: "5"
+      # max number of biggrep tasks allowed per search
       max_broad_phase_tasks: "100000"
     
       PLUGIN_ENABLE_MEM_LIMITS: "false"
