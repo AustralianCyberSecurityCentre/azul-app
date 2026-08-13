@@ -48,4 +48,5 @@ dependencies:
     version: 4.41.0
     # repository: https://seaweedfs.github.io/seaweedfs/helm
     repository: file://charts/seaweedfs-4.41.0.tgz
-    condition: seaweedfs.main.enable,seaweedfs.backup.enable
+    condition: seaweedfs-main.enable
+    alias: seaweefs-main
