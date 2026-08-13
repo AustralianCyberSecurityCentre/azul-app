@@ -1579,7 +1579,7 @@ plugins:
                 cpu: "500m"
               limits:
                 memory: "4Gi"
-                cpu: "5"
+                cpu: "1"
             command:
               - azul-plugin-retroworker
             volumeMounts:
