@@ -65,7 +65,7 @@ customNetworkPolicies: []
 
 
 seaweedfs:
-  enabled: false
+  enabled: true
   global:
     # imageRegistry: 
     seaweedfs:
@@ -118,20 +118,20 @@ seaweedfs:
     # max 4Gi file size
     fileSizeLimitMB: 4000
     minFreeSpacePercent: 5
-    storage: 10Gi
     dataDirs:
+      # Start small can always add more volumes and make them larger.
       - name: data1
         type: "persistentVolumeClaim"
         storageClass: "default"
-        size: "200Gi"
-      - name: data2
-        type: "persistentVolumeClaim"
-        storageClass: "default"
-        size: "200Gi"
-      - name: data3
-        type: "persistentVolumeClaim"
-        storageClass: "default"
-        size: "200Gi"
+        size: "100Gi"
+      # - name: data2
+      #   type: "persistentVolumeClaim"
+      #   storageClass: "default"
+      #   size: "200Gi"
+      # - name: data3
+      #   type: "persistentVolumeClaim"
+      #   storageClass: "default"
+      #   size: "200Gi"
         # maxVolumes: 7
     resources:
       requests:
