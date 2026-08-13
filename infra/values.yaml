@@ -65,7 +65,7 @@ customNetworkPolicies: []
 
 
 seaweedfs:
-  enable: true
+  enabled: true
   global:
     # imageRegistry: 
     seaweedfs:
@@ -190,6 +190,7 @@ seaweedfs:
     #   allowPrivilegeEscalation: false
   worker:
     enabled: true
+    adminServer: "idk"
     data:
       type: "persistentVolumeClaim"
       size: "10Gi"
@@ -218,7 +219,7 @@ seaweedfs:
     #   allowPrivilegeEscalation: false
 
   admin:
-    enable: true
+    enabled: true
     secret:
       existingSecret: "main-seaweed"
       userKey: "user"
