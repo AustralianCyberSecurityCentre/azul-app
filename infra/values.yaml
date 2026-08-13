@@ -70,7 +70,9 @@ seaweedfs:
     # imageRegistry: 
     seaweedfs:
       image:
-        name: "chrislusf/seaweedfs:4.41_large_disk_rocksdb"
+        name: "chrislusf/seaweedfs"
+  image:
+    tag: "4.41_large_disk_rocksdb"
   master:
     enabled: true
     data:
