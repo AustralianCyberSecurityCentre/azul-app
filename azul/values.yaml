@@ -1496,7 +1496,6 @@ plugins:
       max_broad_phase_workers: "5"
       # max number of biggrep tasks allowed per search
       max_broad_phase_tasks: "100000"
-    
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"
       PLUGIN_INDEXERS:
@@ -2012,7 +2011,7 @@ images:
     plugin-pdftools: plugin-pdftools:20260809T1732-unstable@sha256:7d0806bd7143b0bc11b25e969c723d1074aa7a67849522eea581f27af159a0a3
     plugin-python: plugin-python:20260813T0110-unstable@sha256:7c37a5b2d3f27ec77dd43006b0974a53dd8142278a8abf84d0d9d33dd53599fa
     plugin-repeated-bytes: plugin-repeated-bytes:20260809T1735-unstable@sha256:d46104f25d4e30b705d61f59c6626e7e9c7d01f9aa805cd128bce94c25fac682
-    plugin-retrohunt: plugin-retrohunt:20260809T1638-unstable@sha256:9881c2688138826d405dc2cd29dbe34aff5f2a306b4576b63415938dfe1759e1
+    plugin-retrohunt: plugin-retrohunt:20260813T0341-unstable@sha256:e0f4cf6d4e80b00a170cfb799d2d96c97634a93ee4946d107aa22116ec08ab03
     plugin-richid: plugin-richid:20260809T1740-unstable@sha256:4b34d44b4c254941b4e8702800f09d43c61c2769df5037354bff67adcb418cb4
     plugin-script-decoder: plugin-script-decoder:20260809T1746-unstable@sha256:76cd4b53dd7ae0a6c1b9e4b6e52ea3171e721a10741a5bea8d87b0bc9bec1a8c
     plugin-shortcut: plugin-shortcut:20260809T1734-unstable@sha256:6d683a19c97e521d6dd864eea5280a909c2dc6556b2aa77883aa15f53d64d769
