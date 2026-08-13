@@ -64,7 +64,7 @@ customNetworkPolicies: []
 #             protocol: TCP
 
 
-seaweedfsMain: &seaweedDefaults
+seaweedfs-main: &seaweedDefaults
   enabled: true
   # common options that are needed but can't be in the default template easily.
   # certificates:
@@ -240,7 +240,7 @@ seaweedfsMain: &seaweedDefaults
       allowPrivilegeEscalation: false
 
 # Same as main
-seaweedfsBackup: *seaweedDefaults
+seaweedfs-backup: *seaweedDefaults
   # master:
   #   enabled: false
   # filer:
