@@ -182,58 +182,6 @@ seaweedfs:
     s3:
       enabled: true
       enableAuth: true
-  # s3:
-  #   enabled: true
-  #   logs:
-  #     type: "persistentVolumeClaim"
-  #     size: "10Gi"
-  #     storageClass: "default"
-  #     hostPathPrefix: /logs
-  #   resources:
-  #     requests:
-  #       memory: "4Gi"
-  #       cpu: "1"
-  #     limits:
-  #       memory: "8Gi"
-  #       cpu: "2"
-  #   podSecurityContext:
-  #     enabled: true
-  #     runAsUser: 1000
-  #     runAsGroup: 3000
-  #     fsGroup: 2000
-  #   containerSecurityContext:
-  #     enabled: true
-  #     runAsUser: 2000
-  #     allowPrivilegeEscalation: false
-  # worker:
-  #   enabled: true
-  #   adminServer: "azul-dev-infra-helm-seaweedfs-admin:23646"
-  #   data:
-  #     type: "persistentVolumeClaim"
-  #     size: "10Gi"
-  #     storageClass: "default"
-  #     hostPathPrefix: /storage
-  #   logs:
-  #     type: "persistentVolumeClaim"
-  #     size: "10Gi"
-  #     storageClass: "default"
-  #     hostPathPrefix: /logs
-  #   resources:
-  #     requests:
-  #       memory: "4Gi"
-  #       cpu: "1"
-  #     limits:
-  #       memory: "8Gi"
-  #       cpu: "2"
-  #   podSecurityContext:
-  #     enabled: true
-  #     runAsUser: 1000
-  #     runAsGroup: 3000
-  #     fsGroup: 2000
-  #   containerSecurityContext:
-  #     enabled: true
-  #     runAsUser: 2000
-  #     allowPrivilegeEscalation: false
   admin:
     enabled: true
     secret:
