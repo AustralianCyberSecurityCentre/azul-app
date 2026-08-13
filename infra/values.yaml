@@ -65,7 +65,7 @@ customNetworkPolicies: []
 
 
 seaweedfs:
-  enabled: true
+  enabled: false
   global:
     # imageRegistry: 
     seaweedfs:
