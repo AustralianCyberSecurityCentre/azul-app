@@ -212,8 +212,11 @@ seaweedfs-main: &seaweedDefaults
       enabled: true
       className: "nginx"
       host: "admin.seaweedfs"
-      # Enable tls security on hosted ingress (https)
-      tls: true
+      # How to add TLS to this endpoint.
+      # tls:
+      #   - secretName: <tls-secret-name>
+      #     hosts:
+      #       - "admin.seaweedfs"
     data:
       type: "persistentVolumeClaim"
       size: "4Gi"
