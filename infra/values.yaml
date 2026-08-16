@@ -201,10 +201,11 @@ seaweedfs-main: &seaweedDefaults
     s3:
       enabled: true
       enableAuth: true
+      existingConfigSecret: "seaweed-s3"
   admin:
     enabled: true
     secret:
-      existingSecret: "main-seaweed"
+      existingSecret: "admin-seaweed"
       userKey: "user"
       pwKey: "password"
     ingress:

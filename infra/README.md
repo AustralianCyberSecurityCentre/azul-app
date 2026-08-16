@@ -71,6 +71,85 @@ Requirements:
     - accesskey: An access key used for Minio access.
     - secretkey: A Minio secret key.
 
+
+### SeaweedFS
+
+Seaweed comes in four components and is highly customizable, the components are:
+
+master: Master node(s) used to manage the volume and filer components.
+filer: Holds the database and the S3 access to the files stored in seaweed.
+volume: Holds the raw datafiles being stored in the S3 store.
+admin: Admin console used by the end user to access seaweed and view it's storage.
+
+Note if you are deploying for backup and main it is recommended to override the secret names so the two file stores
+can have different secrets.
+
+#### Minimum Prerequisites
+
+Configure the admin ingress found at: `admin.ingress.host` this is the hostname that will be used
+to access the seaweed admin console and is the only ingress enabled by default.
+
+The admin console requires a secret called `admin-seaweed` be created with the keys:
+`user` and `password` holding the username and password used to login to the admin console.
+(note this customized be modified under the admin section of seaweed under `admin.secret`)
+
+e.g:
+
+```yaml
+apiVersion: v1
+stringData:
+  password: Password1
+  user: admin
+kind: Secret
+metadata:
+  name: main-seaweed
+type: Opaque
+```
+
+The other secret that is required is for S3 access.
+
+To create the secret, create and modify the example s3 configuration file.
+
+You can then create a secret from the file with the following command.
+
+NOTE the secret name `seaweed-s3` is configurable in the `filer.s3.existingConfigSecret` section of the helm chart
+
+`kubectl create secret generic seaweed-s3 --from-file=seaweedfs_s3_config=s3-config.yaml`
+
+```yaml (s3-config.yaml)
+{
+  "identities": [
+    {
+      "name":"anvAdmin",
+      "credentials": [
+        {
+          "accessKey":"admins3accesskey",
+          "secretKey":"s3secretkeykeepitsecret"
+        }
+      ],
+      "actions": ["Admin","Read","Write"]
+    },
+    { 
+      "name":"anvReadOnly",
+      "credentials": [
+        {
+          "accessKey":"readonly3accesskey",
+          "secretKey":"s3secretkeykeepitsecret"
+        }
+      ],
+      "actions":["Read"]
+    }
+  ]
+}
+```
+
+Once setup the S3 access and secret keys will need to be added to the azul-app namespace.
+
+The S3 filestore endpoint will also need to be updated to point to the S3 service.
+typically the service `azul-infra-helm-seaweedfs-main-s3.infra.svc.cluster.local:8333`
+
+And for backup it will be the same but backup instead of main.
+
 ### OpenSearch
 
 OpenSearch is used to index and collate documents emitted from various components in Azul for
