@@ -109,18 +109,18 @@ seaweedfs-main: &seaweedDefaults
       size: "10Gi"
       storageClass: "default"
       hostPathPrefix: /storage
-    logs:
-      type: "persistentVolumeClaim"
-      size: "10Gi"
-      storageClass: "default"
-      hostPathPrefix: /logs
+    # logs:
+    #   type: "persistentVolumeClaim"
+    #   size: "10Gi"
+    #   storageClass: "default"
+    #   hostPathPrefix: /logs
     resources:
       requests:
-        memory: "4Gi"
-        cpu: "1"
+        memory: "256Mi"
+        cpu: "100m"
       limits:
-        memory: "8Gi"
-        cpu: "2"
+        memory: "1Gi"
+        cpu: "500m"
     podSecurityContext:
       enabled: true
       runAsUser: 1000
@@ -154,11 +154,11 @@ seaweedfs-main: &seaweedDefaults
         # maxVolumes: 7
     resources:
       requests:
-        memory: "4Gi"
-        cpu: "1"
+        memory: "8Gi"
+        cpu: "100m"
       limits:
         memory: "8Gi"
-        cpu: "2"
+        cpu: "1"
     podSecurityContext:
       enabled: true
       runAsUser: 1000
@@ -177,18 +177,18 @@ seaweedfs-main: &seaweedDefaults
       storageClass: "default"
       size: "100Gi"
       hostPathPrefix: /storage
-    logs:
-      type: "persistentVolumeClaim"
-      storageClass: "default"
-      size: "100Gi"
-      hostPathPrefix: /logs
+    # logs:
+    #   type: "persistentVolumeClaim"
+    #   storageClass: "default"
+    #   size: "10Gi"
+    #   hostPathPrefix: /logs
     resources:
       requests:
-        memory: "4Gi"
-        cpu: "1"
+        memory: "1Gi"
+        cpu: "100m"
       limits:
-        memory: "8Gi"
-        cpu: "2"
+        memory: "2Gi"
+        cpu: "500m"
     podSecurityContext:
       enabled: true
       runAsUser: 1000
@@ -214,21 +214,21 @@ seaweedfs-main: &seaweedDefaults
       # tls
     data:
       type: "persistentVolumeClaim"
-      size: "10Gi"
+      size: "4Gi"
       storageClass: "default"
       hostPathPrefix: /storage
-    logs:
-      type: "persistentVolumeClaim"
-      size: "10Gi"
-      storageClass: "default"
-      hostPathPrefix: /logs
+    # logs:
+    #   type: "persistentVolumeClaim"
+    #   size: "10Gi"
+    #   storageClass: "default"
+    #   hostPathPrefix: /logs
     resources:
       requests:
-        memory: "4Gi"
-        cpu: "1"
+        memory: "256Mi"
+        cpu: "100m"
       limits:
-        memory: "8Gi"
-        cpu: "2"
+        memory: "1Gi"
+        cpu: "500m"
     podSecurityContext:
       enabled: true
       runAsUser: 1000
@@ -239,36 +239,8 @@ seaweedfs-main: &seaweedDefaults
       runAsUser: 2000
       allowPrivilegeEscalation: false
 
-# Same as main
+# Same as main but for backup
 seaweedfs-backup: *seaweedDefaults
-  # master:
-  #   enabled: false
-  # filer:
-  #   enabled: false
-  # volume:
-  #   enabled: false
-  
-  # allInOne:
-  #   enabled: true
-  #   s3:
-  #     enabled: true
-  #     enableAuth: true
-  # data:
-  #   type: "persistentVolumeClaim"
-  #   hostPathPrefix: /mnt/data
-  #   size: 100Gi
-
-  # resources:
-  #   limits:
-  #     cpu: "2"
-  #     memory: "2Gi"
-  #   requests:
-  #     cpu: "500m"
-  #     memory: "1Gi"
-
-  # backup:
-  #   enable: false
-
 
 
 minio:
