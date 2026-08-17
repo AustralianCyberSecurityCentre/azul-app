@@ -1024,7 +1024,7 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-connect-prometheus-push-gateway
+  name: allow-ingress-seaweed-admin
 spec:
   action: ALLOW
   selector:
@@ -1037,6 +1037,48 @@ spec:
     when:
     - key: destination.port
       values: ["23646"]
+---
+{{ end }}
+{{ end }}
+
+{{ if not (has "allow-connect-prometheus-push-gateway" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-seaweed-s3
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: filer
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 8333
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 8333
+      {{- end }}
+  egress:
+    - {}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-seaweed-s3
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: filer
+  rules:
+  - to:
+    - operation:
+        ports: ["8333"]
+    when:
+    - key: destination.port
+      values: ["8333"]
 ---
 {{ end }}
 {{ end }}
