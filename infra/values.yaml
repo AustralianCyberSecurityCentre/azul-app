@@ -71,9 +71,9 @@ seaweedfs-main: &seaweedDefaults
   #   enabled: true
   #   egress:
   #     enabled: true
-  certificates:
-    externalCertificates:
-      enabled: true
+  # certificates:
+  #   externalCertificates:
+  #     enabled: true
   global:
     # imageRegistry: 
     seaweedfs:
