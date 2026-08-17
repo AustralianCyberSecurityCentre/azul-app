@@ -71,9 +71,9 @@ seaweedfs-main: &seaweedDefaults
   #   enabled: true
   #   egress:
   #     enabled: true
-  certificates:
-    externalCertificates:
-      enabled: true
+  # certificates:
+  #   externalCertificates:
+  #     enabled: true
   global:
     # imageRegistry: 
     seaweedfs:
@@ -84,7 +84,7 @@ seaweedfs-main: &seaweedDefaults
       # Z number of replica in other servers in the same rack
       # effectively 1 replica within cluster
       replicationPlacement: "001"
-      # enableSecurity: true
+      enableSecurity: true
       image:
         name: "chrislusf/seaweedfs"
   image:
@@ -98,11 +98,11 @@ seaweedfs-main: &seaweedDefaults
       size: "10Gi"
       storageClass: "default"
       hostPathPrefix: /storage
-    logs:
-      type: "persistentVolumeClaim"
-      size: "10Gi"
-      storageClass: "default"
-      hostPathPrefix: /logs
+    # logs:
+    #   type: "persistentVolumeClaim"
+    #   size: "10Gi"
+    #   storageClass: "default"
+    #   hostPathPrefix: /logs
     resources:
       requests:
         memory: "256Mi"
@@ -166,11 +166,11 @@ seaweedfs-main: &seaweedDefaults
       storageClass: "default"
       size: "100Gi"
       hostPathPrefix: /storage
-    logs:
-      type: "persistentVolumeClaim"
-      storageClass: "default"
-      size: "10Gi"
-      hostPathPrefix: /logs
+    # logs:
+    #   type: "persistentVolumeClaim"
+    #   storageClass: "default"
+    #   size: "10Gi"
+    #   hostPathPrefix: /logs
     resources:
       requests:
         memory: "1Gi"
@@ -211,11 +211,11 @@ seaweedfs-main: &seaweedDefaults
       size: "4Gi"
       storageClass: "default"
       hostPathPrefix: /storage
-    logs:
-      type: "persistentVolumeClaim"
-      size: "10Gi"
-      storageClass: "default"
-      hostPathPrefix: /logs
+    # logs:
+    #   type: "persistentVolumeClaim"
+    #   size: "10Gi"
+    #   storageClass: "default"
+    #   hostPathPrefix: /logs
     resources:
       requests:
         memory: "256Mi"
