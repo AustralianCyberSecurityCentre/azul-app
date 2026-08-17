@@ -150,6 +150,26 @@ typically the service `azul-infra-helm-seaweedfs-main-s3.infra.svc.cluster.local
 
 And for backup it will be the same but backup instead of main.
 
+
+Extra, full ingress setup with TLS looks like this:
+
+```yaml
+    ingress:
+      host: seaweedfs.main-admin.domain
+      tls:
+        - hosts:
+            - seaweedfs.main-admin.domain
+          secretName: <certificate secretname>
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+        cert-manager.io/cluster-issuer: <your-issuer-here-todo!>
+        cert-manager.io/private-key-algorithm: RSA
+        cert-manager.io/private-key-size: "4096"
+        cert-manager.io/private-key-rotation-policy: Always
+```
+
 ### OpenSearch
 
 OpenSearch is used to index and collate documents emitted from various components in Azul for
