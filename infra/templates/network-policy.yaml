@@ -1065,10 +1065,10 @@ spec:
   rules:
   - to:
     - operation:
-        ports: ["23646"]
+        ports: ["23646", "33646"]
     when:
     - key: destination.port
-      values: ["23646"]
+      values: ["23646", "33646"]
 ---
 {{ end }}
 {{ end }}
@@ -1098,19 +1098,19 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-seaweed-s3
+  name: allow-ingress-seaweed-filer
 spec:
   action: ALLOW
   selector:
     matchLabels:
-      app.kubernetes.io/component: filer
+      app.kubernetes.io/component: admin
   rules:
   - to:
     - operation:
-        ports: ["8333"]
+        ports: ["8888", "18888", "9327", "8333"]
     when:
     - key: destination.port
-      values: ["8333"]
+      values: ["8888", "18888", "9327", "8333"]
 ---
 {{ end }}
 {{ end }}
@@ -1150,7 +1150,7 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-seaweed-s3
+  name: allow-ingress-seaweed-filer
 spec:
   action: ALLOW
   selector:
@@ -1163,6 +1163,57 @@ spec:
     when:
     - key: destination.port
       values: ["8333"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-seaweed-admin
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: admin
+  rules:
+  - to:
+    - operation:
+        ports: ["23646", "33646"]
+    when:
+    - key: destination.port
+      values: ["23646", "33646"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-seaweed-master
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: master
+  rules:
+  - to:
+    - operation:
+        ports: ["9333", "19333", "9327"]
+    when:
+    - key: destination.port
+      values: ["9333", "19333", "9327"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ingress-seaweed-volume
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: volume
+  rules:
+  - to:
+    - operation:
+        ports: ["8080", "18080", "9327"]
+    when:
+    - key: destination.port
+      values: ["8080", "18080", "9327"]
 ---
 {{ end }}
 
