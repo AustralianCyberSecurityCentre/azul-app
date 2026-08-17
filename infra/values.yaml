@@ -67,25 +67,10 @@ customNetworkPolicies: []
 seaweedfs-main: &seaweedDefaults
   enabled: true
   # common options that are needed but can't be in the default template easily.
-  certificates:
-    externalCertificates:
-      # This will avoid the need to use cert-manager and will rely on providing your own external certificates and CA
-      # you will need to store your provided certificates in the secret read by the different services:
-      # seaweedfs-master-cert, seaweedfs-filer-cert, etc. Can see any statefulset definition to see secret names
-      enabled: true
-    # commonName: "SeaweedFS CA"
-    # dnsNames: []
-    # ipAddresses: []
-    # keyAlgorithm: RSA
-    # keySize: 2048
-    # duration: 2160h  # 90d
-    # renewBefore: 360h  # 15d
-    # ca:
-    #   duration: 87600h  # 10 years
-    #   renewBefore: 720h  # 30d
-
   # networkPolicy:
-  #   enabled: false
+  #   enabled: true
+  #   egress:
+  #     enabled: true
   global:
     # imageRegistry: 
     seaweedfs:

@@ -998,7 +998,50 @@ spec:
 {{ end }}
 {{ end }}
 
-# Dumping point for custom network policy.
+# --------------------------- Seaweed policies ---------------------------
+{{ if not (has "allow-connect-prometheus-push-gateway" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-seaweed-admin
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: admin
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+      - port: 23646
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+  egress:
+    - {}
+---
+{{- if .Values.istioEnabled }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-connect-prometheus-push-gateway
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: admin
+  rules:
+  - to:
+    - operation:
+        ports: ["23646"]
+    when:
+    - key: destination.port
+      values: ["23646"]
+---
+{{ end }}
+{{ end }}
+
+# --------------------------- Dumping point for custom network policy. ---------------------------
 {{- range .Values.customNetworkPolicies }}
 {{ . | toYaml | indent 0 }}
 ---
