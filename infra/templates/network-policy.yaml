@@ -1150,23 +1150,6 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-seaweed-filer
-spec:
-  action: ALLOW
-  selector:
-    matchLabels:
-      app.kubernetes.io/component: filer
-  rules:
-  - to:
-    - operation:
-        ports: ["8333"]
-    when:
-    - key: destination.port
-      values: ["8333"]
----
-apiVersion: security.istio.io/v1
-kind: AuthorizationPolicy
-metadata:
   name: allow-ingress-seaweed-admin
 spec:
   action: ALLOW
