@@ -73,8 +73,8 @@ seaweedfs-main: &seaweedDefaults
   #     enabled: true
   certificates:
     externalCertificates:
-      enabled: false
-    global:
+      enabled: true
+  global:
     # imageRegistry: 
     seaweedfs:
       enableReplication: true
