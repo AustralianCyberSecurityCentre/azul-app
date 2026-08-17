@@ -71,9 +71,9 @@ seaweedfs-main: &seaweedDefaults
   #   enabled: true
   #   egress:
   #     enabled: true
-  # certificates:
-  #   externalCertificates:
-  #     enabled: true
+  certificates:
+    externalCertificates:
+      enabled: true
   global:
     # imageRegistry: 
     seaweedfs:
@@ -84,7 +84,7 @@ seaweedfs-main: &seaweedDefaults
       # Z number of replica in other servers in the same rack
       # effectively 1 replica within cluster
       replicationPlacement: "001"
-      enableSecurity: true
+      # enableSecurity: true
       image:
         name: "chrislusf/seaweedfs"
   image:
