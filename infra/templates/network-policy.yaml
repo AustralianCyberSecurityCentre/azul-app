@@ -1070,10 +1070,23 @@ spec:
 ---
 {{ end }}
 {{ end }}
-
-
-
-
+{{ if not (has "allow-egress-seaweed-admin" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-seaweed-admin
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: admin
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+      ports:
+        - port: 9333
+---
+{{ end }}
 {{ if not (has "allow-ingress-seaweed-s3" .Values.disableNetworkPolicies) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
