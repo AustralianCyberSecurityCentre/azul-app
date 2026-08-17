@@ -209,7 +209,7 @@ spec:
           matchLabels:
             strimzi.io/cluster: azul-kafka
             strimzi.io/kind: Kafka
-      - ports:
+      ports:
         - port: 9090
         - port: 9091
         - port: 9092
