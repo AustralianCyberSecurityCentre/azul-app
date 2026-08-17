@@ -1071,6 +1071,9 @@ spec:
 {{ end }}
 {{ end }}
 
+
+
+
 {{ if not (has "allow-ingress-seaweed-s3" .Values.disableNetworkPolicies) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -1089,8 +1092,6 @@ spec:
       {{- if .Values.istioEnabled }}
       - port: 15008
       {{- end }}
-  egress:
-    - {}
 ---
 {{- if .Values.istioEnabled }}
 apiVersion: security.istio.io/v1
