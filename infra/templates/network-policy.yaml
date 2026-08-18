@@ -1144,6 +1144,10 @@ spec:
       - port: 15008
   policyTypes:
     - Ingress
+    - Egress
+  egress:
+    - ports:
+      - port: 15008
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
