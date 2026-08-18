@@ -66,7 +66,8 @@ customNetworkPolicies: []
 
 seaweedfs-main: &seaweedDefaults
   enabled: true
-  # common options that are needed but can't be in the default template easily.
+  # NOTE - if this network policy is enabled all network policy needs to be enabled.
+  # Otherwise S3 access ceases to function.
   # networkPolicy:
   #   enabled: true
   #   egress:
