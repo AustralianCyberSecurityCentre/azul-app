@@ -229,8 +229,9 @@ seaweedfs-main: &seaweedDefaults
 # Same as main but for backup
 seaweedfs-backup: *seaweedDefaults
 
-
+# DEPRECATED - FUTURE WILL BE REMOVED!!!
 minio:
+  # DEPRECATED - FUTURE WILL BE REMOVED!!!
   # Main instance, used to store files
   main:
     enable: true
@@ -271,6 +272,7 @@ minio:
       annotations: {}
 
   # Backup instance, used to store Kafka events
+  # DEPRECATED - FUTURE WILL BE REMOVED!!!
   # NOT RECOMMENDED FOR PRODUCTION USE - put your backups external to Kubernetes!
   backup:
     enable: true

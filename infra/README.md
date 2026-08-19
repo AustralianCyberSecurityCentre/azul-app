@@ -11,7 +11,8 @@ whether managed cloud services are suitable for use (such as hosted OpenSearch, 
 Product deployments included:
 
 - OpenSearch
-- Minio
+- Minio (Deprecated)
+- Seaweed
 - Kafka
 - keycloak
 - prometheus/grafana
@@ -54,6 +55,8 @@ For upgrades and full install instructions of kafka refer to the strimzi kafka d
 As well as updating strimzi operators(https://strimzi.io/)
 
 ### Minio
+
+  DEPRECATED - FUTURE WILL BE REMOVED!!!
 
 Minio is an example storage provider used to store the content of files uploaded to Azul. The
 configuration of Minio in this chart is not designed for production use (primarily because
