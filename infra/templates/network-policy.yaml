@@ -1031,20 +1031,32 @@ spec:
 
 # --------------------------- Seaweed policies ---------------------------
 # Seaweed - Network policies with istio rules
-{{ if not (has "allow-ingress-seaweed-admin" .Values.disableNetworkPolicies) }}
+{{ if not (has "allow-connect-seaweed-admin" .Values.disableNetworkPolicies) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-ingress-seaweed-admin
+  name: allow-connect-seaweed-admin
 spec:
   podSelector:
     matchLabels:
       app.kubernetes.io/component: admin
   policyTypes:
     - Ingress
+    - Egress
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: seaweedfs-backup
+      to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: seaweedfs-main
   ingress:
     - ports:
       - port: 23646
+        protocol: TCP
+      - port: 33646
         protocol: TCP
       {{- if .Values.istioEnabled }}
       - port: 15008
@@ -1070,28 +1082,11 @@ spec:
 ---
 {{ end }}
 {{ end }}
-{{ if not (has "allow-egress-seaweed-admin" .Values.disableNetworkPolicies) }}
+{{ if not (has "allow-connect-seaweed-filer" .Values.disableNetworkPolicies) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-egress-seaweed-admin
-spec:
-  podSelector:
-    matchLabels:
-      app.kubernetes.io/component: admin
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-      ports:
-        - port: 9333
----
-{{ end }}
-{{ if not (has "allow-ingress-seaweed-s3" .Values.disableNetworkPolicies) }}
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-ingress-seaweed-s3
+  name: allow-connect-seaweed-filer
 spec:
   podSelector:
     matchLabels:
@@ -1100,6 +1095,12 @@ spec:
     - Ingress
   ingress:
     - ports:
+      - port: 8888
+        protocol: TCP
+      - port: 18888
+        protocol: TCP
+      - port: 9327
+        protocol: TCP
       - port: 8333
         protocol: TCP
       {{- if .Values.istioEnabled }}
@@ -1110,7 +1111,7 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-seaweed-filer
+  name: allow-connect-seaweed-filer
 spec:
   action: ALLOW
   selector:
@@ -1127,50 +1128,44 @@ spec:
 {{ end }}
 {{ end }}
 
-# Seaweed - Istio only rules
+{{ if not (has "allow-connect-seaweed-master" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-seaweed-master
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: master
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: seaweedfs-backup
+      to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: seaweedfs-main
+  ingress:
+    - ports:
+      - port: 9333
+        protocol: TCP
+      - port: 19333
+        protocol: TCP
+      - port: 9327
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
 {{- if .Values.istioEnabled }}
-# Seaweed istio policies, regular network policies are handled by seaweed helm chart.
-# Additional networkPolicy to allow access to the istio Z-Tunnel for all seaweed components
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: seaweedfs-main-istio-ztunnel-ingress
-spec:
-  podSelector:
-    matchLabels:
-      app.kubernetes.io/name: seaweedfs-main
-  ingress:
-    - ports:
-      - port: 15008
-  policyTypes:
-    - Ingress
-    - Egress
-  egress:
-    - ports:
-      - port: 15008
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: seaweedfs-backup-istio-ztunnel-ingress
-spec:
-  podSelector:
-    matchLabels:
-      app.kubernetes.io/name: seaweedfs-backup
-  ingress:
-    - ports:
-      - port: 15008
-  policyTypes:
-    - Ingress
-    - Egress
-  egress:
-    - ports:
-      - port: 15008
----
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-seaweed-master
+  name: allow-connect-seaweed-master
 spec:
   action: ALLOW
   selector:
@@ -1184,10 +1179,47 @@ spec:
     - key: destination.port
       values: ["9333", "19333", "9327"]
 ---
+{{ end }}
+{{ end }}
+
+{{ if not (has "allow-connect-seaweed-volume" .Values.disableNetworkPolicies) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-connect-seaweed-volume
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: volume
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: seaweedfs-backup
+      to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: seaweedfs-main
+  ingress:
+    - ports:
+      - port: 8080
+        protocol: TCP
+      - port: 18080
+        protocol: TCP
+      - port: 9327
+        protocol: TCP
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
+---
+{{- if .Values.istioEnabled }}
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-seaweed-volume
+  name: allow-connect-seaweed-volume
 spec:
   action: ALLOW
   selector:
@@ -1202,6 +1234,85 @@ spec:
       values: ["8080", "18080", "9327"]
 ---
 {{ end }}
+{{ end }}
+
+
+
+# # Seaweed - Istio only rules
+# {{- if .Values.istioEnabled }}
+# # Seaweed istio policies, regular network policies are handled by seaweed helm chart.
+# # Additional networkPolicy to allow access to the istio Z-Tunnel for all seaweed components
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: seaweedfs-main-istio-ztunnel-ingress
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app.kubernetes.io/name: seaweedfs-main
+#   ingress:
+#     - ports:
+#       - port: 15008
+#   policyTypes:
+#     - Ingress
+#     - Egress
+#   egress:
+#     - ports:
+#       - port: 15008
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: seaweedfs-backup-istio-ztunnel-ingress
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app.kubernetes.io/name: seaweedfs-backup
+#   ingress:
+#     - ports:
+#       - port: 15008
+#   policyTypes:
+#     - Ingress
+#     - Egress
+#   egress:
+#     - ports:
+#       - port: 15008
+# ---
+# apiVersion: security.istio.io/v1
+# kind: AuthorizationPolicy
+# metadata:
+#   name: allow-ingress-seaweed-master
+# spec:
+#   action: ALLOW
+#   selector:
+#     matchLabels:
+#       app.kubernetes.io/component: master
+#   rules:
+#   - to:
+#     - operation:
+#         ports: ["9333", "19333", "9327"]
+#     when:
+#     - key: destination.port
+#       values: ["9333", "19333", "9327"]
+# ---
+# apiVersion: security.istio.io/v1
+# kind: AuthorizationPolicy
+# metadata:
+#   name: allow-ingress-seaweed-volume
+# spec:
+#   action: ALLOW
+#   selector:
+#     matchLabels:
+#       app.kubernetes.io/component: volume
+#   rules:
+#   - to:
+#     - operation:
+#         ports: ["8080", "18080", "9327"]
+#     when:
+#     - key: destination.port
+#       values: ["8080", "18080", "9327"]
+# ---
+# {{ end }}
 
 
 # --------------------------- Dumping point for custom network policy. ---------------------------
