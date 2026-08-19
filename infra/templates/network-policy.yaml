@@ -1115,6 +1115,9 @@ spec:
   egress:
     - ports:
       - port: 18888
+      {{- if .Values.istioEnabled }}
+      - port: 15008
+      {{- end }}
 ---
 {{- if .Values.istioEnabled }}
 apiVersion: security.istio.io/v1
