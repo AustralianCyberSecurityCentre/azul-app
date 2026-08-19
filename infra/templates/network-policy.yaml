@@ -1114,7 +1114,7 @@ spec:
     #         app.kubernetes.io/component: filer
   egress:
     - ports:
-      - port: 15008
+      - port: 18888
 ---
 {{- if .Values.istioEnabled }}
 apiVersion: security.istio.io/v1
