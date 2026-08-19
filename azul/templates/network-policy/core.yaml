@@ -92,8 +92,10 @@ spec:
     - ports:
       - port: 443
         protocol: TCP
+      # minio
       - port: 9000
         protocol: TCP
+      # seaweed
       - port: 8333
         protocol: TCP
       {{- if .Values.istioEnabled }}
