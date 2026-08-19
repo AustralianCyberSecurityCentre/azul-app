@@ -1128,7 +1128,7 @@ spec:
   action: ALLOW
   selector:
     matchLabels:
-      app.kubernetes.io/component: admin
+      app.kubernetes.io/component: filer
   rules:
   - to:
     - operation:
