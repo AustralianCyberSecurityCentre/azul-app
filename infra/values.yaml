@@ -66,15 +66,7 @@ customNetworkPolicies: []
 
 seaweedfs-main: &seaweedDefaults
   enabled: true
-  # NOTE - if this network policy is enabled all network policy needs to be enabled.
-  # Otherwise S3 access ceases to function.
-  # networkPolicy:
-  #   enabled: true
-  #   egress:
-  #     enabled: true
-  # certificates:
-  #   externalCertificates:
-  #     enabled: true
+  # Seaweed network policies are not recommended as custom policies that support istio have been created in this infra chart.
   global:
     # imageRegistry: 
     seaweedfs:
