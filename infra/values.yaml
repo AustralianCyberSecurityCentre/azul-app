@@ -65,7 +65,7 @@ customNetworkPolicies: []
 
 
 seaweedfs-main: &seaweedDefaults
-  enabled: true
+  enabled: false
   # Seaweed network policies are not recommended as custom policies that support istio have been created in this infra chart.
   global:
     # imageRegistry: 
