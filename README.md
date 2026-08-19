@@ -103,6 +103,7 @@ Here is the table of values
 | 8080      | Docs,WebUI                            | Inbound connections to the WebUI/Docs                         | Ingress        |
 | 8090      | Scaler                                | Inbound connections from Keda to Scaler.                      | Ingress        |
 | 8111      | Dispatcher,lost-tasks                 | Internal communication between dispatcher and everything else | Both           |
+| 8333      | S3 (seaweed)                          | Connection to Seaweed S3 store                                | Egress           |
 | 8850      | Assemblyline Receiver                 | Receive data from Assemblyline and hosts stats                | Ingress        |
 | 8851      | Smart string finder                   | Filter strings for restapi and hosts stats                    | Both           |
 | 8853      | NSRL lookup Server                    | Hosts the Nsrl lookup server                                  | Ingress        |

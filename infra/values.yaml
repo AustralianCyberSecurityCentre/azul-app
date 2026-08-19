@@ -63,7 +63,175 @@ customNetworkPolicies: []
 #           - port: 80
 #             protocol: TCP
 
+
+seaweedfs-main: &seaweedDefaults
+  enabled: false
+  # Seaweed network policies are not recommended as custom policies that support istio have been created in this infra chart.
+  global:
+    # imageRegistry: 
+    seaweedfs:
+      enableReplication: true
+      #  replication type is XYZ:
+      # X number of replica in other data centers
+      # Y number of replica in other racks in the same data center
+      # Z number of replica in other servers in the same rack
+      # effectively 1 replica within cluster
+      replicationPlacement: "001"
+      enableSecurity: true
+      image:
+        name: "chrislusf/seaweedfs"
+  image:
+    tag: "4.41_large_disk_rocksdb"
+  master:
+    enabled: true
+    # 200GBi to match the pvc
+    volumeSizeLimitMB: 200000
+    data:
+      type: "persistentVolumeClaim"
+      size: "10Gi"
+      storageClass: "default"
+      hostPathPrefix: /storage
+    logs:
+      type: "persistentVolumeClaim"
+      size: "10Gi"
+      storageClass: "default"
+      hostPathPrefix: /logs
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+    podSecurityContext:
+      enabled: true
+      runAsUser: 1000
+      runAsGroup: 3000
+      fsGroup: 2000
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 2000
+      allowPrivilegeEscalation: false
+  volume:
+    enabled: true
+    replicas: 2
+    index: "leveldbMedium"
+    # max 4Gi file size
+    fileSizeLimitMB: 4000
+    minFreeSpacePercent: 5
+    dataDirs:
+      # Start small can always add more volumes and make them larger.
+      - name: data1
+        type: "persistentVolumeClaim"
+        storageClass: "default"
+        size: "100Gi"
+      # - name: data2
+      #   type: "persistentVolumeClaim"
+      #   storageClass: "default"
+      #   size: "200Gi"
+      # - name: data3
+      #   type: "persistentVolumeClaim"
+      #   storageClass: "default"
+      #   size: "200Gi"
+        # maxVolumes: 7
+    resources:
+      requests:
+        memory: "8Gi"
+        cpu: "100m"
+      limits:
+        memory: "8Gi"
+        cpu: "1"
+    podSecurityContext:
+      enabled: true
+      runAsUser: 1000
+      runAsGroup: 3000
+      fsGroup: 2000
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 2000
+      allowPrivilegeEscalation: false
+  filer:
+    enabled: true
+    extraEnvironmentVars:
+      WEED_LEVELDB2_ENABLED: "false"
+    data:
+      type: "persistentVolumeClaim"
+      storageClass: "default"
+      size: "100Gi"
+      hostPathPrefix: /storage
+    logs:
+      type: "persistentVolumeClaim"
+      storageClass: "default"
+      size: "10Gi"
+      hostPathPrefix: /logs
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "100m"
+      limits:
+        memory: "2Gi"
+        cpu: "500m"
+    podSecurityContext:
+      enabled: true
+      runAsUser: 1000
+      runAsGroup: 3000
+      fsGroup: 2000
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 2000
+      allowPrivilegeEscalation: false
+    s3:
+      enabled: true
+      enableAuth: true
+      existingConfigSecret: "seaweed-s3"
+  admin:
+    enabled: true
+    secret:
+      existingSecret: "admin-seaweed"
+      userKey: "user"
+      pwKey: "password"
+    ingress:
+      enabled: true
+      className: "nginx"
+      host: "admin.seaweedfs"
+      # How to add TLS to this endpoint.
+      # tls:
+      #   - secretName: <tls-secret-name>
+      #     hosts:
+      #       - "admin.seaweedfs"
+    data:
+      type: "persistentVolumeClaim"
+      size: "4Gi"
+      storageClass: "default"
+      hostPathPrefix: /storage
+    logs:
+      type: "persistentVolumeClaim"
+      size: "10Gi"
+      storageClass: "default"
+      hostPathPrefix: /logs
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+    podSecurityContext:
+      enabled: true
+      runAsUser: 1000
+      runAsGroup: 3000
+      fsGroup: 2000
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 2000
+      allowPrivilegeEscalation: false
+
+# Same as main but for backup
+seaweedfs-backup: *seaweedDefaults
+
+# DEPRECATED - FUTURE WILL BE REMOVED!!!
 minio:
+  # DEPRECATED - FUTURE WILL BE REMOVED!!!
   # Main instance, used to store files
   main:
     enable: true
@@ -104,6 +272,7 @@ minio:
       annotations: {}
 
   # Backup instance, used to store Kafka events
+  # DEPRECATED - FUTURE WILL BE REMOVED!!!
   # NOT RECOMMENDED FOR PRODUCTION USE - put your backups external to Kubernetes!
   backup:
     enable: true
