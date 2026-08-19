@@ -1048,7 +1048,7 @@ spec:
       - podSelector:
           matchLabels:
             app.kubernetes.io/name: seaweedfs-backup
-      to:
+    - to:
       - podSelector:
           matchLabels:
             app.kubernetes.io/name: seaweedfs-main
@@ -1066,7 +1066,7 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-seaweed-admin
+  name: allow-connect-seaweed-admin
 spec:
   action: ALLOW
   selector:
@@ -1093,6 +1093,7 @@ spec:
       app.kubernetes.io/component: filer
   policyTypes:
     - Ingress
+    - Egress
   ingress:
     - ports:
       - port: 8888
@@ -1107,8 +1108,10 @@ spec:
       - port: 15008
       {{- end }}
   egress:
-    - ports:
-      - port: 18888
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/component: filer
 ---
 {{- if .Values.istioEnabled }}
 apiVersion: security.istio.io/v1
@@ -1148,7 +1151,7 @@ spec:
       - podSelector:
           matchLabels:
             app.kubernetes.io/name: seaweedfs-backup
-      to:
+    - to:
       - podSelector:
           matchLabels:
             app.kubernetes.io/name: seaweedfs-main
@@ -1202,7 +1205,7 @@ spec:
       - podSelector:
           matchLabels:
             app.kubernetes.io/name: seaweedfs-backup
-      to:
+    - to:
       - podSelector:
           matchLabels:
             app.kubernetes.io/name: seaweedfs-main
