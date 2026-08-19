@@ -1107,11 +1107,14 @@ spec:
       {{- if .Values.istioEnabled }}
       - port: 15008
       {{- end }}
+  # egress:
+    # - to:
+    #   - podSelector:
+    #       matchLabels:
+    #         app.kubernetes.io/component: filer
   egress:
-    - to:
-      - podSelector:
-          matchLabels:
-            app.kubernetes.io/component: filer
+    - ports:
+      - port: 15008
 ---
 {{- if .Values.istioEnabled }}
 apiVersion: security.istio.io/v1
