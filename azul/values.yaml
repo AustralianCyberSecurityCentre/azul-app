@@ -2009,7 +2009,7 @@ images:
     plugin-lookback: plugin-lookback:20260821T1742-unstable@sha256:958c39f674aa0f3424fc51d9a39666f5cc27e5619f2861b767b691a55d5d82cc
     plugin-malcarve: plugin-malcarve:20260821T1854-unstable@sha256:3c182ffc174b0f177ecea748ea9a8551cc3df23004d150532791293afe98426d
     plugin-netinfo: plugin-netinfo:20260821T1802-unstable@sha256:167162cd1c3d55b6136a244364a5c0ca884d4480238a8b03bc708d8f6797d011
-    plugin-nsrl: plugin-nsrl:20260821T1802-unstable@sha256:252dfc31b28d1e65b602a2542c0e13c3b31a3567612de8946cd9ddca23861b7b
+    plugin-nsrl: plugin-nsrl:20260821T1915-unstable@sha256:d89b649a44233e69ff8783156226b13f940eb09414bea5d575c5e9db9eef36b1
     plugin-office: plugin-office:20260821T1805-unstable@sha256:ee203b863cb38caaeadbbbc75c51ff20f1e0426770d1546e891a054f1b0fa838
     plugin-pdftools: plugin-pdftools:20260821T1744-unstable@sha256:073d6f355796deb8b1bd480175313a8e12539c13965d70979aefc1223cfb76cf
     plugin-python: plugin-python:20260821T1806-unstable@sha256:92a80638e16d39c318a517d95678679ec7d5ad36956b76626bf3aa5c95edfa73
