@@ -2025,7 +2025,7 @@ images:
     nsrl-lookup-server: nsrl-lookup-server:20260821T1507-unstable@sha256:abc4c7b7ccf3d8a9ece98b28fa2480b4b2a5da227a779d4892f4a36db15b8255
     plugin-suricata: plugin-suricata:20260821T1619-unstable@sha256:744a5fe83199f6bff59ed668a38f672be62a5b5d5fe1242cc836e35905b2117e
     scaler: scaler:20260821T1447-unstable@sha256:dea135e18443d5568264b35823835115a8e42f3ebbb3dac428f5c83e192152f4
-    plugin-debloat: plugin-debloat:20260821T1617-unstable@sha256:739ee15af024f5e4cf5f0c0aa172946ad6e45d701010b12ba09e7e59316f90e5
+    plugin-debloat: plugin-debloat:20260821T1651-unstable@sha256:f8f033bf3c44f57bbf6cdb65384a98ff29a20edf85cb8453bf115c235e45bf29
     plugin-yara: plugin-yara:20260821T1624-unstable@sha256:1e7939fff52c88d11e8ba756d549b06104d8d20294be4d19d9709ec91929da13
     plugin-portex: plugin-portex:20260821T1627-unstable@sha256:c3edeac0d4a463c1f8d8cbc89bec7b5a6ac1d3d949936d50ccbb13d0ffecc0a2
     plugin-truncated: plugin-truncated:20260821T1627-unstable@sha256:f1fe40976e75fb507c4ac86aebeb6ce5a377411525743c6114e3c8fadab9b03f
