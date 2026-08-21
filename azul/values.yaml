@@ -1187,6 +1187,9 @@ pluginConfig:
   RUNNER_LOG_LEVEL: "info"
   ENABLE_MEM_LIMITS: "true"
   PLUGIN_DEPTH_LIMIT: "10"
+  # By default all plugins should attempt to not lose jobs when they are asked to terminate (via sigterm or sigkill)
+  PLUGIN_GRACEFUL_SHUTDOWN: "true"
+
 
 # enable/disable all plugins
 # use when restoring from backup or during an upgrade
