@@ -2008,7 +2008,7 @@ images:
     plugin-lief: plugin-lief:20260822T1504-unstable@sha256:fc75e4055f7f9931e055cad29a42b8159a055048c9058ca32482b3c97e633473
     plugin-lookback: plugin-lookback:20260822T0020-unstable@sha256:6035fcb7b459ada3951a8c862073e99d831cb802e36e39ff0ef1320288e06738
     plugin-malcarve: plugin-malcarve:20260822T1505-unstable@sha256:29c35221438e39511f325aa1a5423598f5ba78e560ecc91902fc7cddc1858b63
-    plugin-netinfo: plugin-netinfo:20260822T0039-unstable@sha256:c1166f788190132ca6af3648183863645556d480f3cc9432d67d46327e6ca03c
+    plugin-netinfo: plugin-netinfo:20260822T1509-unstable@sha256:61d3214ad091c8b02b313b4c57cf755d09aeade59298ba4c6cc5723bbf2834c2
     plugin-nsrl: plugin-nsrl:20260822T1452-unstable@sha256:b26c6a8532cb04b811e70467cdf99631cc967b41b2719e7fabbbd1c36814a1ab
     plugin-office: plugin-office:20260822T0031-unstable@sha256:d880be96cfec9201725ab7bb026bedd36080e2aef3d842ef1f3961053c306677
     plugin-pdftools: plugin-pdftools:20260822T0026-unstable@sha256:0edb897d6609b1c849964dc49f40e1040e6178f8080e1e461f0210d2f6363f93
