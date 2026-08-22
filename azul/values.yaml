@@ -2024,7 +2024,7 @@ images:
     stats: stats:20260809T1721-unstable@sha256:9b13024b12325c4945572e0004f5e7872b7e4085b678aacaa7bf2a345fb83aa2
     nsrl-lookup-server: nsrl-lookup-server:20260822T0004-unstable@sha256:411628d594dae71cdb7fb6cc31781a14fa6b4d5f57c614bc71fb1394d27704f1
     plugin-suricata: plugin-suricata:20260822T0025-unstable@sha256:0facb84ff961098c6a94f745e406208faae169a13c05c778142b9e0be41eba7b
-    scaler: scaler:20260822T0004-unstable@sha256:4d5c6b0fd84e0a5092dec295b8dfa30195050c86ad26cb44b34efad8bce881a8
+    scaler: scaler:20260822T1423-unstable@sha256:6490af3504bb0a23e9e6268401e81a852ff8f1ca89ded949c9a6d9eb8cc35047
     plugin-debloat: plugin-debloat:20260822T0022-unstable@sha256:bb671db43e9c16b3574000a810d62c1e89a0a615b44505401448ff5d740b35db
     plugin-yara: plugin-yara:20260822T0028-unstable@sha256:4bc41054af52d5938b3afa7017161389ece35936849f8f5d687db49f6b0868a6
     plugin-portex: plugin-portex:20260822T0028-unstable@sha256:9fb4111d634a6157a586fd6b54db00188cf5b94b179aed7fe94883ba358f31b8
