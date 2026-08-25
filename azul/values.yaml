@@ -2018,7 +2018,7 @@ images:
     plugin-richid: plugin-richid:20260825T2308-unstable@sha256:518ed02a7489fbb50027e696399b264a64a1dc9dbdd6302edaa755818e4b803a
     plugin-script-decoder: plugin-script-decoder:20260825T2306-unstable@sha256:43b1a56bb1eac4d9fb8a33d5fd5854c562fe0baa31b639593ef7daf470014956
     plugin-shortcut: plugin-shortcut:20260825T2253-unstable@sha256:b014795a612c8bb3533159bea58392e04fa1bb63606569b02b472f9eb56e4a94
-    plugin-tika: plugin-tika:20260825T2220-unstable@sha256:7167af56f811021399208cb29d5b7ec239992643333e68d61ec30c9218e0ebd8
+    plugin-tika: plugin-tika:20260825T2320-unstable@sha256:3a94c98449a7a2de55859e199d93aab84bfdf5022f034c274e33780ff29bce4e
     plugin-unbox: plugin-unbox:20260825T2217-unstable@sha256:473b0990007655d660c13dcd361368c7fbf2ca21aee04ae1a0130e49b8b5ba40
     plugin-virustotal: plugin-virustotal:20260825T2205-unstable@sha256:d406df967937eaf4e8c46aaa9aeb293c56976633c29c88a1fb652cef0c8af41a
     stats: stats:20260825T0425-unstable@sha256:55a4b30c8e6f22f2ec4299078aab2d412e704ae372c011666f40256aa0699040
