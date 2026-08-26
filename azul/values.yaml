@@ -2012,7 +2012,7 @@ images:
     plugin-nsrl: plugin-nsrl:20260826T0249-unstable@sha256:aa76ce321a676a954ce3325747d0dc52431b211fd906a845872e54e12167a557
     plugin-office: plugin-office:20260825T2305-unstable@sha256:77f95fa9c626e218a8e56f620c0356deb62ada2bd857c83e48b033a17347eb8a
     plugin-pdftools: plugin-pdftools:20260826T0251-unstable@sha256:5668498f0dfe7b7e0e61505b08a3a7da81cde225a300bb3d4b183659b2d95ae6
-    plugin-python: plugin-python:20260825T2313-unstable@sha256:ebaf5dcdcb0a6589129ed933e73d9238c33f52a90b56fc368c50a0ab2bfaf08c
+    plugin-python: plugin-python:20260826T0257-unstable@sha256:ce91764791309ca145b1ad0a83b8513ab08342bad4d220df1167a619ecc8e348
     plugin-repeated-bytes: plugin-repeated-bytes:20260825T2256-unstable@sha256:a0d45e4809ac87fde69db063869f554d275bdcf629a116657ed2d6fc02eb5e72
     plugin-retrohunt: plugin-retrohunt:20260825T2322-unstable@sha256:6495d072f4db102288efb747236d4d8bff994c3c9b6feea60fa339358974f7f9
     plugin-richid: plugin-richid:20260825T2308-unstable@sha256:518ed02a7489fbb50027e696399b264a64a1dc9dbdd6302edaa755818e4b803a
