@@ -1979,7 +1979,7 @@ images:
   # images that form part of an azul release
   custom:
     audit-forwarder: audit-forwarder:20260822T1411-unstable@sha256:2f9677be7719d77f2b5faa25c6f4568d0e813d3ff50ce040c1dcee9b4e8b93a4
-    backup: backup:20260826T2209-unstable@sha256:59a7d5c0b225b55dc8c1b864adffc8d1b1e8ff2a719b54e5537d91dd40058ab3
+    backup: backup:20260828T0618-unstable@sha256:6a70d3f248ca883ffec02610517925231bcfded1d850fb465658f00a9cca04bc
     client: client:20260826T2211-unstable@sha256:44f92a5c1035f397b545734cbc25a85a068e7fab9b0191207d31f1fee266dc79
     dispatcher: dispatcher:20260827T0623-unstable@sha256:e1001b74b0eadcc25f621f3f00c0820bdb15770307a6974ed6aa038c5133ba5c
     docs: docs:20260822T0001-unstable@sha256:b974af0f0ecec1bf06dac8fc64a1728b554bd0afc4506653b96303239fd57e72
