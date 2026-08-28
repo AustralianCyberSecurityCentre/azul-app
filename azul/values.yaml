@@ -1983,7 +1983,7 @@ images:
     client: client:20260828T1900-unstable@sha256:2c2dc8e1ff2205709bdd08f2a47f3b267ad4ba76609a3147f0c6f72b234f4f85
     dispatcher: dispatcher:20260828T1842-unstable@sha256:afb26b9e4cd403949b31d8a460c87b3c732c426a2624c9ea6a59bb29e1d46be6
     docs: docs:20260822T0001-unstable@sha256:b974af0f0ecec1bf06dac8fc64a1728b554bd0afc4506653b96303239fd57e72
-    restapi-server: restapi-server:20260828T1937-unstable@sha256:9692f43cfc022fcb2a0411fa7e912b1af106f0791c05da5980bc02d1ea81210e
+    restapi-server: restapi-server:20260828T1949-unstable@sha256:fa5cef3186148c3b82409dbfa2c395b9945f877adeede4f09199c4625f2b85d5
     webui: webui:20260828T1842-unstable@sha256:4b366150cc61fedeac0d2fea0656b0273ac532db51939c6c1d2e4afead113658
     plugin-alphabets: plugin-alphabets:20260828T1912-unstable@sha256:40b20c7291a55313c9cb2e54506d7834d605df07495c362e70c046b41b2e3ecc
     plugin-android-parser: plugin-android-parser:20260828T1911-unstable@sha256:3662355f4b87e5d56fb495ea67a5b777218fb81a917cd955c06db95ec03dd73f
