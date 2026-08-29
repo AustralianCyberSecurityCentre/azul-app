@@ -2015,7 +2015,7 @@ images:
     plugin-python: plugin-python:20260829T1515-unstable@sha256:64d732bab575103ed5c831016bf590bd7420073e0bc1e9c0f31034136795b1bd
     plugin-repeated-bytes: plugin-repeated-bytes:20260829T1624-unstable@sha256:61b55256cce422ba522fbaea12de2659fafb4075dba641af8bbf42a914c568cf
     plugin-retrohunt: plugin-retrohunt:20260829T1533-unstable@sha256:b36831e531427ca21b309dfe6c3edf80e73da357def4e5e7415158148bd6d79a
-    plugin-richid: plugin-richid:20260829T1526-unstable@sha256:9bf41bd3d231635c07486f3508b16f816e0408eb092584082a442c8eaea8268f
+    plugin-richid: plugin-richid:20260829T1633-unstable@sha256:82c36d53289b413b12bce677f38ad2d5a08f071d202898a49d71d2606168600c
     plugin-script-decoder: plugin-script-decoder:20260829T1620-unstable@sha256:6759bb28a853f199895bf37d37833d2caf5834c6e45483087eab0f2ba6b8a0c0
     plugin-shortcut: plugin-shortcut:20260829T1526-unstable@sha256:ac29427fb3b03ba40f66f894cd696e36536304b1e94bb550e095df029dc2ef6e
     plugin-tika: plugin-tika:20260829T1633-unstable@sha256:c5949f4579ff43539ac7a4f5a762c568025d299e5154e42614e5a8debb04a4cc
