@@ -1978,7 +1978,7 @@ images:
   customRegistry: docker.io/asdazul/
   # images that form part of an azul release
   custom:
-    audit-forwarder: audit-forwarder:20260829T1413-unstable@sha256:378457eed903a6b312ca0023125b60c98823ac12404e7108e60f0ef7e7ffb72d
+    audit-forwarder: audit-forwarder:20260829T1640-unstable@sha256:4837218c53bad321d0ba684e66806cb0ec5d7b4685e10bc21eab8916297dcfc6
     backup: backup:20260829T0017-unstable@sha256:44e2a34bda91d85c87968f3c701c6b91b9064274a800fa12912266abafad284c
     client: client:20260829T1440-unstable@sha256:1122a683fe66296c2cac01ff0cfccd5478b6dbc31c9a6f4c782619eacc18dfda
     dispatcher: dispatcher:20260829T1452-unstable@sha256:a99dd5313dedbd51698fb1b16cd47155d635481aebbbcc75a28cf7c6ca33593a
