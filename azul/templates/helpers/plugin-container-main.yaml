@@ -1,11 +1,11 @@
 {{- define "plugin.container.main" -}}
-{{- $root := .root.Values}}
+{{- $root := .root.Values -}}
 {{/* standard main container for plugin */}}
-{{- if .container_name }}
+{{- if .container_name -}}
 - name: {{ .container_name }}
-{{- else }}
+{{- else -}}
 - name: main
-{{- end}}  
+{{- end -}}
 {{- if .plugin.image }}
   image: {{ include "image.custom" (dict "images" $root.images "name" .plugin.image )}}
 {{- else if .k }}
@@ -94,6 +94,9 @@
   - name: PLUGIN_HEADERS
     value: |-
       {{- include "server.headers.envs" (dict "Values" $root "inputCsp" .plugin.ingress.security.csp ) | nindent 6  }}
+  {{- end }}
+  {{- if gt (len (default (list) .envOverrides)) 1 }}
+    {{-  tpl (.envOverrides | toYaml) .root | nindent 2 }}
   {{- end }}
   envFrom:
   # Plugin ref first so the plugin specific settings will override standard settings.
