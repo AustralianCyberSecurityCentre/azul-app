@@ -389,7 +389,7 @@ plugins:
             envOverride:
               - name: PLUGIN_CAPE_SERVER
                 value: http://localhost:8001
-              - name: PLUGIN_CAPE_AUTH_TOKEN
+              - name: PLUGIN_SECRET_CAPE_AUTH_TOKEN
                 valueFrom:
                   secretKeyRef:
                     name: "plugin-cape"
@@ -398,7 +398,7 @@ plugins:
             envOverride:
               - name: PLUGIN_CAPE_SERVER
                 value: http://localhost:8002
-              - name: PLUGIN_CAPE_AUTH_TOKEN
+              - name: PLUGIN_SECRET_CAPE_AUTH_TOKEN
                 valueFrom:
                   secretKeyRef:
                     name: "plugin-cape"
@@ -407,7 +407,7 @@ plugins:
             envOverride:
               - name: PLUGIN_CAPE_SERVER
                 value: http://localhost:8003
-              - name: PLUGIN_CAPE_AUTH_TOKEN
+              - name: PLUGIN_SECRET_CAPE_AUTH_TOKEN
                 valueFrom:
                   secretKeyRef:
                     name: "plugin-cape"

@@ -2594,10 +2594,6 @@
                     "$ref": "#/definitions/pluginEnv"
                   }
                 ]
-              },
-              "secretKey":{
-                "description": "Key within the cape secret to get the SECRET_PLUGIN_CAPE_AUTH_TOKEN value with.",
-                "type": "string"
               }
             },
             "required": ["nameSuffix"]
