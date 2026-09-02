@@ -192,6 +192,9 @@ secrets:
   #   apikey: <apikey-from-vt> # When you signup for virustotal you get an API key to use there API, that value is required here.
   virustotalCreds: "virustotal-creds"
 
+  # Azureblog connection string for storing/pulling virustotal metatdata
+  azureStorageCreds: "azure-storage-creds"
+
   # Backup S3 credentials used to backup important kafka data to an S3 instance.
   # data:
   #   access_key: <access-key-from-backup-minio-or-s3> # Access key / username from S3 UI.
@@ -1660,8 +1663,10 @@ plugins:
     # Use a demo configuration for the virustotal plugin.
     demoConfig: false
     # If `true`, creates a CronJob to download the VT filefeed metadata.
-    # hit virustotal api using credentials and pull metadata feed
+    # If true run cronjob to pull virustotal metadata from either virustotal or azure blobstorage
     pullFromApi: false
+    # If true cronjob will pull data from Virustotal (must have VT api key)
+    pullFromVT: false
     config:
       # Choose between "v2" or "v3" of the virustotal API.
       VIRUSTOTAL_APIVERSION: "v3"
@@ -1690,7 +1695,7 @@ plugins:
           - name: RULES_ROOT
             value: /rules
         args:
-          - "filefeed"
+          - "filefeedserver"
         volumeMounts:
           - name: data
             mountPath: /data

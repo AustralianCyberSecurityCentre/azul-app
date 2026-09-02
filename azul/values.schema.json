@@ -229,6 +229,9 @@
         "virustotalCreds": {
           "type": "string"
         },
+        "azureStorageCreds": {
+          "type": "string"
+        },
         "backupS3Keys": {
           "type": "string"
         },
@@ -244,7 +247,8 @@
         "redis",
         "metastoreCreds",
         "assemblylineReceiver",
-        "virustotalCreds"
+        "virustotalCreds",
+        "azureStorageCreds"
       ],
       "additionalProperties": false
     },

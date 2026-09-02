@@ -79,6 +79,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secrets.virustotalCreds }}
                   key: apikey
+            - name: AZURE_STORAGE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.azureStorageCreds }}
+                  key: connectionString
             {{- if .Values.external.services.virustotal }}
             - name: VIRUSTOTAL_APISERVER
               value: {{ .Values.external.services.virustotal }}
@@ -96,6 +101,11 @@ spec:
               - configMapRef:
                   name: plugin-virustotal
             args:
+            # Pulls from blob storage
             - "filefeed"
+            {{- if .Values.plugins.virustotal.pullFromVT }}
+            # Pulls from VT
+            - "--download-from-vt"
+            {{- end }}
 {{- end }}
 {{- end }}
