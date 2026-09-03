@@ -706,6 +706,10 @@ web:
     unauthorized_help: Please contact your system administrator for assistance.
     unavailable_help: Please contact your system administrator for assistance.
 
+    # List of feature names that should appear like tags if a binary has a value for it.
+    highlight_features:
+      - family
+
     # Optional message to display to users to inform them about something - e.g. patching in progress, system is read-only,
     # etc.
     # banner_message: The system will be going down for patching at 00:00 UTC.
