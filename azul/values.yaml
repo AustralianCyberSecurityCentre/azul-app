@@ -2004,7 +2004,7 @@ images:
     plugin-goinfo: plugin-goinfo:20260903T0143-unstable@sha256:52b233fc8ac4f8e691cc946e751f045e7998bb27367326f04ee23ba1d2fed2bf
     plugin-image-convert: plugin-image-convert:20260830T1553-unstable@sha256:251981553af251515589f241db83f136cb5168d328fe894c37ffef526ad8c5a4
     plugin-index-coincidence: plugin-index-coincidence:20260830T1554-unstable@sha256:63f0c921968f9205ff6d5077d9b85f67aac3e160a4a3d1e85b7b67dfd5c3b61d
-    plugin-js-deobf: plugin-js-deobf:20260830T2144-unstable@sha256:5fb31a6da542ac64a74b371bd15d26a5cb8c87b5e2513dd01a110c2baaee88a5
+    plugin-js-deobf: plugin-js-deobf:20260903T0153-unstable@sha256:a9bda0bdcd2db96944ff5ef32abe3ffbe3959dcb4dec06a9941fda7ca4a4871d
     plugin-lief: plugin-lief:20260830T2142-unstable@sha256:88682912d960358a65b2786478f3c5a6db998c32331cecbbf18fdd680b66d496
     plugin-lookback: plugin-lookback:20260903T0151-unstable@sha256:4bd2526cf2570d936f229cc58ce59d6915fe0a27ec15073f3e94fb7a34a09454
     plugin-malcarve: plugin-malcarve:20260830T2142-unstable@sha256:7c962de9cd795e00bb7f4ddcd9f87e7488973cabe480fc7fe4e487ec9b00b4d8
