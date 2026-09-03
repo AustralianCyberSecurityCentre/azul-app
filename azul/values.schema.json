@@ -2378,10 +2378,6 @@
         "resources": {
           "$ref": "#/definitions/resources"
         },
-        "cacert": {
-          "description": "Set to mount the configured CA cert into the container.",
-          "type": "boolean"
-        },
         "volumeMounts": {
           "$ref": "#/definitions/volumeMounts"
         },
@@ -2539,29 +2535,34 @@
           "$ref": "#/definitions/resources"
         },
         "maxReplicas": {
-          "type": "integer"
+          "type": "integer",
+          "description": "HPA settings cannot be used if instanceOverrides is set"
         },
         "volumeMounts": {
           "$ref": "#/definitions/volumeMounts"
         },
         "averageUtilization": {
-          "type": "integer"
+          "type": "integer",
+          "description": "HPA settings cannot be used if instanceOverrides is set"
         },
         "config": {
           "$ref": "#/definitions/pluginConfig"
         },
         "minReplicas": {
-          "type": "integer"
+          "type": "integer",
+          "description": "HPA settings cannot be used if instanceOverrides is set"
         },
         "useSmartScaler": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "HPA settings cannot be used if instanceOverrides is set"
         },
         "includeHistoric": {
           "type": "boolean"
         },
         "maxQueueLength": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "description": "HPA settings cannot be used if instanceOverrides is set"
         },
         "runTimeout": {
           "type": "string"
@@ -2576,6 +2577,27 @@
         "promPort": {
           "description": "Port for prometheus to scrape this pod on.",
           "type": "string"
+        },
+        "instanceOverrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "nameSuffix":{
+                "description": "Name suffix for the particular plugin pod instance.",
+                "type": "string"
+              },
+              "envOverride": {
+                "description": "Environment variable override.",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/pluginEnv"
+                  }
+                ]
+              }
+            },
+            "required": ["nameSuffix"]
+          }
         },
         "strategy": {
           "description": "K8s update strategy.",
@@ -2646,6 +2668,27 @@
         },
         {
           "$ref": "#/definitions/pluginHpa"
+        },
+        {
+          "if": {
+            "properties": {
+              "instanceOverrides": {
+                "minItems": 1
+              }
+            },
+            "required": ["instanceOverrides"]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["maxReplicas"] },
+                { "required": ["minReplicas"] },
+                { "required": ["averageUtilization"] },
+                { "required": ["useSmartScaler"] },
+                { "required": ["maxQueueLength"] }
+              ]
+            }
+          }
         }
       ],
       "dependencies": {

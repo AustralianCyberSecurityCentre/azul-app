@@ -34,8 +34,37 @@
         {{/* STANDARD PLUGIN */}}
         {{/* ------------------------------------------------------- */}}
         {{- if eq $group.type "standard"}}
-          {{- include "plugin.deployment" (dict "k" $k "root" $ "plugin" $plugin "plugin_name" $plugin_name "group" $group "group_name" $group_name "cmSHA256" $cmSHA256) | nindent 0 }}
-          {{- include "hpa" (dict "root" $ "name" $plugin_name "min" ($plugin.minReplicas | default $.Values.pluginHPA.minReplicas) "max" ($plugin.maxReplicas | default $.Values.pluginHPA.maxReplicas) "avgUtil" ($plugin.averageUtilization | default $.Values.pluginHPA.averageUtilization) "useSmartScaler" (hasKey $plugin "useSmartScaler" | ternary $plugin.useSmartScaler $.Values.pluginHPA.useSmartScaler) "includeHistoric" (hasKey $plugin "includeHistoric" | ternary $plugin.includeHistoric $.Values.pluginHPA.includeHistoric) "maxQueueLength" (hasKey $plugin "maxQueueLength" | ternary $plugin.maxQueueLength $.Values.pluginHPA.maxQueueLength)) | nindent 0 }}
+          {{- if gt (len (default (list) $plugin.instanceOverrides)) 1 }}
+            {{/* Plugin with hardcoded pod variations that won't use a HPA */}}
+            {{- range $instanceIndex, $overrides := $plugin.instanceOverrides }}
+              {{- $newPluginName := printf "%s-%s" $plugin_name $overrides.nameSuffix }}
+              {{- $envOverrides := default (list) $overrides.envOverride }}
+              {{- include "plugin.deployment" (dict
+                  "k" $k
+                  "root" $
+                  "plugin" $plugin
+                  "plugin_name" $plugin_name
+                  "deployment_name" $newPluginName
+                  "group" $group
+                  "group_name" $group_name
+                  "cmSHA256" $cmSHA256
+                  "envOverrides" $envOverrides
+              ) | nindent 0 }}
+
+            {{- end }}
+          {{- else }}
+              {{- include "plugin.deployment" (dict
+                  "k" $k
+                  "root" $
+                  "plugin" $plugin
+                  "plugin_name" $plugin_name
+                  "deployment_name" $plugin_name
+                  "group" $group
+                  "group_name" $group_name
+                  "cmSHA256" $cmSHA256
+              ) | nindent 0 }}
+            {{- include "hpa" (dict "root" $ "name" $plugin_name "min" ($plugin.minReplicas | default $.Values.pluginHPA.minReplicas) "max" ($plugin.maxReplicas | default $.Values.pluginHPA.maxReplicas) "avgUtil" ($plugin.averageUtilization | default $.Values.pluginHPA.averageUtilization) "useSmartScaler" (hasKey $plugin "useSmartScaler" | ternary $plugin.useSmartScaler $.Values.pluginHPA.useSmartScaler) "includeHistoric" (hasKey $plugin "includeHistoric" | ternary $plugin.includeHistoric $.Values.pluginHPA.includeHistoric) "maxQueueLength" (hasKey $plugin "maxQueueLength" | ternary $plugin.maxQueueLength $.Values.pluginHPA.maxQueueLength)) | nindent 0 }}
+          {{- end }}
         {{- end }}
       {{- end }}
     {{- end }}

@@ -1300,7 +1300,7 @@ plugins:
           - name: PLUGIN_CAPE_SERVER
             value: ""
             # Token for server auth, or blank for none
-          - name: PLUGIN_CAPE_AUTH_TOKEN
+          - name: PLUGIN_SECRET_CAPE_AUTH_TOKEN
             value: ""
             # Report error if CAPE doesn't start running the sample within this time
           - name: PLUGIN_START_TIMEOUT

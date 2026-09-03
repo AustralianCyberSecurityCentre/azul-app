@@ -4,7 +4,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .plugin_name }}
+  name: {{ .deployment_name }}
   labels:
     part-of: azul
     section: plugins
@@ -20,7 +20,7 @@ spec:
       app: {{ .plugin_name }}
   template:
     metadata:
-      name: {{ .plugin_name }}
+      name: {{ .deployment_name }}
       labels:
         app: {{ .plugin_name }}
         part-of: azul
@@ -80,10 +80,18 @@ spec:
       {{- end }}
       containers:
       {{- include "plugin.container.main" . | nindent 6 }}
-      {{- if .plugin.extraContainers}}
+      {{- if .plugin.extraContainers }}
         {{- range $container_name, $container := .plugin.extraContainers}}
           {{/* extra containers should receive their own context, not current */}}
-          {{- include $container.template (dict "container_name" $container_name "plugin" $container "group" $.group "group_name" $.group_name "root" $.root) | nindent 6 }}
+          {{- include $container.template (dict 
+            "k" .k
+            "container_name" $container_name 
+            "plugin" $container 
+            "group" $.group 
+            "group_name" $.group_name 
+            "root" $.root 
+            "envOverrides" .envOverrides
+          ) | nindent 6 }}
         {{- end}}
       {{- end}}
       volumes:
@@ -102,7 +110,11 @@ spec:
   {{- range $container_name, $container := .plugin.extraContainers}}
     {{- if eq (default $container.promMetricsEnabled false) true}}
 ---
-      {{- include "plugin.container.scrape.service" (dict "container_name" $container_name "container" $container "plugin_name" $.plugin_name ) }}
+      {{- include "plugin.container.scrape.service" (dict 
+        "container_name" $container_name 
+        "container" $container 
+        "plugin_name" $.plugin_name 
+      ) }}
     {{- end }}
   {{- end}}
 {{- end}}
