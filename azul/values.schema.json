@@ -513,6 +513,13 @@
             "banner_dismissable": {
               "type": "boolean"
             },
+            "highlight_features": {
+              "type": "array",
+              "description": "List of feature names that should appear like tags if a binary has a value for it.",
+              "items":{
+                "type": "string"
+              }
+            },
             "binary_external_links": {
               "type": "array",
               "items": {
