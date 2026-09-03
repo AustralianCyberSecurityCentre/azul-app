@@ -1832,10 +1832,10 @@ plugins:
         image: plugin-email
         command:
           - "azul-plugin-mime-decoder"
-      email-olemail:
+      email-mail-extract-msg:
         image: plugin-email
         command:
-          - "azul-plugin-olemail"
+          - "azul-plugin-mail-extract-msg"
       entropy:
         maxFileSize: "0" # unlimited
       entrypointcheck:
