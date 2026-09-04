@@ -107,11 +107,11 @@ spec:
               - configMapRef:
                   name: plugin-virustotal
             args:
-            # Pulls from blob storage
+            # Pulls from Virustotal
             - "filefeed"
-            {{- if .Values.plugins.virustotal.pullFromVT }}
-            # Pulls from VT
-            - "--download-from-vt"
+            {{- if .Values.plugins.virustotal.pullFromAzure }}
+            # Pulls from Azure blob storage
+            - "--download-from-blob"
             {{- end }}
 {{- end }}
 {{- end }}

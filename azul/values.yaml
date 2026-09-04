@@ -1665,8 +1665,8 @@ plugins:
     # If `true`, creates a CronJob to download the VT filefeed metadata.
     # If true run cronjob to pull virustotal metadata from either virustotal or azure blobstorage
     pullFromApi: false
-    # If true cronjob will pull data from Virustotal (must have VT api key)
-    pullFromVT: false
+    # If true cronjob will pull data from Azure blob storage else default to virustotal
+    pullFromAzure: false
     config:
       # Choose between "v2" or "v3" of the virustotal API.
       VIRUSTOTAL_APIVERSION: "v3"
