@@ -379,6 +379,40 @@ sources:
 
 # Example configurations for plugins which require repositories or additional configuration
 plugins:
+  dynamic:
+    plugins:
+      cape: 
+        enabled: true
+        # Cape with instance overrides set to create multiple cape instances.
+        instanceOverrides:
+          - nameSuffix: "1"
+            envOverride:
+              - name: PLUGIN_CAPE_SERVER
+                value: http://localhost:8001
+              - name: PLUGIN_SECRET_CAPE_AUTH_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: "plugin-cape"
+                    key: cape1
+          - nameSuffix: "2"
+            envOverride:
+              - name: PLUGIN_CAPE_SERVER
+                value: http://localhost:8002
+              - name: PLUGIN_SECRET_CAPE_AUTH_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: "plugin-cape"
+                    key: cape2
+          - nameSuffix: "3"
+            envOverride:
+              - name: PLUGIN_CAPE_SERVER
+                value: http://localhost:8003
+              - name: PLUGIN_SECRET_CAPE_AUTH_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: "plugin-cape"
+                    key: cape3
+
   report-feeds:
     type: reportFeeds
     enabled: true

@@ -1,11 +1,27 @@
 {{- define "plugin.container.main" -}}
-{{- $root := .root.Values}}
+{{- $root := .root.Values -}}
+{{/*Sort environment variables in priority order (lowest priority into dict first) to prevent conflicts.*/}}
+{{/*Insert all entries into a dictionary.*/}}
+{{- $envPriorityMap := dict -}}
+{{- range (default (list) .plugin.baseEnv) -}}
+  {{- $_ := set $envPriorityMap .name . -}}
+{{- end -}}
+{{- range (default (list) .plugin.env) -}}
+  {{- $_ := set $envPriorityMap .name . -}}
+{{- end -}}
+{{- range (default (list) .envOverrides) -}}
+  {{- $_ := set $envPriorityMap .name . -}}
+{{- end -}}
+{{- $envSortedList := list -}}
+{{- range $name := keys $envPriorityMap | sortAlpha -}}
+  {{- $envSortedList = append $envSortedList (get $envPriorityMap $name) -}}
+{{- end -}}
 {{/* standard main container for plugin */}}
-{{- if .container_name }}
+{{- if .container_name -}}
 - name: {{ .container_name }}
-{{- else }}
+{{- else -}}
 - name: main
-{{- end}}  
+{{- end -}}
 {{- if .plugin.image }}
   image: {{ include "image.custom" (dict "images" $root.images "name" .plugin.image )}}
 {{- else if .k }}
@@ -68,13 +84,8 @@
   - name: REQUESTS_CA_BUNDLE
     value: /etc/ssl/certs/ca-certificates.crt
   {{- end }}
-  {{- if .plugin.baseEnv }}
-    {{- /* template this manually so that we can have dynamic secret names */}}
-    {{- tpl (.plugin.baseEnv | toYaml) .root | nindent 2 }}
-  {{- end }}
-  {{- if .plugin.env }}
-    {{- /* template this manually so that we can have dynamic secret names */}}
-    {{-  tpl (.plugin.env | toYaml) .root | nindent 2 }}
+  {{- if gt (len $envSortedList) 0 }}
+  {{- tpl ($envSortedList | toYaml) .root | nindent 2 }}
   {{- end }}
   {{- if .plugin.maxFileSize }}
   - name: PLUGIN_FILTER_MAX_CONTENT_SIZE
