@@ -94,6 +94,12 @@ spec:
               value: /rules
             - name: PLUGIN_DEPLOYMENT_KEY
               value: plugin-vtfilefeed
+            - name: BLOB_CONTAINER
+              value: {{ .Values.plugins.virustotal.config.BLOB_CONTAINER }}
+            - name: BLOB_FULL_PATH_FORMAT
+              value: {{ .Values.plugins.virustotal.config.BLOB_FULL_PATH_FORMAT }}
+            - name: BLOB_FILE_NAME_FORMAT
+              value: {{ .Values.plugins.virustotal.config.BLOB_FILE_NAME_FORMAT }}
             envFrom:
               # Plugin ref first so the plugin specific settings will override standard settings.
               - configMapRef:

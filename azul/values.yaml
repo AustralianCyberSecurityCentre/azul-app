@@ -1676,6 +1676,12 @@ plugins:
       #PLUGIN_MAX_SECURITY: "OFFICIAL"
       # Number of suspicious or malicious AV hits required to pull a files metadata from VT.
       #PLUGIN_MINIMUM_AV_HITS: "0"
+      # Azure blob storage container name for virustotal metatdata eg. container: files -> path:/v3/..../file1.tar.bz2
+      BLOB_CONTAINER: ""
+      # Azure blob storage full path format eg. v3/%s/%s/%s.tar.bz2
+      BLOB_FULL_PATH_FORMAT: ""
+      # Azure blob storage filename format in GO format so "%Y%m%d%H" would be "2006010215"
+      BLOB_FILE_NAME_FORMAT: ""
     plugins:
       # server for pushing metadata feed to (alternative to pullFromApi)
       vtfilefeedserver:
