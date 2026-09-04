@@ -79,6 +79,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secrets.virustotalCreds }}
                   key: apikey
+            - name: AZURE_STORAGE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.azureStorageCreds }}
+                  key: connectionString
             {{- if .Values.external.services.virustotal }}
             - name: VIRUSTOTAL_APISERVER
               value: {{ .Values.external.services.virustotal }}
@@ -89,6 +94,12 @@ spec:
               value: /rules
             - name: PLUGIN_DEPLOYMENT_KEY
               value: plugin-vtfilefeed
+            - name: BLOB_CONTAINER
+              value: {{ .Values.plugins.virustotal.config.BLOB_CONTAINER }}
+            - name: BLOB_FULL_PATH_FORMAT
+              value: {{ .Values.plugins.virustotal.config.BLOB_FULL_PATH_FORMAT }}
+            - name: BLOB_FILE_NAME_FORMAT
+              value: {{ .Values.plugins.virustotal.config.BLOB_FILE_NAME_FORMAT }}
             envFrom:
               # Plugin ref first so the plugin specific settings will override standard settings.
               - configMapRef:
@@ -96,6 +107,11 @@ spec:
               - configMapRef:
                   name: plugin-virustotal
             args:
+            # Pulls from Virustotal
             - "filefeed"
+            {{- if .Values.plugins.virustotal.pullFromAzure }}
+            # Pulls from Azure blob storage
+            - "--download-from-blob"
+            {{- end }}
 {{- end }}
 {{- end }}

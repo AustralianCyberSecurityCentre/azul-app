@@ -229,6 +229,9 @@
         "virustotalCreds": {
           "type": "string"
         },
+        "azureStorageCreds": {
+          "type": "string"
+        },
         "backupS3Keys": {
           "type": "string"
         },
@@ -244,7 +247,8 @@
         "redis",
         "metastoreCreds",
         "assemblylineReceiver",
-        "virustotalCreds"
+        "virustotalCreds",
+        "azureStorageCreds"
       ],
       "additionalProperties": false
     },
@@ -1351,6 +1355,9 @@
               "type": "boolean"
             },
             "pullFromApi": {
+              "type": "boolean"
+            },
+            "pullFromAzure": {
               "type": "boolean"
             },
             "plugins": {
@@ -2831,6 +2838,7 @@
         "pvc": { "type": "object" },
         "demoConfig": { "type": "boolean" },
         "pullFromApi": { "type": "boolean" },
+        "pullFromAzure": { "type": "boolean" },
         "schedule": {
           "type": "string",
           "description": "Cron schedule for this plugin"
