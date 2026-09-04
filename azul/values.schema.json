@@ -1350,6 +1350,9 @@
             "pullFromApi": {
               "type": "boolean"
             },
+            "pullFromAzure": {
+              "type": "boolean"
+            },
             "plugins": {
               "$comment": "Force definition of vtfilefeedserver as it's a special case referenced by name.",
               "type": "object",
@@ -2785,6 +2788,7 @@
         "pvc": { "type": "object" },
         "demoConfig": { "type": "boolean" },
         "pullFromApi": { "type": "boolean" },
+        "pullFromAzure": { "type": "boolean" },
         "schedule": {
           "type": "string",
           "description": "Cron schedule for this plugin"
