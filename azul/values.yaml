@@ -1697,11 +1697,12 @@ plugins:
       #PLUGIN_MINIMUM_AV_HITS: "0"
       # Azure blob storage container name for virustotal metatdata eg. BLOB_CONTAINER/%s/%s/%s/%s.tar.bz2
       BLOB_CONTAINER: ""
-      # Azure blob storage full path format eg. v3/%s/%s/%s.tar.bz2 NOTE: Azul currently needs the format to have %s/<YEAR> at the beginning
-      # This is because currently Azul will only scan the <YEAR> equal to the current year so needs that format to extract the year from the folder name (format yyyy).
+      # Azure blob storage full path format eg. v3/%s/%s/%s.tar.bz2 NOTE: Azul currently needs the format to have %s/<YEAR>/<MONTH> at the beginning
+      # This is because currently Azul will only scan the <YEAR><MONTH> equal to the current year and month so needs that format to extract the year and month from the folder name (format yyyy/m/).
       BLOB_FULL_PATH_FORMAT: ""
       # Azure blob storage filename format in GO format so "%Y%m%d%H" would be "2006010215"
       BLOB_FILE_NAME_FORMAT: ""
+      # An example full path is files/v3/2026/9/2026090719.tar.bz2
     plugins:
       # server for pushing metadata feed to (alternative to pullFromApi)
       vtfilefeedserver:
