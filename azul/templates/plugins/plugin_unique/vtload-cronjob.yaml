@@ -1,5 +1,5 @@
 {{- if .Values.pluginsEnabled -}}
-{{- if .Values.plugins.virustotal.pullFromApi }}
+{{- if ne .Values.plugins.virustotal.source "disabled" }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -107,11 +107,12 @@ spec:
               - configMapRef:
                   name: plugin-virustotal
             args:
-            # Pulls from Virustotal
+            args:
+            {{- if eq .Values.plugins.virustotal.source "azure" }}
             - "filefeed"
-            {{- if .Values.plugins.virustotal.pullFromAzure }}
-            # Pulls from Azure blob storage
             - "--download-from-blob"
+            {{- else if eq .Values.plugins.virustotal.source "vt" }}
+            - "filefeed"
             {{- end }}
 {{- end }}
 {{- end }}

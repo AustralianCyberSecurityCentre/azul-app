@@ -1681,11 +1681,7 @@ plugins:
       size: "10Gi"
     # Use a demo configuration for the virustotal plugin.
     demoConfig: false
-    # If `true`, creates a CronJob to download the VT filefeed metadata.
-    # If true run cronjob to pull virustotal metadata from either virustotal or azure blobstorage
-    pullFromApi: false
-    # If true cronjob will pull data from Azure blob storage else default to virustotal
-    pullFromAzure: false
+    source: "azure"
     config:
       # Choose between "v2" or "v3" of the virustotal API.
       VIRUSTOTAL_APIVERSION: "v3"
@@ -1704,7 +1700,7 @@ plugins:
       BLOB_FILE_NAME_FORMAT: ""
       # An example full path is files/v3/2026/9/2026090719.tar.bz2
     plugins:
-      # server for pushing metadata feed to (alternative to pullFromApi)
+      # server for pushing metadata feed to (alternative to source)
       vtfilefeedserver:
         enabled: false
         enableLivenessProbe: false

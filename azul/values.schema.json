@@ -1354,11 +1354,9 @@
             "demoConfig": {
               "type": "boolean"
             },
-            "pullFromApi": {
-              "type": "boolean"
-            },
-            "pullFromAzure": {
-              "type": "boolean"
+            "source": {
+              "type": "string",
+              "enum": ["vt", "azure", "disabled"]
             },
             "plugins": {
               "$comment": "Force definition of vtfilefeedserver as it's a special case referenced by name.",
@@ -2837,8 +2835,7 @@
         },
         "pvc": { "type": "object" },
         "demoConfig": { "type": "boolean" },
-        "pullFromApi": { "type": "boolean" },
-        "pullFromAzure": { "type": "boolean" },
+        "source": { "type": "string" },
         "schedule": {
           "type": "string",
           "description": "Cron schedule for this plugin"
