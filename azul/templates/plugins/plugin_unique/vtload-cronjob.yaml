@@ -100,6 +100,8 @@ spec:
               value: {{ .Values.plugins.virustotal.config.BLOB_FULL_PATH_FORMAT | quote }}
             - name: BLOB_FILE_NAME_FORMAT
               value: {{ .Values.plugins.virustotal.config.BLOB_FILE_NAME_FORMAT | quote }}
+            - name: PULL_FROM_AZURE
+              value: {{ .Values.plugins.virustotal.pullFromAzure }}
             envFrom:
               # Plugin ref first so the plugin specific settings will override standard settings.
               - configMapRef:
