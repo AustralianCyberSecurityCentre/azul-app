@@ -43,7 +43,7 @@ spec:
       automountServiceAccountToken: false
       containers:
       - name: main
-        image: postgres:17.4
+        image: {{ .Values.keycloak.postgres.image | default "postgres:17.4" }}
         env:
         - name: POSTGRES_DB
           value: keycloak
