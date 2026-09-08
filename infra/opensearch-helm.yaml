@@ -1,0 +1,362 @@
+# Minimal opensearch chart values for Azul, translated from
+# azul-app/infra/values.yaml
+#
+#   helm repo add opensearch https://opensearch-project.github.io/helm-charts/
+#   helm upgrade --install azul-opensearch opensearch/opensearch \
+#     -n azul --version 3.7.0 -f opensearch-values.yaml
+#
+# Chart 3.7.0 ships appVersion 3.7.0, matching what Azul pins.
+
+clusterName: "azul-opensearch"
+nodeGroup: "nodes"
+masterService: "azul-opensearch-nodes"
+
+# Azul's nodePool runs cluster_manager + data only.
+roles:
+  - cluster_manager
+  - data
+  - ingest
+
+replicas: 3
+
+image:
+  repository: "opensearchproject/opensearch"
+  tag: "3.7.0"
+
+# The Azul infra chart's NetworkPolicies select on operator-applied labels.
+# Without this the policies match nothing and traffic to/from OpenSearch is
+# dropped. See infra/templates/network-policy.yaml.
+labels:
+  opensearch.org/opensearch-cluster: azul-opensearch
+
+# Azul: 2Gi request == limit. Heap at half of that.
+opensearchJavaOpts: "-Xms1g -Xmx1g"
+resources:
+  requests:
+    cpu: "500m"
+    memory: "2Gi"
+  limits:
+    cpu: "500m"
+    memory: "2Gi"
+
+persistence:
+  enabled: true
+  size: 50Gi
+  # storageClass: "managed-csi"
+
+# Equivalent of general.setVMMaxMapCount: true. Needs a privileged init
+# container; drop this and set the sysctl on the nodes if your PSA policy
+# forbids it.
+sysctlInit:
+  enabled: true
+
+# Mount the cert-manager secrets from 00-certs.yaml.
+secretMounts:
+  - name: node-certs
+    secretName: azul-opensearch-certs
+    path: /usr/share/opensearch/config/certs
+  - name: admin-certs
+    secretName: azul-opensearch-admin-certs
+    path: /usr/share/opensearch/config/admin-certs
+
+extraEnvs:
+  # We supply our own opensearch.yml and security config, so the demo
+  # installer must not run. Without this it tries to append to a read-only
+  # opensearch.yml and the pod fails to start.
+  - name: DISABLE_INSTALL_DEMO_CONFIG
+    value: "true"
+
+config:
+  opensearch.yml: |
+    cluster.name: azul-opensearch
+    network.host: 0.0.0.0
+
+    plugins.security.ssl.transport.pemcert_filepath: certs/tls.crt
+    plugins.security.ssl.transport.pemkey_filepath: certs/tls.key
+    plugins.security.ssl.transport.pemtrustedcas_filepath: certs/ca.crt
+    # Single shared node cert, so hostname verification cannot be used.
+    plugins.security.ssl.transport.enforce_hostname_verification: false
+
+    plugins.security.ssl.http.enabled: true
+    plugins.security.ssl.http.pemcert_filepath: certs/tls.crt
+    plugins.security.ssl.http.pemkey_filepath: certs/tls.key
+    plugins.security.ssl.http.pemtrustedcas_filepath: certs/ca.crt
+
+    plugins.security.nodes_dn:
+      - "CN=Opensearch_Node.opensearch"
+    plugins.security.authcz.admin_dn:
+      - "CN=OpenSearch_Admin.opensearch"
+
+    # Bootstrap the security index from the mounted files on first start.
+    plugins.security.allow_default_init_securityindex: true
+    plugins.security.restapi.roles_enabled: ["all_access", "security_rest_api_access"]
+    plugins.security.audit.type: internal_opensearch
+
+securityConfig:
+  enabled: true
+  config:
+    dataComplete: true
+    data:
+      action_groups.yml: |-
+        _meta:
+          type: "actiongroups"
+          config_version: 2
+
+      allowlist.yml: |-
+        _meta:
+          type: "allowlist"
+          config_version: 2
+
+      nodes_dn.yml: |-
+        _meta:
+          type: "nodesdn"
+          config_version: 2
+
+      tenants.yml: |-
+        _meta:
+          type: "tenants"
+          config_version: 2
+        azul:
+          reserved: false
+          description: "Basic Azul tenant"
+
+      config.yml: |-
+        _meta:
+          type: "config"
+          config_version: 2
+        config:
+          dynamic:
+            kibana:
+              # Disabling private tenants fixes 'SG 900D' errors when using DLS.
+              private_tenant_enabled: false
+            authc:
+              basic_internal_auth_domain:
+                description: "Authenticate via HTTP Basic against internal users database"
+                http_enabled: true
+                transport_enabled: true
+                order: 0
+                http_authenticator:
+                  type: basic
+                  challenge: false
+                authentication_backend:
+                  type: intern
+
+      # These are the example hashes from the Azul repo;
+      # Generate your own:
+      #   python -c 'import bcrypt; print(bcrypt.hashpw("PASSWORD".encode("utf-8"), bcrypt.gensalt(12, prefix=b"2a")).decode("utf-8"))'
+      #
+      # Note: the operator-based install used OpensearchUser CRDs
+      # (internalUsersAlt + azul-opensearch-user-passwords) to inject these.
+      # Without the operator, hashes go here.
+      internal_users.yml: |-
+        _meta:
+          type: "internalusers"
+          config_version: 2
+        admin:
+          hash: "$2y$12$H8ozJHFFeSQsXQ7Gm/2dhOBsCQNO01vNrjC1trrAoPzEKW.pc2DSW"
+          reserved: true
+          backend_roles:
+            - "admin"
+          description: "admin user"
+        kibanaserver:
+          hash: "$2y$12$bHlG9Bvlbfyn7ipQSkdVxeEKX.T5Xu2tti76GtcJ9QCRXEosoyqCq"
+          reserved: true
+        monitor:
+          hash: "$2y$12$Wl2JrXSNgwUyzckKlz8K3uD2Xp8oxVtTM/r7O0jyCSGBeZsgp1ruG"
+          description: "Exporter monitoring"
+        azul_writer:
+          hash: "$2y$12$GzoEXpS7eGW5N4yAhygQrue32wYZ7w5T3r03PRqHZnunEPnZC7yxm"
+          backend_roles:
+            - "azul_write"
+          description: "Service account for metastore writer"
+
+      roles.yml: |-
+        _meta:
+          type: "roles"
+          config_version: 2
+
+        azul_read:
+          reserved: false
+          hidden: false
+          static: false
+          cluster_permissions:
+            - "indices:data/read/*"
+            - "kibana_user"
+          index_permissions:
+            - index_patterns:
+                - "*"
+              allowed_actions:
+                - "indices:admin/resolve/index"
+            - index_patterns:
+                - "azul.*"
+              allowed_actions:
+                - "indices:admin/get"
+                - "indices:admin/analyze"
+            - index_patterns:
+                - "azul.x.*"
+              allowed_actions:
+                - "read"
+              dls: '{"bool": {"filter": [{"terms": {"encoded_security.inclusive": [${user.securityRoles}]}}, {"terms_set": {"encoded_security.exclusive": {"terms": [${user.securityRoles}], "minimum_should_match_field": "encoded_security.num_exclusive"}}}]}}'
+            - index_patterns:
+                - "azul.o.*"
+              allowed_actions:
+                - "read"
+          tenant_permissions:
+            - tenant_patterns:
+                - "azul"
+              allowed_actions:
+                - "kibana_all_write"
+
+        azul_write:
+          reserved: false
+          hidden: false
+          static: false
+          cluster_permissions:
+            - "cluster_monitor"
+            - "cluster:admin/script/*"
+            - "indices:admin/index_template/*"
+            - "indices:admin/mapping/*"
+            - "indices:admin/template/*"
+            - "indices:data/read/*"
+            - "indices:data/write/bulk"
+            - "kibana_user"
+          index_permissions:
+            - index_patterns:
+                - "azul.*"
+              allowed_actions:
+                - "unlimited"
+
+        azul_admin:
+          reserved: false
+          hidden: false
+          static: false
+          cluster_permissions:
+            - "cluster_monitor"
+            - "cluster:admin/script/*"
+            - "indices:admin/index_template/*"
+            - "indices:data/read/*"
+            - "indices:data/write/bulk"
+            - "kibana_user"
+          index_permissions:
+            - index_patterns:
+                - "azul.*"
+              allowed_actions:
+                - "unlimited"
+            - index_patterns:
+                - "virustotal*"
+              allowed_actions:
+                - "unlimited"
+          tenant_permissions:
+            - tenant_patterns:
+                - "azul"
+                - "global_tenant"
+              allowed_actions:
+                - "kibana_all_write"
+
+        # Empty roles that exist purely to be mapped onto Azul users.
+        # Azul needs >=4 mapped roles to avoid 'SG 900D' errors under DLS.
+        s-any:
+          reserved: false
+          hidden: false
+          static: false
+        s-official:
+          reserved: false
+          hidden: false
+          static: false
+        azul-fill1: {reserved: false, hidden: false, static: false}
+        azul-fill2: {reserved: false, hidden: false, static: false}
+        azul-fill3: {reserved: false, hidden: false, static: false}
+        azul-fill4: {reserved: false, hidden: false, static: false}
+        azul-fill5: {reserved: false, hidden: false, static: false}
+
+        monitor:
+          reserved: false
+          hidden: false
+          static: false
+          cluster_permissions:
+            - "cluster_monitor"
+          index_permissions:
+            - index_patterns:
+                - "*"
+              allowed_actions:
+                - "indices_monitor"
+
+        kibana_read_only:
+          reserved: true
+        security_rest_api_access:
+          reserved: true
+
+      roles_mapping.yml: |-
+        _meta:
+          type: "rolesmapping"
+          config_version: 2
+
+        azul_read:
+          reserved: false
+          hidden: false
+          backend_roles:
+            - "azul_read"
+            - "azul_read_indirect"
+            - "azul-access"
+          description: "Maps azul_read role"
+        azul_write:
+          reserved: false
+          hidden: false
+          backend_roles:
+            - "azul_write"
+        azul_admin:
+          reserved: false
+          hidden: false
+          backend_roles:
+            - "azul_admin"
+
+        s-any:
+          reserved: false
+          hidden: false
+          backend_roles: ["azul_read", "azul-access"]
+        s-official:
+          reserved: false
+          hidden: false
+          backend_roles: ["azul_read", "azul-access"]
+        azul-fill1:
+          reserved: false
+          backend_roles: ["azul_read"]
+        azul-fill2:
+          reserved: false
+          backend_roles: ["azul_read"]
+        azul-fill3:
+          reserved: false
+          backend_roles: ["azul_read"]
+        azul-fill4:
+          reserved: false
+          backend_roles: ["azul_read"]
+        azul-fill5:
+          reserved: false
+          backend_roles: ["azul_read"]
+
+        monitor:
+          reserved: false
+          hidden: false
+          users: ["monitor"]
+        all_access:
+          reserved: true
+          backend_roles: ["admin"]
+        readall:
+          reserved: true
+          backend_roles: ["readall"]
+        kibana_server:
+          reserved: true
+          users: ["kibanaserver"]
+        kibana_user:
+          reserved: false
+          backend_roles: ["kibanauser"]
+        manage_snapshots:
+          reserved: false
+          backend_roles: ["snapshotrestore"]
+
+service:
+  type: ClusterIP
+
+# Azul's default has this off; turn on and fill in if you need it.
+ingress:
+  enabled: false
