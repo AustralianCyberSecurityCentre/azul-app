@@ -974,6 +974,7 @@ keycloak:
     secretName: keycloak-tls
     annotations: {}
   postgres:
+    image: postgres:17.4
     storageClassName: "managed-csi"
     size: 5Gi
 
