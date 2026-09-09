@@ -1354,7 +1354,7 @@
             "demoConfig": {
               "type": "boolean"
             },
-            "source": {
+            "pullFromApi": {
               "type": "string",
               "enum": ["vt", "azure", "disabled"]
             },
@@ -2835,7 +2835,7 @@
         },
         "pvc": { "type": "object" },
         "demoConfig": { "type": "boolean" },
-        "source": { "type": "string" },
+        "pullFromApi": { "type": "string" },
         "schedule": {
           "type": "string",
           "description": "Cron schedule for this plugin"

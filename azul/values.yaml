@@ -1681,7 +1681,7 @@ plugins:
       size: "10Gi"
     # Use a demo configuration for the virustotal plugin.
     demoConfig: false
-    source: "azure"
+    pullFromApi: "disabled"
     config:
       # Choose between "v2" or "v3" of the virustotal API.
       VIRUSTOTAL_APIVERSION: "v3"
