@@ -1,0 +1,98 @@
+# Replaces the cert-manager resources that infra/templates/opensearch.yaml
+# creates for you. Same CNs, because the security config below pins them in
+# admin_dn / nodes_dn.
+#
+#   kubectl apply -n azul -f 00-certs.yaml
+#
+# If you already have a real CA, delete the two self-signed blocks and point
+# issuerRef at your own Issuer/ClusterIssuer.
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: azul-opensearch-selfsigned-issuer
+spec:
+  selfSigned: {}
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: azul-opensearch-ca-certificate
+spec:
+  secretName: azul-opensearch-ca-cert
+  duration: 87600h0m0s
+  renewBefore: 8760h0m0s
+  commonName: Azul OpenSearch CA
+  isCA: true
+  privateKey:
+    size: 2048
+  usages:
+    - digital signature
+    - key encipherment
+  issuerRef:
+    name: azul-opensearch-selfsigned-issuer
+
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: azul-opensearch-ca-issuer
+spec:
+  ca:
+    secretName: azul-opensearch-ca-cert
+
+---
+# Node certificate. One cert shared by all nodes (perNode: false in the
+# operator config), so hostname verification has to stay off.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: azul-opensearch-certs
+spec:
+  secretName: azul-opensearch-certs
+  duration: 87600h0m0s
+  renewBefore: 8760h0m0s
+  privateKey:
+    size: 2048
+    algorithm: RSA
+    encoding: PKCS8
+  commonName: Opensearch_Node.opensearch
+  dnsNames:
+    - azul-opensearch-nodes
+    - azul-opensearch-nodes.azul
+    - azul-opensearch-nodes.azul.svc
+    - azul-opensearch-nodes.azul.svc.cluster.local
+    # headless service, per-pod DNS
+    - "*.azul-opensearch-nodes.azul.svc.cluster.local"
+  usages:
+    - signing
+    - key encipherment
+    - server auth
+    - client auth
+  issuerRef:
+    name: azul-opensearch-ca-issuer
+
+---
+# Admin certificate. Needed to run securityadmin.sh when you change security
+# config after install (the operator used to do this for you).
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: azul-opensearch-admin-certs
+spec:
+  secretName: azul-opensearch-admin-certs
+  duration: 87600h0m0s
+  renewBefore: 8760h0m0s
+  privateKey:
+    size: 2048
+    algorithm: RSA
+    encoding: PKCS8
+  commonName: OpenSearch_Admin.opensearch
+  usages:
+    - signing
+    - key encipherment
+    - server auth
+    - client auth
+  issuerRef:
+    name: azul-opensearch-ca-issuer
