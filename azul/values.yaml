@@ -1699,6 +1699,20 @@ plugins:
       # Azure blob storage filename format in GO format so "%Y%m%d%H" would be "2006010215"
       BLOB_FILE_NAME_FORMAT: ""
       # An example full path is files/v3/2026/9/2026090719.tar.bz2
+      
+      # blobHourGracePeriod keeps ingestion deliberately behind the current UTC hour.
+      # An hourly blob is not even checked until its timestamp is at least this old.
+      BLOB_HOUR_GRACE_PERIOD: ""
+      # BLOB_STABILITY_PERIOD requires an existing blob to have remained unmodified for
+      # this long before it is downloaded and processed. This protects against late
+      # uploads that happen to target an otherwise old hourly path.
+      BLOB_STABILITY_PERIOD: ""
+      # BLOB_MAX_RETRY_ATTEMPTS is the number of blob-specific failures allowed for an
+      # eligible hour across separate runs. Once the limit is reached, that hour is
+      # explicitly skipped so later eligible hours can continue catching up.
+      # Service-wide failures such as authentication, throttling, or network errors do
+      # not consume this retry budget.
+      BLOB_MAX_RETRY_ATTEMPTS: ""
     plugins:
       # server for pushing metadata feed to (alternative to source)
       vtfilefeedserver:

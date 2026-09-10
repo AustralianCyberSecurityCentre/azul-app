@@ -100,6 +100,12 @@ spec:
               value: {{ .Values.plugins.virustotal.config.BLOB_FULL_PATH_FORMAT | quote }}
             - name: BLOB_FILE_NAME_FORMAT
               value: {{ .Values.plugins.virustotal.config.BLOB_FILE_NAME_FORMAT | quote }}
+            - name: BLOB_HOUR_GRACE_PERIOD
+              value: {{ .Values.plugins.virustotal.config.BLOB_HOUR_GRACE_PERIOD | quote }}
+            - name: BLOB_STABILITY_PERIOD
+              value: {{ .Values.plugins.virustotal.config.BLOB_STABILITY_PERIOD | quote }} 
+            - name: BLOB_MAX_RETRY_ATTEMPTS
+              value: {{ .Values.plugins.virustotal.config.BLOB_MAX_RETRY_ATTEMPTS | quote }} 
             envFrom:
               # Plugin ref first so the plugin specific settings will override standard settings.
               - configMapRef:
