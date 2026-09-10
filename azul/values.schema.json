@@ -229,6 +229,9 @@
         "virustotalCreds": {
           "type": "string"
         },
+        "azureStorageCreds": {
+          "type": "string"
+        },
         "backupS3Keys": {
           "type": "string"
         },
@@ -244,7 +247,8 @@
         "redis",
         "metastoreCreds",
         "assemblylineReceiver",
-        "virustotalCreds"
+        "virustotalCreds",
+        "azureStorageCreds"
       ],
       "additionalProperties": false
     },
@@ -1351,7 +1355,8 @@
               "type": "boolean"
             },
             "pullFromApi": {
-              "type": "boolean"
+              "type": "string",
+              "enum": ["vt", "azure", "disabled"]
             },
             "plugins": {
               "$comment": "Force definition of vtfilefeedserver as it's a special case referenced by name.",
@@ -2830,7 +2835,7 @@
         },
         "pvc": { "type": "object" },
         "demoConfig": { "type": "boolean" },
-        "pullFromApi": { "type": "boolean" },
+        "pullFromApi": { "type": "string" },
         "schedule": {
           "type": "string",
           "description": "Cron schedule for this plugin"
