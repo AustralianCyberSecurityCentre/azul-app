@@ -2015,7 +2015,7 @@ images:
     plugin-netinfo: plugin-netinfo:20260911T1440-unstable@sha256:8f52e6f2fc9229859ac54dedc261e67f099d832cab338f31c50821ad314605ed
     plugin-nsrl: plugin-nsrl:20260912T0011-unstable@sha256:370efa1ef017542693dfa5a63fcc1562b94ab11cbbb55318975c03c0b8184996
     plugin-office: plugin-office:20260911T1437-unstable@sha256:abb16340b8543fb1b37610710ce60ebde86ee6708408c6421ffbf03c51cf3912
-    plugin-pdftools: plugin-pdftools:20260911T1431-unstable@sha256:9d742b9124bc0109fa9929f60681b667df6d4bff87318a5966ca48151f313165
+    plugin-pdftools: plugin-pdftools:20260912T0023-unstable@sha256:e38f45b340ebeaa93c8815f265b4b684121e34ecece0a3d318bd1feb2c21e478
     plugin-python: plugin-python:20260911T1445-unstable@sha256:0085499f9f82b826dadf5e4677405b17c22d614561904dfc8acddcb6369ff484
     plugin-repeated-bytes: plugin-repeated-bytes:20260911T1435-unstable@sha256:253e62aebdf46c16db92e1e745f6bc784b9e3a977a20fd4427a800f38026eb88
     plugin-retrohunt: plugin-retrohunt:20260911T1453-unstable@sha256:359dae1a7e23195829c40e68e5837e99dfcfb0202876bf10d845bb4c4a307028
