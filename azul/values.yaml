@@ -1699,7 +1699,7 @@ plugins:
       # Azure blob storage filename format in GO format so "%Y%m%d%H" would be "2006010215"
       BLOB_FILE_NAME_FORMAT: ""
       # An example full path is files/v3/2026/9/2026090719.tar.bz2
-      
+
       # blobHourGracePeriod keeps ingestion deliberately behind the current UTC hour.
       # An hourly blob is not even checked until its timestamp is at least this old.
       BLOB_HOUR_GRACE_PERIOD: ""
@@ -2010,7 +2010,7 @@ images:
     client: client:20260913T1533-unstable@sha256:35de3aa514705a536ab21c7a1de87448649af0a5f0eaf77232d30f7c194d25ab
     dispatcher: dispatcher:20260912T0018-unstable@sha256:0e6b5fbdb7edba7222bb82a6c104303a60fd5cb044d660f376a5fcff0584d4fb
     docs: docs:20260912T0001-unstable@sha256:1b46ce8b905f0722d88716862568ab993de3711538e8f1ce3754061e89b7875c
-    restapi-server: restapi-server:20260912T0103-unstable@sha256:46772bed03ba95d9ca726040a3fd3048a9b2655501b7a6ea72c54db19e8bb14a
+    restapi-server: restapi-server:20260913T2247-unstable@sha256:92157986fae5e5d38ee1b6364573e9ca47a7c7577bbcaeff30780e30614d0c91
     webui: webui:20260913T1533-unstable@sha256:4eef87badeb67875317fd51d598f7290e40b7c0bb7ba6c8ed2fa575e13df2ff3
     plugin-alphabets: plugin-alphabets:20260913T1509-unstable@sha256:4a9ab5022614f9d86927f116d6eabbf871596dab49b45ba9eeae8d344f893008
     plugin-android-parser: plugin-android-parser:20260913T1429-unstable@sha256:51f05c0761860d09efb419095a5aa1c05ff2269fa4342631a8fbcb8d3ddb7ae9
