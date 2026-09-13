@@ -192,6 +192,9 @@ secrets:
   #   apikey: <apikey-from-vt> # When you signup for virustotal you get an API key to use there API, that value is required here.
   virustotalCreds: "virustotal-creds"
 
+  # Azureblog connection string for storing/pulling virustotal metatdata
+  azureStorageCreds: "azure-storage-creds"
+
   # Backup S3 credentials used to backup important kafka data to an S3 instance.
   # data:
   #   access_key: <access-key-from-backup-minio-or-s3> # Access key / username from S3 UI.
@@ -1678,9 +1681,7 @@ plugins:
       size: "10Gi"
     # Use a demo configuration for the virustotal plugin.
     demoConfig: false
-    # If `true`, creates a CronJob to download the VT filefeed metadata.
-    # hit virustotal api using credentials and pull metadata feed
-    pullFromApi: false
+    pullFromApi: "disabled"
     config:
       # Choose between "v2" or "v3" of the virustotal API.
       VIRUSTOTAL_APIVERSION: "v3"
@@ -1690,8 +1691,30 @@ plugins:
       #PLUGIN_MAX_SECURITY: "OFFICIAL"
       # Number of suspicious or malicious AV hits required to pull a files metadata from VT.
       #PLUGIN_MINIMUM_AV_HITS: "0"
+      # Azure blob storage container name for virustotal metatdata eg. BLOB_CONTAINER/%s/%s/%s/%s.tar.bz2
+      BLOB_CONTAINER: ""
+      # Azure blob storage full path format eg. v3/%s/%s/%s.tar.bz2 NOTE: Azul currently needs the format to have %s/<YEAR>/<MONTH> at the beginning
+      # This is because currently Azul will only scan the <YEAR><MONTH> equal to the current year and month so needs that format to extract the year and month from the folder name (format yyyy/m/).
+      BLOB_FULL_PATH_FORMAT: ""
+      # Azure blob storage filename format in GO format so "%Y%m%d%H" would be "2006010215"
+      BLOB_FILE_NAME_FORMAT: ""
+      # An example full path is files/v3/2026/9/2026090719.tar.bz2
+      
+      # blobHourGracePeriod keeps ingestion deliberately behind the current UTC hour.
+      # An hourly blob is not even checked until its timestamp is at least this old.
+      BLOB_HOUR_GRACE_PERIOD: ""
+      # BLOB_STABILITY_PERIOD requires an existing blob to have remained unmodified for
+      # this long before it is downloaded and processed. This protects against late
+      # uploads that happen to target an otherwise old hourly path.
+      BLOB_STABILITY_PERIOD: ""
+      # BLOB_MAX_RETRY_ATTEMPTS is the number of blob-specific failures allowed for an
+      # eligible hour across separate runs. Once the limit is reached, that hour is
+      # explicitly skipped so later eligible hours can continue catching up.
+      # Service-wide failures such as authentication, throttling, or network errors do
+      # not consume this retry budget.
+      BLOB_MAX_RETRY_ATTEMPTS: ""
     plugins:
-      # server for pushing metadata feed to (alternative to pullFromApi)
+      # server for pushing metadata feed to (alternative to source)
       vtfilefeedserver:
         enabled: false
         enableLivenessProbe: false
@@ -1709,7 +1732,7 @@ plugins:
           - name: RULES_ROOT
             value: /rules
         args:
-          - "filefeed"
+          - "filefeedserver"
         volumeMounts:
           - name: data
             mountPath: /data

@@ -437,7 +437,7 @@ plugins:
     # Ensure the virustotal URL is set.
     # not enabling vtdownload or vtfilelookup (not currently used in production deployments)
     enabled: true
-    pullFromApi: true
+    pullFromApi: "vt"
   assemblyline:
     # Ensure source named assemblyline exists.
     # Add a Security MAP unless your assemblyline and azul mappings are one for one.
