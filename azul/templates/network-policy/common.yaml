@@ -182,14 +182,13 @@ kind: NetworkPolicy
 metadata:
   name: allow-ingress-prometheus-scrape
 spec:
-  podSelector: {}
   podSelector:
     matchLabels:
       allow-ingress-prometheus-scrape: "true"
   ingress:
     - ports:
       - port: 8900
-        endport: 8950
+        endPort: 8950
         protocol: TCP
       {{- if .Values.istioEnabled }}
       - port: 15008
@@ -234,7 +233,6 @@ kind: NetworkPolicy
 metadata:
   name: allow-egress-prometheus-push-gateway
 spec:
-  podSelector: {}
   podSelector:
     matchLabels:
       allow-egress-prometheus-push-gateway: "true"
