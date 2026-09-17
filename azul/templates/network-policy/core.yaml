@@ -253,7 +253,7 @@ spec:
   egress:
     - ports:
       - port: 9200
-        endport: 9700
+        endPort: 9700
         protocol: TCP
       {{- if .Values.istioEnabled }}
       - port: 15008
