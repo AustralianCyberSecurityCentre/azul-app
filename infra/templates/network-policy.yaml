@@ -921,6 +921,28 @@ spec:
     - Egress
 ---
 {{ end }}
+{{ if not (has "allow-egress-loki-main" .Values.disableNetworkPolicies) }}
+# Allow loki side car to egress back to itself.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-loki-main
+spec:
+  egress:
+    - ports:
+        - port: 3100
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: single-binary
+      app.kubernetes.io/name: loki
+  policyTypes:
+    - Egress
+---
+{{ end }}
 {{ if not (has "allow-egress-loki-chunk-cache" .Values.disableNetworkPolicies) }}
 # Allow loki's chunk cache to egress back to loki
 apiVersion: networking.k8s.io/v1
