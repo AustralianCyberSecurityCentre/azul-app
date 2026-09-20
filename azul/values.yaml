@@ -2010,7 +2010,7 @@ images:
     client: client:20260919T1425-unstable@sha256:fb9c955288e094d256c20e2641204ec7c60e662122e737d6bfd6a56493d0b435
     dispatcher: dispatcher:20260919T1537-unstable@sha256:c5f2a87138732d846f7e4a9a81277fb6b53e6935b85f026a014ce21365d1fad5
     docs: docs:20260919T0000-unstable@sha256:c42d87e653dcf492317e5899f0fce5da06fac6873b0a10b945f60b76c5242179
-    restapi-server: restapi-server:20260920T1431-unstable@sha256:4b9d97bdabf4fe6f13dd65febb8aa38bf3b9cc0703d1e483b48419588e88f0bd
+    restapi-server: restapi-server:20260920T1446-unstable@sha256:8e9b92f276b9b74ab4052a709a36201cff2283b15315d1a88c900cb5de733fb1
     webui: webui:20260920T1436-unstable@sha256:702ce11fde42cb4c02c0e1840a3edaccc11ee9f5a856fe5f473376e3f15770c0
     plugin-alphabets: plugin-alphabets:20260919T1445-unstable@sha256:593e5a1ee0db2f8c9e57320d12f2c9d15b89f51ee0393ffe9060f9f89b9e454a
     plugin-android-parser: plugin-android-parser:20260919T1442-unstable@sha256:24150d247d06109b821f92881f768d074ea1661d281efbbbcc4099b75962593e
