@@ -855,7 +855,10 @@ spec:
     - {}
   # Allow egress to two caches (results and chunks)
   egress:
-    - {}
+    - to:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: loki
   podSelector:
     matchLabels:
       app.kubernetes.io/name: loki
