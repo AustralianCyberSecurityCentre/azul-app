@@ -852,13 +852,16 @@ metadata:
   name: allow-ingress-loki
 spec:
   ingress:
-    - {}
+    - ports:
+        - protocol: TCP
+          port: 3100
+        - port: 8080
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
   # Allow egress to two caches (results and chunks)
   egress:
-    - to:
-      - podSelector:
-          matchLabels:
-            app.kubernetes.io/name: loki
+    - {}
   podSelector:
     matchLabels:
       app.kubernetes.io/name: loki
