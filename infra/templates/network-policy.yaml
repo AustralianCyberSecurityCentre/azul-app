@@ -921,7 +921,15 @@ metadata:
   name: allow-egress-loki-main
 spec:
   egress:
-    - {}
+    - ports:
+        - port: 3100
+          protocol: TCP
+        # Port the loki-sc-rules sidecar runs on.
+        - port: 8080
+          protocol: TCP
+        {{- if .Values.istioEnabled }}
+        - port: 15008
+        {{- end }}
   podSelector:
     matchLabels:
       app.kubernetes.io/component: single-binary
