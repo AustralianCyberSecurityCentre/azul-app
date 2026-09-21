@@ -21,6 +21,16 @@ nodeSelector: {}
 # K8s toleration definitions to apply to Azul.
 tolerations: []
 
+# UID/GID that all Azul pods run as. These are applied to the pod and container securityContexts.
+# Any field set to null is omitted from the rendered manifests.
+# On OpenShift (restricted-v2 SCC) set runAsUser and fsGroup to null so the SCC injects values from the
+# namespace's uid-range / supplemental-groups. runAsGroup is not restricted by SCCs and should
+# stay at 21000 so the process keeps group access to files in the Azul images.
+securityContext:
+  runAsUser: 21000
+  runAsGroup: 21000
+  fsGroup: 21000
+
 # K8s node and pod affinity/anti-affinity definitions to apply to Azul.
 affinity: {}
 
