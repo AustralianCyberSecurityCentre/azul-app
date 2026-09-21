@@ -30,6 +30,9 @@
           {{- $cmSHA256 := (print $cmSHA256 (include "plugin.config" (dict "name" $plugin_name "config" $plugin.config) | nindent 0 ) | sha256sum) }}
         {{- end }}
         
+        {{/* per-plugin `vpa:` overrides layered on top of the pluginVPA defaults */}}
+        {{- $vpa := mergeOverwrite (deepCopy $.Values.pluginVPA) (default (dict) $plugin.vpa) }}
+
         {{/* ------------------------------------------------------- */}}
         {{/* STANDARD PLUGIN */}}
         {{/* ------------------------------------------------------- */}}
@@ -50,6 +53,7 @@
                   "cmSHA256" $cmSHA256
                   "envOverrides" $envOverrides
               ) | nindent 0 }}
+              {{- include "vpa" (dict "name" $newPluginName "vpa" $vpa) | nindent 0 }}
 
             {{- end }}
           {{- else }}
@@ -64,6 +68,7 @@
                   "cmSHA256" $cmSHA256
               ) | nindent 0 }}
             {{- include "hpa" (dict "root" $ "name" $plugin_name "min" ($plugin.minReplicas | default $.Values.pluginHPA.minReplicas) "max" ($plugin.maxReplicas | default $.Values.pluginHPA.maxReplicas) "avgUtil" ($plugin.averageUtilization | default $.Values.pluginHPA.averageUtilization) "useSmartScaler" (hasKey $plugin "useSmartScaler" | ternary $plugin.useSmartScaler $.Values.pluginHPA.useSmartScaler) "includeHistoric" (hasKey $plugin "includeHistoric" | ternary $plugin.includeHistoric $.Values.pluginHPA.includeHistoric) "maxQueueLength" (hasKey $plugin "maxQueueLength" | ternary $plugin.maxQueueLength $.Values.pluginHPA.maxQueueLength)) | nindent 0 }}
+            {{- include "vpa" (dict "name" $plugin_name "vpa" $vpa) | nindent 0 }}
           {{- end }}
         {{- end }}
       {{- end }}

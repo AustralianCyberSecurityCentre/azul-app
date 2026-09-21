@@ -128,6 +128,26 @@ pluginHPA:
   # If using the internal scaler, the maximum backlog for a plugin before scaling occurs
   maxQueueLength: 50
 
+# Default Vertical Pod Autoscaler values for plugins unless overwritten by an individual plugin via `vpa:`.
+# This requires the Vertical Pod Autoscaler (VPA) to be installed in the environment.
+pluginVPA:
+  enabled: false
+  # Off: only produce recommendations (view with `kubectl describe vpa`).
+  # Initial: apply recommendations only when pods are created.
+  # Auto / Recreate: evict and recreate pods to apply recommendations.
+  updateMode: "Off"
+  # Resources the VPA is allowed to adjust. CPU is excluded by default because plugin HPAs scale on CPU utilisation
+  # and VPA must not control the same metric as an HPA. Add "cpu" here for plugins using the smart scaler.
+  controlledResources:
+    - memory
+  # Optional bounds on the recommendations, e.g.
+  # minAllowed:
+  #   memory: 128Mi
+  # maxAllowed:
+  #   memory: 4Gi
+  minAllowed: {}
+  maxAllowed: {}
+
 # Default HPA values for plugins using git-sync unless overwritten by individual component.
 pluginSyncHPA:
   maxReplicas: 10

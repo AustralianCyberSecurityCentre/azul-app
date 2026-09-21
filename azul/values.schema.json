@@ -193,6 +193,14 @@
         "maxQueueLength"
       ]
     },
+    "pluginVPA": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/vpa"
+        }
+      ],
+      "required": ["enabled", "updateMode", "controlledResources"]
+    },
     "pluginSyncHPA": {
       "allOf": [
         {
@@ -1877,6 +1885,52 @@
         }
       }
     },
+    "vpa": {
+      "description": "Vertical Pod Autoscaler settings. Requires the VPA to be installed in the cluster.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "updateMode": {
+          "type": "string",
+          "enum": ["Off", "Initial", "Recreate", "Auto", "InPlaceOrRecreate"]
+        },
+        "controlledResources": {
+          "description": "Resources the VPA may adjust. Avoid controlling the same metric as the plugin HPA (cpu by default).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["cpu", "memory"]
+          }
+        },
+        "minAllowed": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          }
+        },
+        "maxAllowed": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "memory": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "resources": {
       "description": "Define CPU and Memory requests and limits.",
       "type": "object",
@@ -2575,6 +2629,10 @@
           "type": "integer",
           "minimum": 0,
           "description": "HPA settings cannot be used if instanceOverrides is set"
+        },
+        "vpa": {
+          "description": "Overrides for the pluginVPA defaults for this plugin.",
+          "$ref": "#/definitions/vpa"
         },
         "runTimeout": {
           "type": "string"
