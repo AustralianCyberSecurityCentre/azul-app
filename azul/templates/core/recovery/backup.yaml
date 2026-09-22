@@ -60,12 +60,12 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- include "harden.deployment" . | nindent 6 }}
+      {{- include "harden.deployment" $ | nindent 6 }}
       containers:
       - name: main
         image: {{ include "image.custom" (dict "images" $.Values.images "name" "backup")}}
         imagePullPolicy: {{ $.Values.images.pullPolicy }}
-        {{- include "harden.container" . | nindent 8 }}
+        {{- include "harden.container" $ | nindent 8 }}
         {{- if $.Values.recovery.backup.resources }}
         resources:
         {{- $.Values.recovery.backup.resources | toYaml | nindent 10 }}

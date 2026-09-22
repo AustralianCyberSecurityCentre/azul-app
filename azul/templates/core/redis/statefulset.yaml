@@ -104,9 +104,13 @@ spec:
             drop:
             - ALL
           readOnlyRootFilesystem: true
-          runAsGroup: 21000
+          {{- with .Values.securityContext.runAsGroup }}
+          runAsGroup: {{ int64 . }}
+          {{- end }}
           runAsNonRoot: true
-          runAsUser: 21000
+          {{- with .Values.securityContext.runAsUser }}
+          runAsUser: {{ int64 . }}
+          {{- end }}
           seccompProfile:
             type: RuntimeDefault
         terminationMessagePath: /dev/termination-log
@@ -133,7 +137,9 @@ spec:
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext:
-        fsGroup: 21000
+        {{- with .Values.securityContext.fsGroup }}
+        fsGroup: {{ int64 . }}
+        {{- end }}
         fsGroupChangePolicy: Always
       terminationGracePeriodSeconds: 30
       volumes:

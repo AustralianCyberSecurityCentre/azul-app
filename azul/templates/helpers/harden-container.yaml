@@ -1,4 +1,8 @@
 {{- define "harden.container" -}}
+{{/* helper may be called with the root context or a dict containing "root" */}}
+{{- $root := . -}}
+{{- if not .Values }}{{ $root = .root }}{{ end -}}
+{{- $sc := $root.Values.securityContext -}}
 securityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
@@ -6,7 +10,9 @@ securityContext:
     drop: ["ALL"]
     add: ["NET_BIND_SERVICE"]
   runAsNonRoot: true
-  runAsUser: 21000
+  {{- with $sc.runAsUser }}
+  runAsUser: {{ int64 . }}
+  {{- end }}
   seccompProfile:
     type: RuntimeDefault
 {{- end }}
