@@ -53,8 +53,26 @@ data:
   CORS_ALLOW_HEADERS: "{{ .Values.restapi.cors.allowHeaders }}"
   # Readonly mode
   METASTORE_READONLY_MODE: "{{ .Values.restapi.readonlyMode }}"
+  # Enable/disable alerter
+  RESTAPI_ALERTER_ENABLED: "{{ .Values.alerter.enabled }}"
+
+{{- if .Values.alerter.enabled }}
+  # Alerter configuration
+  ALERTER_REDIS_HOST: '{{ (split ":" .Values.external.redis.endpoint)._0 }}'
+  ALERTER_REDIS_PORT: '{{ (split ":" .Values.external.redis.endpoint)._1 }}'
+  # Note this needs to match what's in dispatchers settings.
+  ALERTER_REDIS_DB: "{{ .Values.alerter.redis_db }}"
+  ALERTER_ALERT_KEY: "{{ .Values.alerter.alert_key }}"
+  ALERTER_CONFIG_KEY: "{{ .Values.alerter.config_key }}"
+  ALERTER_ALERT_POLL_FREQUENCY_SECONDS: "{{ .Values.alerter.alert_poll_frequency_seconds }}"
+  ALERTER_WEBHOOKS: |-
+    {{- mustToJson .Values.alerter.webhooks | nindent 4 }}
+  ALERTER_ALERT_FORMAT: "{{ .Values.alerter.alert_format }}"
+  # Maximum number of attempt to re-attempt raising an alert (negative means infinite)
+  ALERTER_MAX_ALERT_REATTEMPTS: "{{ .Values.alerter.max_alert_reattempts }}"
+{{- end }}
   # Headers
-  {{- if .Values.web.ingress.security.enableHarden }}
+{{- if .Values.web.ingress.security.enableHarden }}
   RESTAPI_HEADERS: |-
     {{- include "server.headers.envs" (dict "Values" .Values "inputCsp" .Values.web.ingress.security.csp.api "extraHeaders" .Values.restapi.additional_headers ) | nindent 4 }}
 {{- end }}
