@@ -1017,6 +1017,32 @@ metastore:
           memory: "2Gi"
           cpu: "1000m"
 
+# Enabling the alerter allows users to raise alerts to webhooks, when enabled users can configure alerts through the API.
+alerter:
+  enabled: false
+  # List of webhooks with corresponding webhook_id's where alerts can be raised.
+  # NOTE - must be at least one webhook if this is enabled.
+  # Removing IDs after creation will likely lead to broken rules, as alerts that attempt to send to the removed Ids will fail.
+  webhooks: []
+    # - id: "test"
+    #   description: "test"
+    #   webhook_type: "mattermost"
+    #   url: "fake-endpoint"
+  # Maximum security level for events an alert can be raised for (events above this threshold are ignored and never raise alerts.)
+  max_security: ""
+  # Redis keys where the alert hits and configuration are stored.
+  alert_key: "alerts"
+  config_key: "config"
+  # How often to check for new alerts.
+  alert_poll_frequency_seconds: 300
+  # String format of message to be sent via message to the webhook.
+  alert_format: "Alert raised for {sha256} the alert was id {alert_id} with message {alert_message}"
+  # Number of times to re-attempt sending an alert to a webhook before discarding it.
+  max_alert_reattempts: 10
+  # How often redis changes are propagated to the backend (dispatcher) that actually raises the alerts.
+  # Number of minutes that the backend waits before polling for config changes.
+  config_reload_frequency_min: 60
+
 # API server configuration
 restapi:
   readonlyMode: false

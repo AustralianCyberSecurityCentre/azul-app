@@ -33,3 +33,12 @@ data:
   DP.LOG_PATH: "/logs/dispatcher/"
   BED.LOG_LEVEL: "{{ .Values.dispatcher.config.defaultLogLevel }}"
   DP.STREAMS.AES_ENABLED: "{{ .Values.external.filestore.aesEnabled }}"
+  # Alerter settings
+  DP.ALERTER.ENABLED: "{{ .Values.alerter.enabled }}"
+{{- if .Values.alerter.enabled }}
+  DP.ALERTER.MAX_SECURITY: "{{ .Values.alerter.max_security }}"
+  DP.ALERTER.REDIS_DB_ID: "{{ .Values.alerter.redis_db_id }}"
+  DP.ALERTER.CONFIG_RELOAD_FREQUENCY_MIN : "{{ .Values.alerter.config_reload_frequency_min }}"
+  DP.ALERTER.ALERT_KEY: "{{ .Values.alerter.alert_key }}"
+  DP.ALERTER.CONFIG_KEY: "{{ .Values.alerter.config_key }}"
+{{- end }}

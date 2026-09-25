@@ -839,6 +839,79 @@
         }
       ]
     },
+    "alerter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "webhooks":{
+            "type": "array",
+            "items":{
+              "additionalProperties": false,
+              "required": ["id", "description", "webhook_type", "url"],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "description":{
+                  "type": "string"
+                },
+                "webhook_type": {
+                  "type": "string",
+                  "enum": ["msteams", "mattermost"]
+                },
+                "message_field": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+          }
+        },
+        "enabled":{
+          "type": "boolean"
+        },
+        "max_security": {
+          "type": "string"
+        },
+        "alert_key": {
+          "type": "string"
+        },
+        "config_key": {
+          "type": "string"
+        },
+        "alert_poll_frequency_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "alert_format":{
+          "type": "string"
+        },
+        "max_alert_reattempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "config_reload_frequency_min": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "webhooks":{
+            "minItems": 1
+          }
+        }
+      },
+      "else": {}
+    },
     "restapi": {
       "type": "object",
       "additionalProperties": false,
