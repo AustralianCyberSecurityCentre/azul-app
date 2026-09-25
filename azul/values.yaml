@@ -1033,6 +1033,8 @@ alerter:
   # Redis keys where the alert hits and configuration are stored.
   alert_key: "alerts"
   config_key: "config"
+  # Database Id to use in redis (note dispatcher uses 0-3, and retrohunt uses 15 by default)
+  redis_db: 4
   # How often to check for new alerts.
   alert_poll_frequency_seconds: 300
   # String format of message to be sent via message to the webhook.

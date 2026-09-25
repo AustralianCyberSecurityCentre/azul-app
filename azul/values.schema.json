@@ -880,6 +880,10 @@
         "config_key": {
           "type": "string"
         },
+        "redis_db":{
+          "type": "integer",
+          "minimum": 0
+        },
         "alert_poll_frequency_seconds": {
           "type": "integer",
           "minimum": 1
