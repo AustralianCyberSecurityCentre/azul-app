@@ -162,6 +162,14 @@ metastore:
     number_of_shards: 10
     number_of_replicas: 1
 
+alerter:
+  enabled: true
+  webhooks:
+    - id: "test"
+      description: "test"
+      webhook_type: "mattermost"
+      url: "fake-endpoint"
+  max_security: "MORE OFFICIAL"
 
 security:
   default: OFFICIAL
