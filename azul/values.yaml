@@ -2080,7 +2080,7 @@ images:
     nsrl-lookup-server: nsrl-lookup-server:20260927T1426-unstable@sha256:a6bb190ebf295bd1340718c9a81f86936bfca654867903b30afc3d8cdfcf5354
     plugin-suricata: plugin-suricata:20260928T0507-unstable@sha256:0e5d52c07b9f7687b3f9850e9b912927f4947871ae46a1c03388dba08246594e
     scaler: scaler:20260927T1429-unstable@sha256:ce28d40140380a8488814ffda42d2b91760764cf51449a096be4bbc60d9b3164
-    plugin-debloat: plugin-debloat:20260928T0036-unstable@sha256:627ecb3b0733dc5081ff72b5cd906cce9f547ed7773033aac276f9385f77d62d
+    plugin-debloat: plugin-debloat:20260928T0513-unstable@sha256:ce2a53d76bc47d4a144f901a2ab1392d114f1900a61c44009027ae893e324afc
     plugin-yara: plugin-yara:20260928T0040-unstable@sha256:bbbeef862ac6758fa294978fd4279e28b1261d67bf102a08d4e73ccde4fa4789
     plugin-portex: plugin-portex:20260928T0038-unstable@sha256:f34366d32504725f545f862657ac8ab321b96b8f7e09953a5a41c4b09dd3cd7f
     plugin-truncated: plugin-truncated:20260928T0509-unstable@sha256:dc3ecd8eca870e133f863659eee18e86559e58f0c9c90096544fef866b3f31fe
