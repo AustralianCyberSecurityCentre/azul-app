@@ -1027,6 +1027,34 @@ metastore:
           memory: "2Gi"
           cpu: "1000m"
 
+# Enabling the alerter allows users to raise alerts to webhooks, when enabled users can configure alerts through the API.
+alerter:
+  enabled: false
+  # List of webhooks with corresponding webhook_id's where alerts can be raised.
+  # NOTE - must be at least one webhook if this is enabled.
+  # Removing IDs after creation will likely lead to broken rules, as alerts that attempt to send to the removed Ids will fail.
+  webhooks: []
+  # - id: "test"
+  #   description: "test"
+  #   webhook_type: "mattermost"
+  #   url: "fake-endpoint"
+  # Maximum security level for events an alert can be raised for (events above this threshold are ignored and never raise alerts.)
+  max_security: ""
+  # Redis keys where the alert hits and configuration are stored.
+  alert_key: "alerts"
+  config_key: "config"
+  # Database Id to use in redis (note dispatcher uses 0-3, and retrohunt uses 15 by default)
+  redis_db: 4
+  # How often to check for new alerts.
+  alert_poll_frequency_seconds: 300
+  # String format of message to be sent via message to the webhook.
+  alert_format: "Alert raised for {sha256} the alert was id {alert_id} with message {alert_message}"
+  # Number of times to re-attempt sending an alert to a webhook before discarding it.
+  max_alert_reattempts: 10
+  # How often redis changes are propagated to the backend (dispatcher) that actually raises the alerts.
+  # Number of minutes that the backend waits before polling for config changes.
+  config_reload_frequency_min: 60
+
 # API server configuration
 restapi:
   readonlyMode: false
@@ -2015,61 +2043,61 @@ images:
   customRegistry: docker.io/asdazul/
   # images that form part of an azul release
   custom:
-    audit-forwarder: audit-forwarder:20260920T1422-unstable@sha256:8a709e29cf0b28c3ef06a6fc4a0fd734866ade3128ee04f22818f90b8b85e815
-    backup: backup:20260920T1415-unstable@sha256:12071578cc7f83eaaa844bcd2381c300d52b7c4c4f307aa9cab9a745b40b8e37
-    client: client:20260920T1605-unstable@sha256:3f41e31f4609faa3e57d260ab197bdd1897cf1d10452205f02315cdbf67d4ac1
-    dispatcher: dispatcher:20260919T1537-unstable@sha256:c5f2a87138732d846f7e4a9a81277fb6b53e6935b85f026a014ce21365d1fad5
-    docs: docs:20260919T0000-unstable@sha256:c42d87e653dcf492317e5899f0fce5da06fac6873b0a10b945f60b76c5242179
+    audit-forwarder: audit-forwarder:20260927T1413-unstable@sha256:4eb8cae4252d04a61e8f31da494f5cc96cb536577553a754800aad1159c69ffe
+    backup: backup:20260928T0454-unstable@sha256:9cf48d724294a4bd12e0340ebccd556162df2126858fdde213ae0952dac3e451
+    client: client:20260928T0456-unstable@sha256:5dbe20cca844eb1f5cee99ba27c90232ce3e703e21493ce5c6f25fe56c5b27ba
+    dispatcher: dispatcher:20260928T0509-unstable@sha256:24ea398c37ab76a3d709217450a198288cb2ebf3e10c481f26aedd4fa3715a5e
+    docs: docs:20260928T0019-unstable@sha256:99a21a6f5dcbda2e94db710669220f9cb633da7042b9aacf15b660676e018926
     restapi-server: restapi-server:20260920T2357-unstable@sha256:dbe2bc37c129a4bd2168bcf18320abf4a35783c5792820c12fc11c5ce8eeeed2
-    webui: webui:20260920T1436-unstable@sha256:702ce11fde42cb4c02c0e1840a3edaccc11ee9f5a856fe5f473376e3f15770c0
-    plugin-alphabets: plugin-alphabets:20260920T1549-unstable@sha256:a433883ee3e28f4485c82a6792cd4c38dfe6c4af6acbe7382097a01938998bf2
-    plugin-android-parser: plugin-android-parser:20260920T1513-unstable@sha256:fc407204b51ef5db1d04e71c1b007cfee3d9525bd3d4b9cc53c625babce64bdc
-    plugin-assemblyline: plugin-assemblyline:20260920T1559-unstable@sha256:72b00ac0c43ddc2835a87e90510f2d4b67ecee086064d45d41eba36d6ddfc647
-    plugin-build-time-strings: plugin-build-time-strings:20260920T1558-unstable@sha256:6def5471c2202577066072ed532773e16d2f4e46889357304c13c3d3f6c74753
-    plugin-mandiant-capa: plugin-mandiant-capa:20260920T1539-unstable@sha256:c2c8ae6be14a533041c11fa91acd94910cf2b118e00362c2002649ef6e9e86c1
-    plugin-cape: plugin-cape:20260920T1521-unstable@sha256:4ee0008803db40ca1106362217b2b0954f4ab0344d1654ec1b6a10f182c0d15e
-    plugin-de4dot: plugin-de4dot:20260920T1527-unstable@sha256:d7d4ab1ac368f7f209a8cc48b51aa7418c405c0b87c5d0119cb2c1301f42d583
-    plugin-dotnet-decompiler: plugin-dotnet-decompiler:20260920T1528-unstable@sha256:74669a0e2df412b576b6f50d37db5a57d01c4fceec60f732682c3a3ee05d0cf3
-    plugin-dotnet-deob: plugin-dotnet-deob:20260920T1531-unstable@sha256:debb937fc42e06f07102458ed5f37aebfcddba9867fdb850221050642b963f35
-    plugin-email: plugin-email:20260921T0116-unstable@sha256:4778a4d3567d62a0ff6a8908595eb10eb1f82fa5414acd70bb3ea728ffb504ad
-    plugin-entropy: plugin-entropy:20260920T1514-unstable@sha256:baf55da68b29f7283c3ffd369f4cf55e2b8ac787c702d99ab6579e5d99e25a65
-    plugin-entrypointcheck: plugin-entrypointcheck:20260920T1530-unstable@sha256:afb80d7be08bc74267f6a78b7930d7cce5d7acafd6c0806a5dcf90b3e9f9294d
-    plugin-exiftool: plugin-exiftool:20260920T1531-unstable@sha256:816726eb9a995876df106d59b47d26fbcb5d7d09e120fc20eebcf79c5e4ac743
-    plugin-export-hashes: plugin-export-hashes:20260920T1532-unstable@sha256:357c1cde58a45848c45d48b992d31f829055f14dad523fa9b4acac2e7bd4ed20
-    plugin-maco: plugin-maco:20260920T1538-unstable@sha256:7741a510f39de5123ef77972ddeade4992a0fb8490862de991bcb58472269e1b
-    plugin-floss: plugin-floss:20260920T1537-unstable@sha256:7a5552868dfd1612db0fbc691e44fdff7aceb851555d02abddd262f16280f813
-    plugin-goinfo: plugin-goinfo:20260920T1525-unstable@sha256:287447f43c708b3c4cc49c5811de6cd8b9e4f9ea8dece5d86e6c9b0a22f2d292
-    plugin-image-convert: plugin-image-convert:20260920T1534-unstable@sha256:40616dcd30d8e14ad4bced915126121e293021a9a983c87ee05be06ada639e9c
-    plugin-index-coincidence: plugin-index-coincidence:20260920T1534-unstable@sha256:d85a4aab9a0bfa3630deea2578da25d6c193951161330116bd2bca44b653395e
-    plugin-js-deobf: plugin-js-deobf:20260920T1537-unstable@sha256:b3eaebc28f4e91a85b678a759af3afe0f48eb91304d5860fe7c77699497049cd
-    plugin-lief: plugin-lief:20260920T1533-unstable@sha256:1f8dadc4f2d828396be51e8c5129acd51d5b4a91eddf1c4a7227188e9746ab98
-    plugin-lookback: plugin-lookback:20260920T1537-unstable@sha256:ea45d494842afebf1aacfca1908af4769a20ede13d7735116ba6529b234fb490
-    plugin-malcarve: plugin-malcarve:20260920T2208-unstable@sha256:1f8c9d252f262915666d548d350deb6072e497a597bf50058665640530c8e6e6
-    plugin-netinfo: plugin-netinfo:20260920T1538-unstable@sha256:48386ee57aa194a138884daf9a4ef47c7af98ca3be47d385b772f6b5039a2ea9
-    plugin-nsrl: plugin-nsrl:20260920T1559-unstable@sha256:f9b8fdc42662f5cfca91e7ff9aae480334cb643f887226e5ca0af44f40cddbec
-    plugin-office: plugin-office:20260920T1539-unstable@sha256:a8109b08f3008b9519593585bdfa92244782c7d4893dc1d084d6cf7bcd7d3da8
-    plugin-pdftools: plugin-pdftools:20260920T1535-unstable@sha256:a357cd95c68d351c0fbe4a17a772566e51165184b52a3f21c09d522dcde2df77
-    plugin-python: plugin-python:20260920T1602-unstable@sha256:813c909c0779ff1f46372f1d2564939fbb1d65cfc95a9ac9239c8de638028e40
-    plugin-repeated-bytes: plugin-repeated-bytes:20260920T1543-unstable@sha256:95a7e35d197df1954a1982e12d5f9ada92b2220955ab969c3ce2c41c134efceb
-    plugin-retrohunt: plugin-retrohunt:20260920T2341-unstable@sha256:287f53e9bf80f6ecd96e9d8396d6e4f93333a8e6331f85d621b0534ffc5cfe4c
-    plugin-richid: plugin-richid:20260920T1544-unstable@sha256:db3d66b889c25d5a99813366082cdf85e746cee0998bcbeb37cafca7d342b84d
-    plugin-script-decoder: plugin-script-decoder:20260920T1548-unstable@sha256:3d8f14fee5b91cbf8bf62fd215b105801e3d1527dcea779f005ea3726e3b5d1a
-    plugin-shortcut: plugin-shortcut:20260920T1548-unstable@sha256:5c2bf842eb7103be682d0924130aa97793ca69eeab13385a68351ef036591994
-    plugin-tika: plugin-tika:20260920T2328-unstable@sha256:310f6b973e0b5ebd4b1e7d82b26bdffd47488ae51f9487dda4b267bb0bdc8d4e
-    plugin-unbox: plugin-unbox:20260920T1554-unstable@sha256:885d2b35397fcf26ee0c424024e714424b7e274aa2db687f06a87c846b9a68ec
-    plugin-virustotal: plugin-virustotal:20260920T1534-unstable@sha256:4ee8f9876e0a46d4d4d496d9aa12512193ed7804e1131d89c70fe1bb0549544c
-    stats: stats:20260920T1620-unstable@sha256:89eff8f5ef7ad8e417fdeb15970f1eb0d78719628d737b788b2021255c9174e2
-    nsrl-lookup-server: nsrl-lookup-server:20260920T1434-unstable@sha256:907e99e9cf9fe3de1a2c16585489b31cd88de608ce83cb3b9f8a17e0c8c6317b
-    plugin-suricata: plugin-suricata:20260920T1549-unstable@sha256:3cf6c59e296bb17cc8e656b0e0e3430412d0cfba11e901fd7c86cbe945f7baa1
-    scaler: scaler:20260920T1428-unstable@sha256:13c3ba16ee9ee11044c70731578a982f5612c9fff2fdc9d8825ddbdfd15743e1
-    plugin-debloat: plugin-debloat:20260920T1521-unstable@sha256:9c81e0060e49dafdb29ac0d7ac95f2883b607e74cfab6219e77409383fafbd08
-    plugin-yara: plugin-yara:20260920T2232-unstable@sha256:4385259cc4f4960fa234541beb030cfcb33a07b7c56061a70e1e9b749df042a0
-    plugin-portex: plugin-portex:20260920T1559-unstable@sha256:249fb693632ada156c820c461a8378eba8a1e3560757b5d34e6a9116d1ce0779
-    plugin-truncated: plugin-truncated:20260920T1550-unstable@sha256:658dd28b8837ac675bc36dfe28eda5a65fc554138394b887572556cf6ed2e4ba
-    plugin-certificates: plugin-certificates:20260920T1521-unstable@sha256:9be57ebbd59ac37eb083de337b323be9ac977ae0a0d79d2ed30ef506c576dd59
-    plugin-qrcode: plugin-qrcode:20260920T1601-unstable@sha256:367683691e210725534a4ad62b30ae6bfd99ebc4deb4019817031a1943fead29
-    smart-string-filter: smart-string-filter:20260920T1452-unstable@sha256:f09c9efdf1cd45658689d5524756014ba920bf91219828dc3f9c09d34ede24b2
-    plugin-ghidra: plugin-ghidra:20260920T1535-unstable@sha256:b1e803f365bb8222ecf7dcf6f128f5fb564f09e7b8110f26831a7df52b00e703
+    webui: webui:20260927T1439-unstable@sha256:95893bb90ca9a3a3d467a370e3b223bee55bbd08c90a3963cdfb3a8b4fe40a9a
+    plugin-alphabets: plugin-alphabets:20260929T0607-unstable@sha256:06712620d108689389fb09ba9355d6100584537cfd572c0a4e9b133152619e03
+    plugin-android-parser: plugin-android-parser:20260928T0519-unstable@sha256:dfd9097053062cda4e9a808b7d848009a987916446a17b53547ac38d3113a385
+    plugin-assemblyline: plugin-assemblyline:20260928T0522-unstable@sha256:1227147a0b8b3334b4544f01c09df094e0edbf5fce84e700d07385c10d6f4b55
+    plugin-build-time-strings: plugin-build-time-strings:20260929T0600-unstable@sha256:aa380a611acc912b0dc44b73eff79bfdb318c4cec58febba94321d280d89f632
+    plugin-mandiant-capa: plugin-mandiant-capa:20260929T0607-unstable@sha256:baae71d1792622d9d2b08081a7793be11a916573ffb000055414813f58974f2e
+    plugin-cape: plugin-cape:20260928T0520-unstable@sha256:3b684b15f9b3af61e3dee088329425ec508b515d0ae2930b9dd9d5e93328aeeb
+    plugin-de4dot: plugin-de4dot:20260928T0525-unstable@sha256:66b9531a56ad5cd0982a89462c215478c8f25db7ea25c38911d8a9906df9b57e
+    plugin-dotnet-decompiler: plugin-dotnet-decompiler:20260929T0606-unstable@sha256:8c9a71e11dd1c578497efb2b5927b5b883476aabcd94c5ce99955e027acf0c81
+    plugin-dotnet-deob: plugin-dotnet-deob:20260929T0558-unstable@sha256:9528587dcad576936d2f2019253b7272d95cba4245fac24b40e29a57a83c74e7
+    plugin-email: plugin-email:20260929T0605-unstable@sha256:28340b2f6d5ff732baca79a1a6e339de402655725ba4c318736d0d08b28b1dd7
+    plugin-entropy: plugin-entropy:20260928T0454-unstable@sha256:5100c1a9701cfbb0ef6a926a73a90f8c84aa370f38b911f1582f35f44d9a5cec
+    plugin-entrypointcheck: plugin-entrypointcheck:20260929T0608-unstable@sha256:75da5a2152b368bd50f6bbb001736a77e70b2151ebafe2d34bfae729d3a0f02d
+    plugin-exiftool: plugin-exiftool:20260929T0559-unstable@sha256:3fce77b4327fd1476486768d6d9ea0686bb140c414e4b718dee3575229a868d4
+    plugin-export-hashes: plugin-export-hashes:20260928T0526-unstable@sha256:3264ffea36c0d9338fc6292cb44feabb30767725cb6fddf08403c2e3ad1c0ced
+    plugin-maco: plugin-maco:20260929T0559-unstable@sha256:932c4f95a3874f591d496678ec492392f6a8a6b493dba390fd0163d2ec918d95
+    plugin-floss: plugin-floss:20260928T0514-unstable@sha256:5fee5b579998ea9e1a0d9fd22bbb8047c1d50a2b14874543cdd406bbc5e430a8
+    plugin-goinfo: plugin-goinfo:20260928T0454-unstable@sha256:31d25c39e74ff6832381a49fb66ec6fb1e5d5855502684ab5115b0733395eb63
+    plugin-image-convert: plugin-image-convert:20260929T0600-unstable@sha256:8c8d7f9a946f1a18003885c6323f371f1a8abfbb2457cc4dcee1a4d89c29c44d
+    plugin-index-coincidence: plugin-index-coincidence:20260928T0524-unstable@sha256:8b3ce8b7246eb83f4d73d5eee74d3cfa7bb8a7799a641b4dcf9b3c2487bb0532
+    plugin-js-deobf: plugin-js-deobf:20260929T0558-unstable@sha256:1c495c937ea5f27d6e28ad93754ff732057c4313894d7b0e805921713481e7f2
+    plugin-lief: plugin-lief:20260928T0523-unstable@sha256:70cb44b9f2512b16147309d4fe91b7e42b2ed5d3c66eca424e85a544cb8d597c
+    plugin-lookback: plugin-lookback:20260929T0602-unstable@sha256:681c025efb1f84625e9e454c42cd014b86a9e19a3a6c747c0a889d9758d1c653
+    plugin-malcarve: plugin-malcarve:20260928T0525-unstable@sha256:0d3060d757c9a71260c4bdb1fd04d903ad07493d3b9ad34e7385c376381c678e
+    plugin-netinfo: plugin-netinfo:20260928T0526-unstable@sha256:a5cdf4b966833841e4d9b392579c0d20ef6fa25f82756b914ff041a4ba80e155
+    plugin-nsrl: plugin-nsrl:20260929T0558-unstable@sha256:641561ca23157745aba16292ab38cff3b581380bd8447a7bf252e0cdb5b161ee
+    plugin-office: plugin-office:20260928T0524-unstable@sha256:6f8ecc9a8e1ff457ee2ef0453f45ab20207e2c11460446d9fd11c95849e816a7
+    plugin-pdftools: plugin-pdftools:20260929T0606-unstable@sha256:c53a20cb78df295c6ec6086e1f7ab20178b3211e2edbc1e1cc86fc6c8150e653
+    plugin-python: plugin-python:20260928T0530-unstable@sha256:ceaab66c48e8c0d132737dd6bc4b99e54f9a84c6bb478d55f23a32bd582c5c58
+    plugin-repeated-bytes: plugin-repeated-bytes:20260929T0600-unstable@sha256:291b3135981ebbfdf2b5279012bebc4a8ebfd4a2162b5e370ef09c8173752d92
+    plugin-retrohunt: plugin-retrohunt:20260928T0538-unstable@sha256:0bd35568723c1ae855b6c428884b8dd0bce9a3e5e9ab6332ea26982e704316ad
+    plugin-richid: plugin-richid:20260928T0525-unstable@sha256:acb3872be527352b1c0fad17f71d94309d1d8ecbd074aa45559c11679e50d6cc
+    plugin-script-decoder: plugin-script-decoder:20260928T0529-unstable@sha256:f7e65b26871e3b31ce96e9bf2c46a1056dcb567ec4fd0ae56ecf73d7bd4b2084
+    plugin-shortcut: plugin-shortcut:20260929T0601-unstable@sha256:ebc0c8760b4eb674711f55a85071aa83640f0576063a89a5f1545f2abf040645
+    plugin-tika: plugin-tika:20260928T0529-unstable@sha256:93f60c186d04e25d75297d0feb8e6d62abf2fc38978016148080910a50d0f99d
+    plugin-unbox: plugin-unbox:20260929T0604-unstable@sha256:6b8e2e650d05c4a12a2671cb02e6e6dd05b7a3f84ff1dcc83b9b9f2f4f31322a
+    plugin-virustotal: plugin-virustotal:20260928T0455-unstable@sha256:69863cfddaf2116561fe8ef4c0f9ad34aed8d8e3b1d3fbdba19d481fa4d4e304
+    stats: stats:20260927T2138-unstable@sha256:ce5faf21a7f0a287cc27cc0db424f419308112e575c3d1190e28403293e6e064
+    nsrl-lookup-server: nsrl-lookup-server:20260927T1426-unstable@sha256:a6bb190ebf295bd1340718c9a81f86936bfca654867903b30afc3d8cdfcf5354
+    plugin-suricata: plugin-suricata:20260929T0606-unstable@sha256:374888ebdefaaed814eb2b8ab4c1193dc434d6a79f826cab3744f0a7e52994e3
+    scaler: scaler:20260927T1429-unstable@sha256:ce28d40140380a8488814ffda42d2b91760764cf51449a096be4bbc60d9b3164
+    plugin-debloat: plugin-debloat:20260929T0556-unstable@sha256:2de73d90c66f0ee78d02eef037cff0b2b30ba210f789359b30ccea54b89df014
+    plugin-yara: plugin-yara:20260929T0607-unstable@sha256:55eae85606a645bb87285b117739d3602f0b05e7f87aa241bd554eb861bb8548
+    plugin-portex: plugin-portex:20260929T0602-unstable@sha256:349ce723dccde9de2226b17c6d92b125dbe1f27bfb564fb8b7c200f97a8a56d9
+    plugin-truncated: plugin-truncated:20260929T0607-unstable@sha256:bc94bf71d4fd1bd05830f0d9a83f19748376ad07e3813506b2378c155a1b4a5f
+    plugin-certificates: plugin-certificates:20260929T0612-unstable@sha256:21639bbeb28434bd4c557bdbae3ac4ff0fca8c028ab31822bff0013ee3d16679
+    plugin-qrcode: plugin-qrcode:20260929T0558-unstable@sha256:8286b906ec8ab4b2cc24057a82921d8253412a913f7431e41e4d4aadd831ee14
+    smart-string-filter: smart-string-filter:20260928T0454-unstable@sha256:e191ef1837bb5abf63bb90a264db5ecf58b1b3048239b1234b685752f1e05c61
+    plugin-ghidra: plugin-ghidra:20260928T0514-unstable@sha256:6983f79d645eca5b63cfb40915b4a79b73d3ab5d9dc3562eaf832710650838c4
     # plugin-report-feeds: dummy
-    plugin-report-feeds: plugin-report-feeds:20260920T1545-unstable@sha256:fcc38207589b2acdf8a14f50663a996a12bda3061bfb3238a3805790ce25a2e8
-    plugin-jadx: plugin-jadx:20260919T1456-unstable@sha256:5193df0e93e1131b49811149c693176a7c3f3db281ebb63d678f56b4ce2d1b47
+    plugin-report-feeds: plugin-report-feeds:20260929T0600-unstable@sha256:2f20ff6f231a05a13d85cc754667b41cb5da20a631f4887d666285747002125a
+    plugin-jadx: plugin-jadx:20260926T1645-unstable@sha256:f22d095827cc7941d46bd05b16df9e9dbbdead5375f77ddc28cc380c532387d4
