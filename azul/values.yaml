@@ -175,7 +175,7 @@ secrets:
   #   clientId: <azure-app-registration-client-id>
   #   clientsecret: <secret-key-from-azure> # Get when creating a new authorized application.
   filestore: "s3-keys"
-  # Redis that is used by dispatcher (automatically created in infra chart if you are using the built-in chart)
+  # Redis that is used by dispatcher (automatically created in azul chart if you are using the built-in chart)
   # Must keep in sync with redis.author.existingSecret
   # data:
   #   redis-username: <redis-username> # username used when setting up redis
