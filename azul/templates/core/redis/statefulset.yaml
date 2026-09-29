@@ -108,7 +108,7 @@ spec:
           runAsGroup: {{ int64 . }}
           {{- end }}
           runAsNonRoot: true
-          {{- with .Values.securityContext.runAsUser }}
+          {{- with coalesce .Values.redis.securityContext.runAsUser .Values.securityContext.runAsUser }}
           runAsUser: {{ int64 . }}
           {{- end }}
           seccompProfile:
@@ -137,7 +137,7 @@ spec:
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext:
-        {{- with .Values.securityContext.fsGroup }}
+        {{- with coalesce .Values.redis.securityContext.fsGroup .Values.securityContext.fsGroup }}
         fsGroup: {{ int64 . }}
         {{- end }}
         fsGroupChangePolicy: Always

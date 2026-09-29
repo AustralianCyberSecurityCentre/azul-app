@@ -342,6 +342,11 @@ redis:
 
   pvcSize: "1Gi"
 
+  # Override the global securityContext UID/fsGroup for redis
+  securityContext:
+    runAsUser: null
+    fsGroup: null
+
   annotations:
     argocd.argoproj.io/sync-options: Prune=false
 
