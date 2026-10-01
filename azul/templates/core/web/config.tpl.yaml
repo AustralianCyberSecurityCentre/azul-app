@@ -20,4 +20,7 @@ global_external_links:
   {{- if .Values.plugins.nsrl.enabled }}
   nsrl_url: https://{{ .Values.plugins.nsrl.server.ingress.host }}
   {{- end }}
+alerter_enabled: {{ .Values.alerter.enabled }}
+pat_enabled: {{ .Values.security.oidc.enable_pat }}
+admin_roles: {{ .Values.security.admin_roles }}
 {{- end }}
