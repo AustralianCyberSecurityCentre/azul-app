@@ -2075,7 +2075,7 @@ images:
     plugin-shortcut: plugin-shortcut:20261002T1553-unstable@sha256:08fd3588697b53d25c914d65064ecfe155c71aed7f3bf37dc956fd77fdc2553d
     plugin-tika: plugin-tika:20261002T1606-unstable@sha256:c154b2cdeaa24e9ab02537cb2a736b14f740ba4fe66cf9483bc96e591304f467
     plugin-unbox: plugin-unbox:20261002T1551-unstable@sha256:328c15a99e5034f84645b4ae3579e3564285ce3701f31d053f39f5e9b08d9f85
-    plugin-virustotal: plugin-virustotal:20261002T1523-unstable@sha256:b84b46759b8201cd0042c9649a11d8eec8eefac7192edb6309781f9c6065fe58
+    plugin-virustotal: plugin-virustotal:20261003T0011-unstable@sha256:757a984dd3b1ec078d31f0a5235b5b3301288f000af4149507988da7722d8034
     stats: stats:20261003T0005-unstable@sha256:00c57a6e0cc08b21df0f44fce826a8931ba93381d5c3882deb66dc63b97cc746
     nsrl-lookup-server: nsrl-lookup-server:20261003T0003-unstable@sha256:dadefe8dcd9342a76cd9336919f884620ce8f3a3178863a9486e9a7b1669733d
     plugin-suricata: plugin-suricata:20261002T1553-unstable@sha256:7a7c2a71b47439582b35f122c794a262149e3711c946ae5744255acedfc5c357
