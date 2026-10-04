@@ -2042,7 +2042,7 @@ images:
     webui: webui:20261002T1620-unstable@sha256:46005c5dc750ef8f2cd5077cab54e2deb0baaacf07e8554259b129bb468de08f
     plugin-alphabets: plugin-alphabets:20261003T1440-unstable@sha256:1095cde59225e4149c94161939760568caeeee1bdd52639015e555af65f9641c
     plugin-android-parser: plugin-android-parser:20261004T1407-unstable@sha256:cd70d1a40b25fe8d5728dd9d395e49fb759c3d5d446f37ef787e29a08532a4d4
-    plugin-assemblyline: plugin-assemblyline:20261003T1440-unstable@sha256:f176e3ae0d564d6ed1586cd5037b29db757041385ced7cc9d848dcf984bf6ffc
+    plugin-assemblyline: plugin-assemblyline:20261004T1410-unstable@sha256:08102410b0be9180bc13a72c29cfab9c0fc6d4c69b23660cb51691f13acfd4b1
     plugin-build-time-strings: plugin-build-time-strings:20261003T1429-unstable@sha256:e7aaf4d0c0425c891e5725541b86a998a13e03de3a1f72b37725f41107eb5c2a
     plugin-mandiant-capa: plugin-mandiant-capa:20261003T1440-unstable@sha256:a18ac071edbffe0135632e90608dfee59ba30382cf474db7e2060871e42265f7
     plugin-cape: plugin-cape:20261003T1442-unstable@sha256:69491da7a835d06d88deab61375c06366394b06f0d8a0d48772b0a6e6bfc28af
