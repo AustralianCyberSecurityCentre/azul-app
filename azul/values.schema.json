@@ -73,6 +73,21 @@
         "additionalProperties": false
       }
     },
+    "securityContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "runAsUser": {
+          "type": ["integer", "null"]
+        },
+        "runAsGroup": {
+          "type": ["integer", "null"]
+        },
+        "fsGroup": {
+          "type": ["integer", "null"]
+        }
+      }
+    },
     "affinity": {
       "type": "object",
       "properties": {
