@@ -2067,7 +2067,7 @@ images:
     plugin-nsrl: plugin-nsrl:20261005T2030-unstable@sha256:7fe0300174620dc65d1d6cafcac94abbcffcafcded2fdbbed674b4f9bb23e337
     plugin-office: plugin-office:20261004T1425-unstable@sha256:0fe1beb5867528364d21e4bde3f23f5863452e667ff20c2aa57251c6102012e9
     plugin-pdftools: plugin-pdftools:20261005T2033-unstable@sha256:d88f944dce2765e715800d71c1fd6c8b2d4623cf712efbec26ca23f591328486
-    plugin-python: plugin-python:20261004T1629-unstable@sha256:6ca7e04a32f76091825981f0dfc5639ed9905ad4cd2f704b6b7e4a9a9651396c
+    plugin-python: plugin-python:20261005T2037-unstable@sha256:caeb1a0c86da10b1e48b586ee071a39e310739d77000115cf31888baf01bfe7f
     plugin-repeated-bytes: plugin-repeated-bytes:20261005T2041-unstable@sha256:36f57554631724cf291695f32548753bfaaad6b751ea73d3d91962390b9b30f2
     plugin-retrohunt: plugin-retrohunt:20261004T1703-unstable@sha256:14906ed635969ff81b5afa061a6fc2158fb5a08655852948089e3ecef26967f9
     plugin-richid: plugin-richid:20261005T2029-unstable@sha256:5bab27849550220929cc22cc9dfe1cbab3ec9f8b032a94093450079c2c8070e2
