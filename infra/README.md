@@ -130,7 +130,7 @@ NOTE the secret name `seaweed-s3` is configurable in the `filer.s3.existingConfi
           "secretKey":"s3secretkeykeepitsecret"
         }
       ],
-      "actions": ["Admin","Read","Write"]
+      "actions": ["Admin","Read","Write","List","Tagging"]
     },
     { 
       "name":"anvReadOnly",
