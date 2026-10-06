@@ -105,7 +105,7 @@ stringData:
   user: admin
 kind: Secret
 metadata:
-  name: main-seaweed
+  name: admin-seaweed
 type: Opaque
 ```
 
