@@ -234,7 +234,7 @@ minio:
   # DEPRECATED - FUTURE WILL BE REMOVED!!!
   # Main instance, used to store files
   main:
-    enable: true
+    enable: false
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     secretName: s3-keys
 
@@ -275,7 +275,7 @@ minio:
   # DEPRECATED - FUTURE WILL BE REMOVED!!!
   # NOT RECOMMENDED FOR PRODUCTION USE - put your backups external to Kubernetes!
   backup:
-    enable: true
+    enable: false
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     secretName: s3-backup-keys
 
