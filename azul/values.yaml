@@ -1534,6 +1534,8 @@ plugins:
       max_broad_phase_workers: "5"
       # max number of biggrep tasks allowed per search
       max_broad_phase_tasks: "100000"
+      # maximum number of retries retrohunt will process the same job before cancelling it
+      max_retries: "10"
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"
       PLUGIN_INDEXERS:
