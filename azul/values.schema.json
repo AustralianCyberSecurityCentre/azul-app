@@ -452,6 +452,18 @@
         "persistentVolumeClaimRetentionPolicy":{
           "type": "object",
           "additionalProperties": true
+        },
+        "securityContext": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "runAsUser": {
+              "type": ["integer", "null"]
+            },
+            "fsGroup": {
+              "type": ["integer", "null"]
+            }
+          }
         }
       },
       "allOf": [
