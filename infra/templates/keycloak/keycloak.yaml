@@ -142,8 +142,8 @@ metadata:
 spec:
   ports:
   - name: http
-    port: 8443
-    targetPort: 8443
+    port: 8080
+    targetPort: 8080
   # - name: https
   #   port: 443
   #   targetPort: 8443
@@ -160,8 +160,8 @@ metadata:
 spec:
   ports:
   - name: http
-    port: 8443
-    targetPort: 8443
+    port: 8080
+    targetPort: 8080
   selector:
     app: keycloak
   type: ClusterIP
@@ -194,7 +194,7 @@ spec:
               service:
                 name: keycloak
                 port:
-                  number: 8443
+                  number: 8080
 {{- end }}
 
 {{- end }}
