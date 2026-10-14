@@ -21,6 +21,16 @@ nodeSelector: {}
 # K8s toleration definitions to apply to Azul.
 tolerations: []
 
+# UID/GID that all Azul pods run as. These are applied to the pod and container securityContexts.
+# Any field set to null is omitted from the rendered manifests.
+# On OpenShift (restricted-v2 SCC) set runAsUser and fsGroup to null so the SCC injects values from the
+# namespace's uid-range / supplemental-groups. runAsGroup is not restricted by SCCs and should
+# stay at 21000 so the process keeps group access to files in the Azul images.
+securityContext:
+  runAsUser: 21000
+  runAsGroup: 21000
+  fsGroup: 21000
+
 # K8s node and pod affinity/anti-affinity definitions to apply to Azul.
 affinity: {}
 
@@ -165,7 +175,7 @@ secrets:
   #   clientId: <azure-app-registration-client-id>
   #   clientsecret: <secret-key-from-azure> # Get when creating a new authorized application.
   filestore: "s3-keys"
-  # Redis that is used by dispatcher (automatically created in infra chart if you are using the built-in chart)
+  # Redis that is used by dispatcher (automatically created in azul chart if you are using the built-in chart)
   # Must keep in sync with redis.author.existingSecret
   # data:
   #   redis-username: <redis-username> # username used when setting up redis
@@ -331,6 +341,11 @@ redis:
       memory: 512Mi
 
   pvcSize: "1Gi"
+
+  # Override the global securityContext UID/fsGroup for redis
+  securityContext:
+    runAsUser: null
+    fsGroup: null
 
   annotations:
     argocd.argoproj.io/sync-options: Prune=false
