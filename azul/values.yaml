@@ -1097,6 +1097,11 @@ security:
   # Roles that if a user has at least one of means they are an admin user.
   admin_roles:
     - admin
+
+  # Note modifying these settings requires opensearch backend roles also be updated to match.
+  # This can be done using the azul-metastore cli or through the Opensearch security roles interface.
+  backend_opensearch_read_role: "azul-access" # Formerly azul_read
+  backend_opensearch_write_role: "azul_write"
   # OpenID Connect configuration
   oidc:
     enabled: false

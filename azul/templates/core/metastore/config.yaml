@@ -37,3 +37,5 @@ data:
     {{- .Values.metastore.status_index | mustToPrettyJson | nindent 4 }}
   METASTORE_PLUGIN_INDEX_CONFIG: |-
     {{- .Values.metastore.plugin_index | mustToPrettyJson | nindent 4 }}
+  METASTORE_OPENSEARCH_READ_ROLE: "{{ .Values.security.backend_opensearch_read_role }}"
+  METASTORE_OPENSEARCH_WRITE_ROLE: "{{ .Values.security.backend_opensearch_write_role }}"
