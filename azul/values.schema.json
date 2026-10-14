@@ -1078,6 +1078,12 @@
         "admin_roles": {
           "type": "array"
         },
+        "backend_opensearch_read_role": {
+          "type": "string"
+        },
+        "backend_opensearch_write_role": {
+          "type": "string"
+        },
         "oidc": {
           "type": "object",
           "properties": {
