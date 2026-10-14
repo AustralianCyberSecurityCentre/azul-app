@@ -2066,7 +2066,7 @@ images:
     plugin-lookback: plugin-lookback:20261011T2053-unstable@sha256:41052b329bb2635d371440b43d223551481419d29a570785e8be7c8115fb1bdf
     plugin-malcarve: plugin-malcarve:20261011T2104-unstable@sha256:7561132c242c0354f668a64a8c464ef37dbf775b63d9c8400f75c1720d9f4104
     plugin-netinfo: plugin-netinfo:20261011T2107-unstable@sha256:dc2f874d8e91756786befc83eada96430308e935d2162fd194325c85a0809aee
-    plugin-nsrl: plugin-nsrl:20261011T2042-unstable@sha256:b06fc923d08b9240774975af6b9cdae0c20870f423354dc10675ec871fb1dbd2
+    plugin-nsrl: plugin-nsrl:20261014T0712-unstable@sha256:46da7688979de9340d21a9483be4ccf62ceaf2e23fae5d507b5e491241ccee3b
     plugin-office: plugin-office:20261011T2103-unstable@sha256:b2579b7508132a77ea81a19cfc8e7da22101b69c39cf034213ed6f8476391fb3
     plugin-pdftools: plugin-pdftools:20261011T2042-unstable@sha256:78781386248944357804ee94bf9f0c28f83ba2c06a271011497cf9053290e411
     plugin-python: plugin-python:20261011T2146-unstable@sha256:4016f9bdc88505f29c231fc9ba98d1c018621f59e53db4bbb55dd17693c6d236
