@@ -26,7 +26,7 @@ data:
     
     [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
     if [[ -f /opt/redis/mounted-etc/redis.conf ]];then
-        printf "Base config found!\n"
+        printf "Base config found\n"
         cp /opt/redis/mounted-etc/redis.conf /opt/redis/etc/redis.conf
     else 
         printf "Config not found!\n"
@@ -36,7 +36,10 @@ data:
     then
       export REDIS_USERNAME="$(< "${REDIS_USERNAME_FILE}")"
     else
-      printf "User not set!\n"
+      printf "User not set! (${REDIS_USERNAME_FILE}\n"
+      echo "--"
+      ls /opt/redis/secrets/
+      echo "--"
       export REDIS_USERNAME="default"
     fi
     if [[ "default" == "$REDIS_USERNAME" ]] 
