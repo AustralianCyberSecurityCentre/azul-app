@@ -27,6 +27,8 @@ data:
     [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
     if [[ -f /opt/redis/mounted-etc/redis.conf ]];then
         cp /opt/redis/mounted-etc/redis.conf /opt/redis/etc/redis.conf
+    else 
+        printf "Config not found!"
     fi
     
     [[ -f $REDIS_USERNAME_FILE ]] && export REDIS_USERNAME="$(< "${REDIS_USERNAME_FILE}")"
@@ -38,6 +40,9 @@ data:
       echo "user ${REDIS_USERNAME} ~* &* +@all on >${REDIS_PASSWORD}" >> /opt/redis/etc/redis.conf
     fi
     
+    printf "USER: ${REDIS_USERNAME}"
+    printf "PASS: ${REDIS_PASSWORD}"
+
     ARGS=("--port" "${REDIS_PORT}")
     ARGS+=("--masterauth" "${REDIS_PASSWORD}")
     ARGS+=("--include" "/opt/redis/etc/redis.conf")
