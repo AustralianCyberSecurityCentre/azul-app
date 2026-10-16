@@ -23,21 +23,21 @@ apiVersion: v1
 data:
   start-master.sh: |
     #!/bin/bash
-
+    
     [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
     if [[ -f /opt/redis/mounted-etc/redis.conf ]];then
         cp /opt/redis/mounted-etc/redis.conf /opt/redis/etc/redis.conf
     fi
- 
+    
     [[ -f $REDIS_USERNAME_FILE ]] && export REDIS_USERNAME="$(< "${REDIS_USERNAME_FILE}")"
-    if [ "default" == $REDIS_USERNAME ] 
+    if [[ "default" == "$REDIS_USERNAME" ]] 
     then
       echo "user ${REDIS_USERNAME} ~* &* +@all on >${REDIS_PASSWORD}" >> /opt/redis/etc/redis.conf
     else 
       echo "user default off" >> /opt/redis/etc/redis.conf
       echo "user ${REDIS_USERNAME} ~* &* +@all on >${REDIS_PASSWORD}" >> /opt/redis/etc/redis.conf
     fi
-
+    
     ARGS=("--port" "${REDIS_PORT}")
     ARGS+=("--masterauth" "${REDIS_PASSWORD}")
     ARGS+=("--include" "/opt/redis/etc/redis.conf")
