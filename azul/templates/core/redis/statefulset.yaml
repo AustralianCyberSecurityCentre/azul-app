@@ -122,12 +122,8 @@ spec:
           name: azul-redis-scripts
         - mountPath: /health
           name: azul-redis-health
-        - mountPath: /opt/redis/secrets/redis-password
-          name: redis-password
-          subPath: redis-password
-        - mountPath: /opt/redis/secrets/redis-username
-          name: redis-username
-          subPath: redis-username
+        - mountPath: /opt/redis/secrets/
+          name: redis-secrets
         - mountPath: /data
           name: redis-data
         - mountPath: /opt/redis/mounted-etc
@@ -157,22 +153,17 @@ spec:
           defaultMode: 493
           name: azul-redis-health
         name: azul-redis-health
-      - name: redis-password
+      - name: redis-secrets
         secret:
-          defaultMode: 420
+          defaultMode: 400
           items:
           - key: redis-password
             path: redis-password
-          secretName: {{ .Values.secrets.redis }}
-      - name: redis-username
-        secret:
-          defaultMode: 420
-          items:
           - key: redis-username
             path: redis-username
           secretName: {{ .Values.secrets.redis }}
       - configMap:
-          defaultMode: 420
+          defaultMode: 600
           name: azul-redis-configuration
         name: azul-redis-configuration
       - emptyDir: {}
