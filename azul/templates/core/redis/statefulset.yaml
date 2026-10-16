@@ -155,7 +155,7 @@ spec:
         name: azul-redis-health
       - name: redis-secrets
         secret:
-          defaultMode: 400
+          defaultMode: 0400
           items:
           - key: redis-password
             path: redis-password
@@ -163,7 +163,7 @@ spec:
             path: redis-username
           secretName: {{ .Values.secrets.redis }}
       - configMap:
-          defaultMode: 600
+          defaultMode: 0600
           name: azul-redis-configuration
         name: azul-redis-configuration
       - emptyDir: {}
