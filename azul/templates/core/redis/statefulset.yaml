@@ -124,8 +124,10 @@ spec:
           name: azul-redis-health
         - mountPath: /opt/redis/secrets/
           name: redis-password
+          subPath: redis-password
         - mountPath: /opt/redis/secrets/
           name: redis-username
+          subPath: redis-username
         - mountPath: /data
           name: redis-data
         - mountPath: /opt/redis/mounted-etc
