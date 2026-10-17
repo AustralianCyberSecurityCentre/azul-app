@@ -2,7 +2,7 @@
 ---
 apiVersion: v1
 data:
-  redis.conf: |-
+  redis.conf: |
     # Redis data directory.
     dir /data
     # Enable AOF https://redis.io/topics/persistence#append-only-file
@@ -11,6 +11,8 @@ data:
     save ""
     rename-command FLUSHDB ""
     rename-command FLUSHALL ""
+    # Redis ACL users are defined in the following format:
+    #   user <username> ... acl rules ...
 kind: ConfigMap
 metadata:
   labels:
@@ -21,13 +23,37 @@ apiVersion: v1
 data:
   start-master.sh: |
     #!/bin/bash
-
+    
     [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
     if [[ -f /opt/redis/mounted-etc/redis.conf ]];then
-        cp /opt/redis/mounted-etc/redis.conf /opt/redis/etc/redis.conf
+        printf "Base config found\n"
+        install -m 660 /opt/redis/mounted-etc/redis.conf /opt/redis/etc/redis.conf
+    else 
+        printf "Config not found!\n"
     fi
+    
+    if [[ -f $REDIS_USERNAME_FILE ]] 
+    then
+      export REDIS_USERNAME="$(< "${REDIS_USERNAME_FILE}")"
+    else
+      printf "User not set! (${REDIS_USERNAME_FILE}\n"
+      echo "--"
+      ls /opt/redis/secrets/
+      echo "--"
+      export REDIS_USERNAME="default"
+    fi
+    if [[ "default" == "$REDIS_USERNAME" ]] 
+    then
+      echo "user ${REDIS_USERNAME} ~* &* +@all on >${REDIS_PASSWORD}" >> /opt/redis/etc/redis.conf
+    else 
+      echo "user default off" >> /opt/redis/etc/redis.conf
+      echo "user ${REDIS_USERNAME} ~* &* +@all on >${REDIS_PASSWORD}" >> /opt/redis/etc/redis.conf
+    fi
+    
+    printf "USER: ${REDIS_USERNAME}\n"
+    printf "PASS: ${REDIS_PASSWORD}\n"
+
     ARGS=("--port" "${REDIS_PORT}")
-    ARGS+=("--requirepass" "${REDIS_PASSWORD}")
     ARGS+=("--masterauth" "${REDIS_PASSWORD}")
     ARGS+=("--include" "/opt/redis/etc/redis.conf")
     exec redis-server "${ARGS[@]}"

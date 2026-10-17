@@ -1491,14 +1491,12 @@ plugins:
         command:
           - "azul-plugin-sylk"
 
-  # Note - not open-sourced yet.
   # Ingest reports and samples for analysis.
   # Only runs as a cronjob.
   # NOTE - if the feed your using requires credentials also create the report feeds secret and adjust the reportFeeds
   # name if required.
   report-feeds:
     type: reportFeeds
-    # Note - not open-sourced yet, cannot be enabled.
     enabled: false
     # Prometheus push gateway for collecting metrics
     prometheusPushGateway: "http://prometheus-pushgateway.monitoring.svc.cluster.local:9091"
