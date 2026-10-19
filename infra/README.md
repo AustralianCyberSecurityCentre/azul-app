@@ -248,6 +248,7 @@ kubectl apply -f creds.yaml
   The `monitor` user is also important.
   Also, Opensearch operator 3+ deletes all internal users every time the securityconfig job runs.
   When this job runs it also clears any roles and role mappings you've added manually.
+  NOTE: This has since been fixed in 3.0.0. 
 
 - Alternative option: if you don't want to manually create the azul_writer user you can instead use the `internalUsersAlt`
   value and set it to
