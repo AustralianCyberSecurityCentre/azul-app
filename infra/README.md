@@ -252,7 +252,7 @@ kubectl apply -f creds.yaml
 - Alternative option: if you don't want to manually create the azul_writer user you can instead use the `internalUsersAlt`
   value and set it to
   ```yaml
-  internalUsersAlt: {}
+  internalUsersAlt:
     monitor:
       backendRoles: []
     azul-writer:
@@ -275,7 +275,7 @@ kubectl apply -f creds.yaml
   not underscores as the name is used for the username and the kubernetes resource.
   And kubernetes resources can't have `_` in their name.
 
-- To prevent roles and role mappings being deleted you can set the values `opensearch.disableSecurityConfigUpdates` to  true.
+- If using Opensearch Operator < 3.0.0 (including 3.0.0 beta): to prevent roles and role mappings being deleted you can set the values `opensearch.disableSecurityConfigUpdates` to  true.
   This flag means only config.yml updates apply which are updates to your OIDC configuration
   Roles and role mappings will no longer be removed, however internal users will still be cleared everytime the securityconfig job runs (note this will occur when you disable this option)
 
