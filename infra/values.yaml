@@ -468,30 +468,35 @@ opensearch:
       hidden: false
       backend_roles:
         - "azul_read"
+        - "azul-access"
       description: "fix SG 900D error"
     azul-fill2:
       reserved: false
       hidden: false
       backend_roles:
         - "azul_read"
+        - "azul-access"
       description: "fix SG 900D error"
     azul-fill3:
       reserved: false
       hidden: false
       backend_roles:
         - "azul_read"
+        - "azul-access"
       description: "fix SG 900D error"
     azul-fill4:
       reserved: false
       hidden: false
       backend_roles:
         - "azul_read"
+        - "azul-access"
       description: "fix SG 900D error"
     azul-fill5:
       reserved: false
       hidden: false
       backend_roles:
         - "azul_read"
+        - "azul-access"
       description: "fix SG 900D error"
 
     s-any:
