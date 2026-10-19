@@ -36,7 +36,7 @@ data:
         printf "Config not found!\n"
     fi
     
-    if [[ -f $REDIS_USERNAME_FILE ]] && export REDIS_USERNAME="$(< "${REDIS_USERNAME_FILE}")"
+    [[ -f $REDIS_USERNAME_FILE ]] && export REDIS_USERNAME="$(< "${REDIS_USERNAME_FILE}")"
     if [[ -z "${REDIS_USERNAME:-}" ]]; then
       echo "Empty redis username!"
       exit 1
