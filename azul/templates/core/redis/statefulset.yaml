@@ -63,6 +63,8 @@ spec:
           value: "no"
         - name: REDIS_PASSWORD_FILE
           value: /opt/redis/secrets/redis-password
+        - name: REDIS_USERNAME_FILE
+          value: /opt/redis/secrets/redis-username
         - name: REDIS_TLS_ENABLED
           value: "no"
         - name: REDIS_PORT
@@ -121,7 +123,7 @@ spec:
         - mountPath: /health
           name: azul-redis-health
         - mountPath: /opt/redis/secrets/
-          name: redis-password
+          name: redis-secrets
         - mountPath: /data
           name: redis-data
         - mountPath: /opt/redis/mounted-etc
@@ -151,15 +153,17 @@ spec:
           defaultMode: 493
           name: azul-redis-health
         name: azul-redis-health
-      - name: redis-password
+      - name: redis-secrets
         secret:
-          defaultMode: 420
+          defaultMode: 0400
           items:
           - key: redis-password
             path: redis-password
+          - key: redis-username
+            path: redis-username
           secretName: {{ .Values.secrets.redis }}
       - configMap:
-          defaultMode: 420
+          defaultMode: 0600
           name: azul-redis-configuration
         name: azul-redis-configuration
       - emptyDir: {}
