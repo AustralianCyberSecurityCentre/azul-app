@@ -25,6 +25,10 @@ data:
     #!/bin/bash
     
     [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    if [[ -z "${REDIS_PASSWORD:-}" ]]; then
+      echo "Empty redis password!"
+      exit 1
+    fi
     if [[ -f /opt/redis/mounted-etc/redis.conf ]];then
         printf "Base config found\n"
         install -m 660 /opt/redis/mounted-etc/redis.conf /opt/redis/etc/redis.conf
@@ -32,26 +36,16 @@ data:
         printf "Config not found!\n"
     fi
     
-    if [[ -f $REDIS_USERNAME_FILE ]] 
-    then
-      export REDIS_USERNAME="$(< "${REDIS_USERNAME_FILE}")"
-    else
-      printf "User not set! (${REDIS_USERNAME_FILE}\n"
-      echo "--"
-      ls /opt/redis/secrets/
-      echo "--"
-      export REDIS_USERNAME="default"
-    fi
-    if [[ "default" == "$REDIS_USERNAME" ]] 
-    then
+    if [[ -f $REDIS_USERNAME_FILE ]] && export REDIS_USERNAME="$(< "${REDIS_USERNAME_FILE}")"
+    if [[ -z "${REDIS_USERNAME:-}" ]]; then
+      echo "Empty redis username!"
+      exit 1
+    elif [[ "${REDIS_USERNAME:-}" == "default" ]]; then
       echo "user ${REDIS_USERNAME} ~* &* +@all on >${REDIS_PASSWORD}" >> /opt/redis/etc/redis.conf
-    else 
+    else
       echo "user default off" >> /opt/redis/etc/redis.conf
       echo "user ${REDIS_USERNAME} ~* &* +@all on >${REDIS_PASSWORD}" >> /opt/redis/etc/redis.conf
     fi
-    
-    printf "USER: ${REDIS_USERNAME}\n"
-    printf "PASS: ${REDIS_PASSWORD}\n"
 
     ARGS=("--port" "${REDIS_PORT}")
     ARGS+=("--masterauth" "${REDIS_PASSWORD}")
