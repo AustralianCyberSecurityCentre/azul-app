@@ -239,26 +239,31 @@ Apply with:
 kubectl apply -f creds.yaml
 ```
 
-- IMPORTANT! - you need to manually create internal users in opensearch because there is a bug with the opensearch
-  operator (2.8.2+)
+- IMPORTANT:
+  For OpenSearch Operator versions 2.8.2 through 2.x, internal users may not
+  be created from the security configuration due to a known operator issue:
   https://github.com/opensearch-project/opensearch-k8s-operator/issues/1371
-  This means you need to manually create all the users in opensearch that aren't admin and kibanaserver through the
-  opensearch dashboards user interface and map them to the appropriate backend roles and roles.
+  If using an affected version, you must manually create any required internal
+  users (other than the default admin and kibanaserver users) in the OpenSearch
+  Dashboards UI and assign the appropriate backend roles and role mappings.
   The main user that must be created is the `azul_writer` user.
   The `monitor` user is also important.
-  Also, Opensearch operator 3+ deletes all internal users every time the securityconfig job runs.
-  When this job runs it also clears any roles and role mappings you've added manually.
+  In affected versions, running the securityconfig job may also remove manually
+  created internal users, roles, and role mappings, requiring them to be
+  recreated.
+  This issue was fixed in OpenSearch Operator 3.0.0. These manual steps
+  are only required when running older operator versions.
 
-- Alternative option: if you don't want to manually create the azul_writer user you can instead use the `internalUsersAlt`
+- Preferred option: if you don't want to manually create the azul_writer user you can instead use the `internalUsersAlt`
   value and set it to
   ```yaml
-  internalUsersAlt: {}
+  internalUsersAlt:
     monitor:
       backendRoles: []
     azul-writer:
       backendRoles: ["azul_write"]
   ```
-  and then also create the `azul-opensearch-user-passwords` secret witha  spec similar to this:
+  and then also create the `azul-opensearch-user-passwords` secret with a spec similar to this:
   ```yaml
   apiVersion: v1
   kind: Secret
@@ -275,7 +280,7 @@ kubectl apply -f creds.yaml
   not underscores as the name is used for the username and the kubernetes resource.
   And kubernetes resources can't have `_` in their name.
 
-- To prevent roles and role mappings being deleted you can set the values `opensearch.disableSecurityConfigUpdates` to  true.
+- If using Opensearch Operator < 3.0.0 (including 3.0.0 beta): to prevent roles and role mappings being deleted you can set the values `opensearch.disableSecurityConfigUpdates` to  true.
   This flag means only config.yml updates apply which are updates to your OIDC configuration
   Roles and role mappings will no longer be removed, however internal users will still be cleared everytime the securityconfig job runs (note this will occur when you disable this option)
 
