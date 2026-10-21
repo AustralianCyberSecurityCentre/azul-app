@@ -190,7 +190,7 @@ spec:
     {{- if .Values.opensearch.general.setVMMaxMapCount }}
     setVMMaxMapCount: true
     {{- else }}
-    setVMMaxMapCount: true
+    setVMMaxMapCount: false
     {{- end }}
     additionalVolumes:
     - name: additional-certs
