@@ -2054,7 +2054,7 @@ images:
   # images that form part of an azul release
   custom:
     audit-forwarder: audit-forwarder:20261018T1310-unstable@sha256:4883bb4b82f9e9d7417537ba64afd59a0abf85f231cf2734137e978197d74da4
-    backup: backup:20261020T0254-unstable@sha256:e025d5edb01d843f790643f6361ba9525d9566072239166267bde47df021f1cb
+    backup: backup:20261021T2059-unstable@sha256:a6c8f2a29d8b4fbc1a6ad4116aaae07eefd5a649598055f9fdabe3c84f42eb4b
     client: client:20261018T1448-unstable@sha256:55781ce82a3e4a43c1f5009ccc5f3a4993691a4524f730dc20b3f233f310e935
     dispatcher: dispatcher:20261018T1402-unstable@sha256:722e22f433f1fc1798ffbb462646cefa36572fcf3b4a396e81f2cf95bd9e989f
     docs: docs:20261017T0001-unstable@sha256:0044f46b8b808993435a0ca22903670a1b6c3f029a7dad0c0b853834ecc08ea5
