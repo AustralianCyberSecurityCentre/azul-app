@@ -1058,7 +1058,7 @@ alerter:
   max_alert_reattempts: 10
   # How often redis changes are propagated to the backend (dispatcher) that actually raises the alerts.
   # Number of minutes that the backend waits before polling for config changes.
-  config_reload_frequency_min: 60
+  config_reload_frequency_min: 10
 
 # API server configuration
 restapi:
