@@ -2043,7 +2043,7 @@ images:
   pullPolicy: Always
   # External image dependencies - These will be cloned into our registry on release of Azul.
   external:
-    tika_external: docker.io/apache/tika:4.1.0-2-full@sha256:d69fab827fa004a5e1db786e6d78da947a6cfeedbf595bc5c353ef99622bb2e2
+    tika_external: docker.io/apache/tika:3.3.3.0-full@sha256:6ef30abd65df4b6c478907904099d0245bdb0e0686f94fb9bc7493558442bb74
     alloy: docker.io/grafana/alloy:v1.21.1@sha256:4039c971193053a84e53dd9ed3e7d4561c069256b024631cd3498a353ed7ece8
     # Pod to scrape kafka consumer lag statistics from Kafka.
     burrow: ghcr.io/linkedin/burrow/burrow:v1.9.6@sha256:829fc72ba29e72b3d8c3ddf095f41c44516b991677c27066537ebad3a0d0fd24
