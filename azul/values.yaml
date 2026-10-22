@@ -2043,12 +2043,11 @@ images:
   pullPolicy: Always
   # External image dependencies - These will be cloned into our registry on release of Azul.
   external:
-    git-sync: registry.k8s.io/git-sync/git-sync:v4.5.0@sha256:0e64aedb0d0ae0a3bab880349a5109b2a31891d646dd61e433ca36ed220dff1f
-    tika_external: docker.io/apache/tika:3.2.3.0-full@sha256:21d8052de04e491ccf66e8680ade4da6f3d453a56d59f740b4167e54167219b7
-    alloy: docker.io/grafana/alloy:v1.14.1@sha256:8f5666aebb871ba43ee2d65159c5d1c26c903720efafaf2d9ed4e237afc3bc88
+    tika_external: docker.io/apache/tika:4.1.0-2-full@sha256:d69fab827fa004a5e1db786e6d78da947a6cfeedbf595bc5c353ef99622bb2e2
+    alloy: docker.io/grafana/alloy:v1.21.1@sha256:4039c971193053a84e53dd9ed3e7d4561c069256b024631cd3498a353ed7ece8
     # Pod to scrape kafka consumer lag statistics from Kafka.
-    burrow: ghcr.io/linkedin/burrow/burrow:v1.9.5@sha256:670c59255a339e14e241ca2d8f80085628d9295e6a46102b4730ace820e51952
-    redis: docker.io/redis:8.6.1-trixie@sha256:315270d166080f537bbdf1b489b603aaaa213cb55a544acfa51feb7481abb1c0
+    burrow: ghcr.io/linkedin/burrow/burrow:v1.9.6@sha256:829fc72ba29e72b3d8c3ddf095f41c44516b991677c27066537ebad3a0d0fd24
+    redis: docker.io/redis:8.8.3-trixie@sha256:30928ad7fd204ec536f1eb84e3cd6826d29a7ebe06c9cf0143c287c466a4568f
   # custom registry to retrieve 'custom' images from (prepended)
   customRegistry: docker.io/asdazul/
   # images that form part of an azul release
