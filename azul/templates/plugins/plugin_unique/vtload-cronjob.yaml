@@ -10,7 +10,7 @@ metadata:
     component: virustotal
 spec:
   concurrencyPolicy: Forbid
-  schedule: "*/5 * * * *"
+  schedule: 0 * * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 2
   jobTemplate:
