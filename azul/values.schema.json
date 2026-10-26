@@ -2762,6 +2762,15 @@
                 },
                 "required": ["name"]
               },
+              "secret":{
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": ["secretName"]
+              },
               "emptyDir": {
                 "type": "object"
               },
