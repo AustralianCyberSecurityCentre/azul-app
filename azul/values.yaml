@@ -2069,7 +2069,7 @@ images:
     plugin-dotnet-decompiler: plugin-dotnet-decompiler:20261025T1616-unstable@sha256:bf30591c6114cd68397588fdb7020ec0cd2f6958a2c51e50575bb0c63931fb85
     plugin-dotnet-deob: plugin-dotnet-deob:20261025T1618-unstable@sha256:610c1efdaa92e2191c353b30ab5e8158fc8775c87b73b120f45a82c426bd802b
     plugin-email: plugin-email:20261025T1618-unstable@sha256:48aab2589649fb9c88e8925a7183edcfd60341d9b7ebec3bfa47e60f7bc9e304
-    plugin-entropy: plugin-entropy:20261025T1416-unstable@sha256:b870f3f507e595c5db156599d3be7215b555bbba4b5d928a76f3701683d6e92d
+    plugin-entropy: plugin-entropy:20261031T1415-unstable@sha256:196a5fd4405ebd7d96ddb867a43af3abd3d6c2f1dedc893ba471492f8d1da8ce
     plugin-entrypointcheck: plugin-entrypointcheck:20261025T1621-unstable@sha256:c667f08fdd6acb2e991005d87d16b152693612024a6d4158bebbbedea03ddfb8
     plugin-exiftool: plugin-exiftool:20261025T1619-unstable@sha256:bd2b286374dc6f9e356bafc4100cf8d037deab8dec406a04de4e6b9c70f3cf3c
     plugin-export-hashes: plugin-export-hashes:20261025T1619-unstable@sha256:8c353ca2b6e592ff2a129cb438946f6b1bd3136cebb7b7380303d6a1f4ce6bfd
