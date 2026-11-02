@@ -313,9 +313,9 @@ spec:
         {{- $nodeRef.additionalConfig | toYaml | nindent 8 }}
       {{- end }}
 
-      {{- if $nodeRef.nodeSelect }}
-      nodeSelect:
-        {{- $nodeRef.nodeSelect | toYaml | nindent 8 }}
+      {{- if $nodeRef.nodeSelector }}
+      nodeSelector:
+        {{- $nodeRef.nodeSelector | toYaml | nindent 8 }}
       {{- end }}
 
       {{- if $nodeRef.affinity }}

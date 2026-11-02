@@ -350,7 +350,7 @@ opensearch:
 ```
 
 Example node pool configurations using dc1, dc2 and dc3.
-Note with the nodeSelect and affinity rules you should choose one or the other.
+Note with the nodeSelector and affinity rules you should choose one or the other.
 
 Also note c
 
@@ -360,7 +360,7 @@ opensearch:
     # Node pool configuration
     - additionalConfig:
         node.attr.dc: dc1
-      nodeSelect:
+      nodeSelector:
         topology.kubernetes.io/zone: node-attribute-1
       topologySpreadConstraints: # Optional (label selectors are pre-defined) e.g:
       - maxSkew: 1
