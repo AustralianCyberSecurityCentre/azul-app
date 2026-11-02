@@ -314,6 +314,8 @@ minio:
 opensearch:
   enable: true
   name: azul-opensearch
+  # Helm template validate routing awareness configuration
+  awarenessValidation: true
 
   # Hardening Opensearch requires your nodes to already have
   # vm.max_map_count=262144 - this may not be default in your
@@ -321,10 +323,53 @@ opensearch:
   harden: false
 
   general:
-    version: 3.7.0
+    version: 3.9.0
     replicas: 3
     setVMMaxMapCount: true
     # defaultRepo: docker.io/opensearchproject
+
+    # # Optional Routing configuration, needed for redundant node pools.
+    # additionalConfig:
+    #   cluster.routing.allocation.awareness.attributes: "dc"
+    #   # NOTE - dc1/dc2/dc3 just have to match whatever is listed as the node.attr.dc in the redundancy configurations.
+    #   cluster.routing.allocation.awareness.force.dc.values: "dc1,dc2,dc3"
+
+  # # Optional (multi-distributed deployment) way of making a redundant opensearch deployment.
+  # # Note, when using this option topology spread constraints and affinity should be specified through
+  # # here and not the base chart.
+  # # Also for every list item there will be a new node pool with replica pods, which can result in a large number of pods.
+  # redundantMultiNodePool:
+  #   # Node pool configuration
+  #   - additionalConfig:
+  #       node.attr.dc: dc1
+  #     nodeSelector:
+  #       topology.kubernetes.io/zone: node-attribute-1
+  #     topologySpreadConstraints: # Optional (label selectors are pre-defined) e.g:
+  #     - maxSkew: 1
+  #       topologyKey: topology.kubernetes.io/zone
+  #       whenUnsatisfiable: ScheduleAnyway
+  #   - additionalConfig:
+  #       node.attr.dc: dc2
+  #     affinity:
+  #       nodeAffinity:
+  #         requiredDuringSchedulingIgnoredDuringExecution:
+  #           nodeSelectorTerms:
+  #             - matchExpressions:
+  #             - key: topology.kubernetes.io/zone
+  #               operator: In
+  #               values:
+  #               - node-attribute-2
+  #   - additionalConfig:
+  #       node.attr.dc: dc3
+  #     affinity:
+  #       nodeAffinity:
+  #         requiredDuringSchedulingIgnoredDuringExecution:
+  #           nodeSelectorTerms:
+  #             - matchExpressions:
+  #             - key: topology.kubernetes.io/zone
+  #               operator: In
+  #               values:
+  #               - node-attribute-3
 
   nodes:
     # The amount of storage PER data node

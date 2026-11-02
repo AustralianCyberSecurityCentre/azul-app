@@ -319,6 +319,77 @@ helm upgrade opensearch-operator opensearch-operator/opensearch-operator
 
 Next update the version of Opensearch in `values.yaml`
 
+#### Opensearch - Advanced
+
+If Opensearch needs to be distributed in multiple regions to ensure data redundancy this can be achieved 
+through routing awareness attributes.
+
+The purpose of this configuration is to ensure opensearch is aware of how the opensearch nodes are distributed in the Kubernetes cluster so Opensearch 
+can target what kubernetes node opensearch nodes are on and then ensure replicas and primaries are split up between the different nodes to ensure a node failure doesn't take out a replica 
+because all replicas will be split up based on the node affinities defined in `redundantMultiNodePool`.
+This is flexible enough to work between datacenters as well if required.
+
+This configuration makes `replicas * #redundantMultiNodePool` so if the replicas are 3 and the number of
+redundantMultiNodePool is 3 it's a total of 9 replicas. (3 per pool)
+
+The example configuration and validation uses the routing awareness attribute of "dc".
+If you need a different routing awareness attribute you can disable the validation by setting `awarenessValidation` to false.
+
+Example opensearch general configuration for settings up
+
+```yaml
+opensearch:
+  enable: true
+  awarenessValidation: true # disable if the awareness attribute isn't dc
+  general:
+    additionalConfig:
+      # routing awareness attribute used within opensearch.
+      cluster.routing.allocation.awareness.attributes: "dc"
+      # NOTE - dc1/dc2/dc3 just have to match whatever is listed as the node.attr.dc in the redundancy configurations.
+      cluster.routing.allocation.awareness.force.dc.values: "dc1,dc2,dc3"
+```
+
+Example node pool configurations using dc1, dc2 and dc3.
+Note with the nodeSelector and affinity rules you should choose one or the other.
+
+Also note c
+
+```yaml
+opensearch:
+  redundantMultiNodePool:
+    # Node pool configuration
+    - additionalConfig:
+        node.attr.dc: dc1
+      nodeSelector:
+        topology.kubernetes.io/zone: node-attribute-1
+      topologySpreadConstraints: # Optional (label selectors are pre-defined) e.g:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+    - additionalConfig:
+        node.attr.dc: dc2
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                - node-attribute-2
+    - additionalConfig:
+        node.attr.dc: dc3
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                - node-attribute-3
+```
+
 ### Keycloak
 
 This is a demo for what authentication could look like in a typical Azul

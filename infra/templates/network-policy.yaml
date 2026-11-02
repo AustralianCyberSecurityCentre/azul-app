@@ -58,6 +58,7 @@ spec:
     - Egress
   egress:
     - {}
+---
 {{- end }}
 
 {{- if .Values.istioEnabled }}

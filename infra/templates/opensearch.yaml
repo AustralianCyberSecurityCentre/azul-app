@@ -168,6 +168,9 @@ spec:
 {{- end }}
 
 ---
+{{- if .Values.opensearch.awarenessValidation }}
+{{- include "azul.validate.opensearch.awareness" . }}
+{{- end }}
 apiVersion: opensearch.org/v1
 kind: OpenSearchCluster
 metadata:
@@ -191,6 +194,12 @@ spec:
     setVMMaxMapCount: true
     {{- else }}
     setVMMaxMapCount: false
+    {{- end }}
+    {{- if hasKey .Values.opensearch.general "additionalConfig" }}
+    {{- if gt (len .Values.opensearch.general.additionalConfig) 0 }}
+    additionalConfig:
+      {{- .Values.opensearch.general.additionalConfig | toYaml | nindent 6 }}
+    {{- end }}
     {{- end }}
     additionalVolumes:
     - name: additional-certs
@@ -286,10 +295,63 @@ spec:
 {{- end }}
 {{- if gt (len .Values.opensearch.dashboard.additionalConfig) 0 }}
     additionalConfig:
-{{ .Values.opensearch.dashboard.additionalConfig | toYaml | nindent 6 }}
+{{- .Values.opensearch.dashboard.additionalConfig | toYaml | nindent 6 }}
 {{- end }}
 
   nodePools:
+  {{- if and (hasKey .Values.opensearch "redundantMultiNodePool") (gt (len .Values.opensearch.redundantMultiNodePool) 0) }}
+    {{- range $index, $nodeRef := .Values.opensearch.redundantMultiNodePool }}
+    - component: {{ printf "nodes-%d" $index }}
+      replicas: {{ $.Values.opensearch.general.replicas }}
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- if $nodeRef.additionalConfig }}
+      additionalConfig:
+        {{- $nodeRef.additionalConfig | toYaml | nindent 8 }}
+      {{- end }}
+
+      {{- if $nodeRef.nodeSelector }}
+      nodeSelector:
+        {{- $nodeRef.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+
+      {{- if $nodeRef.affinity }}
+      affinity:
+        {{- $nodeRef.affinity | toYaml | nindent 8 }}
+      {{- end }}
+
+      {{- if $nodeRef.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range $nodeRef.topologySpreadConstraints }}
+        - labelSelector:
+            matchLabels:
+              opensearch.org/opensearch-nodepool: {{ printf "nodes-%d" $index }}
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- else if $.Values.opensearch.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range $.Values.opensearch.topologySpreadConstraints }}
+        - labelSelector:
+            matchLabels:
+              opensearch.org/opensearch-nodepool: {{ printf "nodes-%d" $index }}
+          {{- . | toYaml | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
+      {{- with $.Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- $.Values.opensearch.nodes | toYaml | nindent 6 }}
+      roles:
+        - "cluster_manager"
+        - "data"
+    {{- end }}
+  {{- else }}
     - component: nodes
       replicas: {{ .Values.opensearch.general.replicas }}
       {{- with .Values.imagePullSecrets }}
@@ -313,10 +375,11 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-{{ .Values.opensearch.nodes | toYaml | nindent 6 }}
+      {{- .Values.opensearch.nodes | toYaml | nindent 6 }}
       roles:
         - "cluster_manager"
         - "data"
+  {{- end }}
 
 {{- if .Values.opensearch.dashboard.ingress.enable }}
 ---
