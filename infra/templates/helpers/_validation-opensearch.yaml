@@ -1,0 +1,38 @@
+{{/*Validate that every node.attr.dc is included in cluster.routing.allocation.awareness.force.dc.values*/}}
+{{- define "azul.validate.opensearch.awareness" -}}
+
+{{- $pools := .Values.opensearch.redundantMultiNodePool | default (list) -}}
+
+{{- if gt (len $pools) 0 }}
+
+  {{- $config := .Values.opensearch.general.additionalConfig | default (dict) -}}
+
+  {{- $awarenessValues := index $config "cluster.routing.allocation.awareness.force.dc.values" | default "" -}}
+
+  {{- if not $awarenessValues }}
+    {{- fail "opensearch.general.additionalConfig.cluster.routing.allocation.awareness.force.dc.values must be set when opensearch.redundantMultiNodePool is configured" }}
+  {{- end }}
+
+  {{- $forcedDcs := list -}}
+  {{- range (splitList "," $awarenessValues) }}
+    {{- $forcedDcs = append $forcedDcs (trim .) -}}
+  {{- end }}
+
+  {{- range $idx, $pool := $pools }}
+
+    {{- $poolConfig := $pool.additionalConfig | default (dict) -}}
+    {{- $dc := index $poolConfig "node.attr.dc" | default "" -}}
+
+    {{- if and $dc (not (has $dc $forcedDcs)) }}
+      {{- fail (printf
+        "opensearch.redundantMultiNodePool[%d].additionalConfig.node.attr.dc '%s' is not present in opensearch.general.additionalConfig.cluster.routing.allocation.awareness.force.dc.values"
+        $idx
+        $dc
+      ) }}
+    {{- end }}
+
+  {{- end }}
+
+{{- end }}
+
+{{- end }}
