@@ -323,7 +323,7 @@ opensearch:
   harden: false
 
   general:
-    version: 3.7.0
+    version: 3.9.0
     replicas: 3
     setVMMaxMapCount: true
     # defaultRepo: docker.io/opensearchproject
