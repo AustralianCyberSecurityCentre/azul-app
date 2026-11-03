@@ -1513,6 +1513,7 @@ loki:
       # increase these 10x to try resolve issues with long log lines displaying in grafana
       grpc_server_max_recv_msg_size: 41943040
       grpc_server_max_send_msg_size: 41943040
+      log_level: warn
 
     compactor:
       # enable compactor to enforce retention_period
