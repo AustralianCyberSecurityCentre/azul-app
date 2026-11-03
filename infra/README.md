@@ -191,11 +191,11 @@ And then add this section to the filer:
 seaweedfs-main:
   filer:
     secretExtraEnvironmentVars:
-      WEED_POSTGRES_USERNAME:
+      WEED_MYSQL_USERNAME::
         secretKeyRef:
           name: seaweed-db-credentials
           key: user
-      WEED_POSTGRES_PASSWORD:
+      WEED_MYSQL_PASSWORD:
         secretKeyRef:
           name: seaweed-db-credentials
           key: password
