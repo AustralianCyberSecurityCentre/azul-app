@@ -178,6 +178,29 @@ seaweedfs-main:
         nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 ```
 
+#### Recommended secret
+
+It's recommended to create the filer's Db secret to avoid it re-creating and breaking the cluster.
+If the cluster breaks in this way deleting all the pods does fix it but it's not always clear to debug.
+
+`kubectl create secret seaweed-db-credentials --from-literal=user=admin --from-literal=password=password`
+
+And then add this section to the filer:
+
+```yaml
+seaweedfs-main:
+  filer:
+    secretExtraEnvironmentVars:
+      WEED_MYSQL_USERNAME:
+        secretKeyRef:
+          name: seaweed-db-credentials
+          key: user
+      WEED_MYSQL_PASSWORD:
+        secretKeyRef:
+          name: seaweed-db-credentials
+          key: password
+```
+
 ### OpenSearch
 
 OpenSearch is used to index and collate documents emitted from various components in Azul for
