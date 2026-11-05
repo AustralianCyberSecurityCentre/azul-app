@@ -87,6 +87,10 @@ recovery:
   env:
     HTTP_PROXY: "http://not-a-real-proxy.net"
     HTTPS_PROXY: "http://not-a-real-proxy.net"
+  backup:
+    storagePvcSize: "8Gi"
+  restore:
+    storagePvcSize: "9Gi"
 
 # This file is used to set fields required by the azul helm chart. This file is used to ensure checks pass during development.
 external:

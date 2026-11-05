@@ -1887,6 +1887,9 @@
         },
         "backup": {
           "type": "object",
+          "properties": {
+            "storagePvcSize": {"type": "string"}
+          },
           "allOf": [
             {
               "$ref": "#/definitions/resources"
@@ -1895,6 +1898,9 @@
         },
         "restore": {
           "type": "object",
+          "properties": {
+            "storagePvcSize": {"type": "string"}
+          },
           "allOf": [
             {
               "$ref": "#/definitions/resources"

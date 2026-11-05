@@ -581,6 +581,7 @@ recovery:
 
   tmp: "400Mi"
   backup:
+    storagePvcSize: "1Gi"
     resources:
       requests:
         memory: "4Gi"
@@ -591,6 +592,7 @@ recovery:
   # generally you'd want restore to have more 'capacity' than backup as you run it in emergencies,
   # however it'll mostly be limited by performance of dispatcher
   restore:
+    storagePvcSize: "1Gi"
     resources:
       requests:
         memory: "4Gi"
