@@ -805,6 +805,11 @@ dispatcher:
           limits:
             memory: "1Gi"
             cpu: "200m"
+        tempCache:
+          tmp: "200Mi"
+          fcache: "1Gi"
+          logs: "200Mi"
+          alloy: "200Mi"
         env:
           # size of cache used for events being consumed
           # this cache is useful - hit rate of 50% after historical catches up with live processing
@@ -825,6 +830,11 @@ dispatcher:
           limits:
             memory: "1Gi"
             cpu: "200m"
+        tempCache:
+          tmp: "200Mi"
+          fcache: "10Gi"
+          logs: "200Mi"
+          alloy: "200Mi"
         env:
           # allow deletion of s3 items - for data purging operations
           DP.STREAMS.API_ALLOW_DELETE: "true"
@@ -848,6 +858,11 @@ dispatcher:
           limits:
             memory: "2Gi"
             cpu: "1000m"
+        tempCache:
+          tmp: "200Mi"
+          fcache: "1Gi"
+          logs: "200Mi"
+          alloy: "200Mi"
         env:
           # size of cache used for events being consumed
           # this cache is useful - hit rate of 50% after historical catches up with live processing
@@ -873,6 +888,11 @@ dispatcher:
           limits:
             memory: "2Gi"
             cpu: "1000m"
+        tempCache:
+          tmp: "200Mi"
+          fcache: "10Gi"
+          logs: "200Mi"
+          alloy: "200Mi"
         env:
           # This cache greatly reduces calls dispatcher makes to S3 during plugin processing.
           # NOTE: Additional RAM consumed will equal DP.STREAMS.CACHE.SIZE * 1.5
@@ -892,6 +912,11 @@ lostTasks:
   args: ["lost-tasks"]
   replicas: 1
   env: {}
+  tempCache:
+    tmp: "200Mi"
+    fcache: "10Gi"
+    logs: "200Mi"
+    alloy: "200Mi"
   resources:
     requests:
       memory: "500Mi"
@@ -925,6 +950,11 @@ migration:
     config:
       args: ["reprocess"]
       replicas: 1
+      tempCache:
+        tmp: "200Mi"
+        fcache: "10Gi"
+        logs: "200Mi"
+        alloy: "200Mi"
       resources:
         # Reprocessing all topics requires substantial resources.
         # These values may need to be tuned to your environment depending on
