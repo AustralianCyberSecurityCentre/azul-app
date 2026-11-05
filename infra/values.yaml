@@ -229,6 +229,10 @@ seaweedfs-main: &seaweedDefaults
 # Same as main but for backup
 seaweedfs-backup: *seaweedDefaults
 
+# Dedicated S3-compatible storage for Retrohunt.
+# Disabled by default until environment-specific settings are configured.
+seaweedfs-retrohunt: *seaweedDefaults
+
 # DEPRECATED - FUTURE WILL BE REMOVED!!!
 minio:
   # DEPRECATED - FUTURE WILL BE REMOVED!!!

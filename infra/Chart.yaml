@@ -56,3 +56,8 @@ dependencies:
     repository: file://charts/seaweedfs-4.41.0.tgz
     condition: seaweedfs-backup.enabled
     alias: seaweedfs-backup
+  - name: seaweedfs
+    version: 4.41.0
+    repository: file://charts/seaweedfs-4.41.0.tgz
+    condition: seaweedfs-retrohunt.enabled
+    alias: seaweedfs-retrohunt
