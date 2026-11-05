@@ -1556,6 +1556,13 @@ plugins:
       max_retries: "10"
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"
+        # S3 shadow storage for Retrohunt indexes
+      PLUGIN_S3_ENABLED: "true"
+      PLUGIN_S3_BUCKET: "retrohunt-indexes"
+      PLUGIN_S3_PREFIX: "retrohunt/indices"
+      PLUGIN_S3_REGION: "us-east-1"
+      PLUGIN_S3_ENDPOINT_URL: "http://azul-dev-infra-helm-seaweedfs-retrohunt-s3.infra-dev.svc.cluster.local:8333"
+      PLUGIN_S3_VERIFY_TLS: "true"
       PLUGIN_INDEXERS:
         content:
           name: content
@@ -1665,6 +1672,16 @@ plugins:
                   secretKeyRef:
                     name: "{{ .Values.secrets.redis }}"
                     key: redis-password
+              - name: AWS_ACCESS_KEY_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: retrohunt-s3-client
+                    key: accessKey
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: retrohunt-s3-client
+                    key: secretKey
             image: plugin-retrohunt
             resources:
               requests:
