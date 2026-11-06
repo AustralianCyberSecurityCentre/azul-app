@@ -11,9 +11,8 @@
       {{- end }}
     {{- end }}
   {{- end }}
-  {{- include "pvc" (dict "root" .Values "name" (printf "%s-%s" "azul-backup" .Values.recovery.label ) "size" "1Gi") | nindent 0 }}
-  {{- include "pvc" (dict "root" .Values "name" (printf "%s-%s" "azul-restore" .Values.recovery.label ) "size" "1Gi") | nindent 0 }}
-  # Additional PVC if there is going to be a nextBackup
+  {{- include "pvc" (dict "root" .Values "name" (printf "%s-%s" "azul-backup" .Values.recovery.label ) "size" .Values.recovery.backup.storagePvcSize) | nindent 0 }}
+  {{- include "pvc" (dict "root" .Values "name" (printf "%s-%s" "azul-restore" .Values.recovery.label ) "size" .Values.recovery.restore.storagePvcSize ) | nindent 0 }}  # Additional PVC if there is going to be a nextBackup
   {{- if and (not (empty .Values.recovery.nextBackupLabel)) (ne .Values.recovery.nextBackupLabel .Values.recovery.label) -}}
     {{- include "pvc" (dict "root" .Values "name" (printf "%s-%s" "azul-backup" .Values.recovery.nextBackupLabel ) "size" "1Gi") | nindent 0 }}
   {{- end }}
