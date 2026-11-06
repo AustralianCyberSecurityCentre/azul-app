@@ -2090,7 +2090,7 @@ images:
     dispatcher: dispatcher:20261105T2144-unstable@sha256:d2addb8ff0d85ce685e3abd091007599d8afb775d887084c1527e45e59be96e3
     docs: docs:20261031T0001-unstable@sha256:01c3ccecebb41bd5f39ca82179df6f8c80bcbe65c5dc3b80576b34dc36ffede4
     restapi-server: restapi-server:20261105T2032-unstable@sha256:cd140cd94cedfbd5245a2b60c8bf592edd6f8f5c52c8706d1a5792eae73f2525
-    webui: webui:20261106T0315-unstable@sha256:b6f20c9b845eed31c3a30ba787f6017fe81ae02802ff7608d421e938e543a022
+    webui: webui:20261106T1324-unstable@sha256:c575cd7a50cdd2d30cace4a33e474fda9e525589d8b1dcc49f83864b73aa9b11
     plugin-alphabets: plugin-alphabets:20261102T0403-unstable@sha256:5bd5851a27e88ba9185d077e79a32c69d2a5baf960cd2215b0a9cc046ee8d778
     plugin-android-parser: plugin-android-parser:20261101T1351-unstable@sha256:022cc7f70ed8d476df7c640056dfa58cf95150f90698854c5fb956f081c731ed
     plugin-assemblyline: plugin-assemblyline:20261101T1507-unstable@sha256:ad123d6ce679599a3b379e6f55c7edd2e585ba4f2467ecf74389bf57918178b9
