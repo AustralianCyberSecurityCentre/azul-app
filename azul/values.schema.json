@@ -717,6 +717,15 @@
             }
           ]
         },
+        "tempCache": {
+          "type": "object",
+          "properties": {
+            "tmp": {"type": "string"},
+            "fcache": {"type": "string"},
+            "logs": {"type": "string"},
+            "alloy": {"type": "string"}
+          }
+        },
         "resources": {
           "type": "object",
           "allOf": [
@@ -755,6 +764,15 @@
                   "type": "array",
                   "items": {
                     "type": "string"
+                  }
+                },
+                "tempCache": {
+                  "type": "object",
+                  "properties": {
+                    "tmp": {"type": "string"},
+                    "fcache": {"type": "string"},
+                    "logs": {"type": "string"},
+                    "alloy": {"type": "string"}
                   }
                 },
                 "replicas": {
@@ -1869,6 +1887,9 @@
         },
         "backup": {
           "type": "object",
+          "properties": {
+            "storagePvcSize": {"type": "string"}
+          },
           "allOf": [
             {
               "$ref": "#/definitions/resources"
@@ -1877,6 +1898,9 @@
         },
         "restore": {
           "type": "object",
+          "properties": {
+            "storagePvcSize": {"type": "string"}
+          },
           "allOf": [
             {
               "$ref": "#/definitions/resources"
@@ -2287,13 +2311,23 @@
             }
           ]
         },
+        "tempCache": {
+          "type": "object",
+          "properties": {
+            "tmp": {"type": "string"},
+            "fcache": {"type": "string"},
+            "logs": {"type": "string"},
+            "alloy": {"type": "string"}
+          }
+        },
         "resources": {
           "$ref": "#/definitions/resources"
         },
         "env": {
           "$ref": "#/definitions/dispatcherEnv"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "migrationProfile": {
       "description": "Configuration for migrating Prefixless topics to prefixed topics.",
