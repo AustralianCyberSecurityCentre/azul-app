@@ -2094,7 +2094,7 @@ images:
     plugin-build-time-strings: plugin-build-time-strings:20261108T1414-unstable@sha256:24017ebb4ea3764cab82c3e46528b8213185f6ea4b706228607952fb62f4176b
     plugin-mandiant-capa: plugin-mandiant-capa:20261108T2140-unstable@sha256:18f783ebfeab688fb2e8351ead74197797fe0a01426be6b83851fe3dfe7cf618
     plugin-cape: plugin-cape:20261108T1440-unstable@sha256:056deaeeaa16d53d26a5ea3f15f9836cf8e2b411cf37b22a970fcbc842e973b1
-    plugin-de4dot: plugin-de4dot:20261108T1429-unstable@sha256:25036b188f21a147f4dd893ae88ba72558e1ef526f358d39a4c4206aecf819a7
+    plugin-de4dot: plugin-de4dot:20261109T0052-unstable@sha256:bcc38f4e8076f11010c9c2a3de8e29bff383e299b02768f16a9131d28db9e678
     plugin-dotnet-decompiler: plugin-dotnet-decompiler:20261108T1445-unstable@sha256:0819efd1ae40341355416b4afad35e19250bef821dafc5454f786661d392e152
     plugin-dotnet-deob: plugin-dotnet-deob:20261108T1454-unstable@sha256:fb9663ac5001bb4539c8f9a026184eb922de374b5feda29960e1176b4404aef4
     plugin-email: plugin-email:20261109T0045-unstable@sha256:91840ea2e114a8b18afbda608b54d7162063df1d60cd2331b54edb61ee7f5c43
