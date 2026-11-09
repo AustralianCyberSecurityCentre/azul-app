@@ -2059,16 +2059,13 @@ plugins:
       shortcut:
         tmp: "1Gi"
       unbox:
-        maxFileSize: "1000000000" # 1gb
+        maxFileSize: "4000000000" # 4gb
         tmp: "4Gi"
         resources:
           requests:
             memory: "4Gi"
           limits:
             memory: "8Gi"
-        config:
-          # should handle larger files than most plugins to try and extract them.
-          PLUGIN_FILTER_MAX_CONTENT_SIZE: "4GiB"
 
 # Container registry image names
 images:
