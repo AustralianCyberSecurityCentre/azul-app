@@ -805,6 +805,7 @@
       "properties": {
         "status_index": { "$ref": "#/definitions/opensearchConfig" },
         "plugin_index": { "$ref": "#/definitions/opensearchConfig" },
+        "binary_index": { "$ref": "#/definitions/opensearchConfig" },
         "env": {
           "type": "object"
         },
