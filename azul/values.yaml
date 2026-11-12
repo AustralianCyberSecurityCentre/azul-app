@@ -1145,6 +1145,11 @@ security:
   admin_roles:
     - admin
 
+  # With oidc.enabled false, the restapi accepts every request unauthenticated
+  # with full API access. Set this to true to deploy that way on purpose,
+  # otherwise the chart refuses to render. There is no safe default here.
+  allowInsecure: false
+
   # Note modifying these settings requires opensearch backend roles also be updated to match.
   # This can be done using the azul-metastore cli or through the Opensearch security roles interface.
   backend_opensearch_read_role: "azul-access" # Formerly azul_read
