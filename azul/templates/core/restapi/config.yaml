@@ -29,6 +29,9 @@ data:
   OIDC_CLIENT_ID: "{{ .Values.security.oidc.client_id | required "oidc client_id required" }}"
   OIDC_SCOPES: "{{ .Values.security.oidc.scopes | required "oidc scopes required" }}"
   {{- else }}
+    {{- if not .Values.security.allowInsecure }}
+      {{- fail "security.oidc.enabled is false and security.allowInsecure is not true. The restapi has no authentication with security.oidc.enabled false, set security.allowInsecure=true to deploy that way on purpose." }}
+    {{- end }}
   RESTAPI_SECURITY: "none"
   {{- end }}
   # certificates

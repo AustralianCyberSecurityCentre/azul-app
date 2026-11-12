@@ -1096,6 +1096,9 @@
         "admin_roles": {
           "type": "array"
         },
+        "allowInsecure": {
+          "type": "boolean"
+        },
         "backend_opensearch_read_role": {
           "type": "string"
         },
