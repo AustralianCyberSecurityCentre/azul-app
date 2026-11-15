@@ -2088,7 +2088,7 @@ images:
     docs: docs:20261114T0001-unstable@sha256:92d196e2ce9290ccaac8ddaac71d24539348eec6494be9fce6422124162ebbba
     restapi-server: restapi-server:20261115T1518-unstable@sha256:c6fa2f41cfbba4bb4b4418e6d2d8ccfbd56be2d664b371b50a841dfccf9b4b16
     webui: webui:20261114T1321-unstable@sha256:ea1aaf98d7c44e37da528f25f20ea0747859def0f936c1c9059c688de8e764cc
-    plugin-alphabets: plugin-alphabets:20261115T1522-unstable@sha256:eb461c5c5bee3eb2072dc43360cd561068f2c3510410c3573aff4f05c5d2ff83
+    plugin-alphabets: plugin-alphabets:20261115T1528-unstable@sha256:1ad7fa01166822a40ddf8dce6ec6ce2f966ec2536d5c6ce4f8976525ffd56571
     plugin-android-parser: plugin-android-parser:20261115T1341-unstable@sha256:62e2b8111c391cc7776d23308d2364441a775f9d3ebcfdd7789508b499a82308
     plugin-assemblyline: plugin-assemblyline:20261115T1441-unstable@sha256:b109d9554ae553cb81300251117db9e354e673c7a35fe565cc3667029155a1b2
     plugin-build-time-strings: plugin-build-time-strings:20261115T1355-unstable@sha256:f8186d90fd8dea25382b3822bea0698ae28df9fe283fa223155956b83c095136
