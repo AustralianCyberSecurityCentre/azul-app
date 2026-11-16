@@ -979,6 +979,10 @@ metastore:
   plugin_index:
     number_of_shards: 3
     number_of_replicas: 2
+  # after updating these settings you will need to re-index for it to take affect.
+  binary_index:
+    number_of_shards: 3
+    number_of_replicas: 2
   # Service for metastore to hit dispatcher instances
   # Should not need to be changed
   env: {}
