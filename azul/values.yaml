@@ -1144,7 +1144,7 @@ security:
   # Roles that if a user has at least one of means they are an admin user.
   admin_roles:
     - admin
-
+  allowInsecure: true
   # Note modifying these settings requires opensearch backend roles also be updated to match.
   # This can be done using the azul-metastore cli or through the Opensearch security roles interface.
   backend_opensearch_read_role: "azul-access" # Formerly azul_read
@@ -1555,6 +1555,83 @@ plugins:
     #     distribution: public
     #     site: "https://api.feedly.com"
     #     feed_url: https://api.feedly.com/v3/streams/contents
+  retroindexer:
+    type: standard
+    enabled: true
+
+    # Used by your retroindexer-pvc.yaml Helm template
+    pvc:
+      size: "100Gi"
+
+    plugins:
+      retroindexer:
+        enabled: true
+        image: plugin-retroindexer
+
+        minReplicas: 1
+        maxReplicas: 1
+        useSmartScaler: false
+
+        strategy:
+          type: Recreate
+
+        enableLivenessProbe: false
+
+        additionalLabels:
+          allow-egress-https-http: "true"
+
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "4Gi"
+          limits:
+            cpu: "4000m"
+            memory: "16Gi"
+
+        volumeMounts:
+          - name: indices
+            mountPath: /indices
+
+        volumes:
+          - name: indices
+            persistentVolumeClaim:
+              claimName: plugin-retroindexer
+
+        config:
+          RETROINDEXER_ROOT_PATH: "/indices"
+          RETROINDEXER_INDEXER_NAME: "content"
+          RETROINDEXER_STREAM_LABELS: "content"
+
+          # 100 MiB in bytes; deliberately small for POC
+          RETROINDEXER_MAX_BYTES_BEFORE_INDEXING: "104857600"
+
+          RETROINDEXER_PERIODIC_MINUTES: "5"
+          RETROINDEXER_TIMEOUT_MINUTES: "60"
+          RETROINDEXER_POLL_SECONDS: "10"
+
+          # Enable historic support for reindexing
+          RETROINDEXER_REQUIRE_HISTORIC: "true"
+
+          # Azure Blob is the destination for .bgi files
+          RETROINDEXER_STORAGE_BACKEND: "azure"
+          RETROINDEXER_STORAGE_ENDPOINT: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
+          RETROINDEXER_STORAGE_BUCKET: "retrohunt-indexes"
+          RETROINDEXER_STORAGE_PREFIX: "retrohunt/indices"
+
+          # Remove local .bgi after successful Put
+          RETROINDEXER_KEEP_LOCAL_INDEXES: "false"
+
+          RETROINDEXER_BGINDEX: "/usr/local/bin/bgindex"
+
+        env:
+          - name: RETROINDEXER_AZURE_ACCOUNT
+            value: "saapptestshrdretrohunt01"
+
+          - name: RETROINDEXER_AZURE_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: azure-retrohunt-creds
+                key: accesskey
   # On demand historic yara rules scanning.
   retrohunt:
     type: standard
