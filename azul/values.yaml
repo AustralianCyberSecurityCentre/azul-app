@@ -2063,6 +2063,10 @@ plugins:
       repeated-bytes:
         tmp: "1Gi"
       richid: {}
+      rust-binary-analysis:
+        image: plugin-rust-binary-analysis
+        command:
+          - "azul-plugin-rust-binary-analysis"
       script-decoder:
         tmp: "1Gi"
       shortcut:
@@ -2147,4 +2151,5 @@ images:
     plugin-ghidra: plugin-ghidra:20261116T2119-unstable@sha256:fa924d9446efb62f94b970480a2ec013c7e27d729798f714af026574bc94fead
     # plugin-report-feeds: dummy
     plugin-report-feeds: plugin-report-feeds:20261115T1559-unstable@sha256:727b29331cc090f6647c1f5b6e9db3a44fa6b967cb1a13aa3873b3e02c439b7a
+    plugin-rust-binary-analysis: plugin-rust-binary-analysis:20261119T2241-dev@sha256:803769572fedc809cf8ff19ec77426d8e94e897f08a74f95a54c2bb54d6abe78
     plugin-jadx: plugin-jadx:20261021T2133-unstable@sha256:175e49f62d8fded80107ba726a518884cca3cc0e8e507f3f1585e0457b23ba4e
