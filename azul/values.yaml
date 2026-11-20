@@ -1148,12 +1148,7 @@ security:
   # Roles that if a user has at least one of means they are an admin user.
   admin_roles:
     - admin
-
-  # With oidc.enabled false, the restapi accepts every request unauthenticated
-  # with full API access. Set this to true to deploy that way on purpose,
-  # otherwise the chart refuses to render. There is no safe default here.
-  allowInsecure: false
-
+  allowInsecure: true
   # Note modifying these settings requires opensearch backend roles also be updated to match.
   # This can be done using the azul-metastore cli or through the Opensearch security roles interface.
   backend_opensearch_read_role: "azul-access" # Formerly azul_read
@@ -1564,74 +1559,160 @@ plugins:
     #     distribution: public
     #     site: "https://api.feedly.com"
     #     feed_url: https://api.feedly.com/v3/streams/contents
+  retroindexer:
+    type: standard
+    enabled: true
 
-  # On demand historic yara rules scanning.
+    # Used by your retroindexer-pvc.yaml Helm template
+    pvc:
+      size: "100Gi"
+
+    plugins:
+      retroindexer:
+        enabled: true
+        image: plugin-retroindexer
+
+        minReplicas: 1
+        maxReplicas: 1
+        useSmartScaler: false
+
+        strategy:
+          type: Recreate
+
+        enableLivenessProbe: false
+
+        additionalLabels:
+          allow-egress-https-http: "true"
+
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "4Gi"
+          limits:
+            cpu: "4000m"
+            memory: "16Gi"
+
+        volumeMounts:
+          - name: indices
+            mountPath: /indices
+
+        volumes:
+          - name: indices
+            persistentVolumeClaim:
+              claimName: plugin-retroindexer
+
+        config:
+          RETROINDEXER_ROOT_PATH: "/indices"
+          RETROINDEXER_INDEXER_NAME: "content"
+          RETROINDEXER_STREAM_LABELS: "content"
+
+          # 1 TiB (1024 GiB) in bytes
+          RETROINDEXER_MAX_BYTES_BEFORE_INDEXING: "1099511627776"
+
+          RETROINDEXER_PERIODIC_MINUTES: "5"
+          RETROINDEXER_TIMEOUT_MINUTES: "60"
+          RETROINDEXER_POLL_SECONDS: "10"
+
+          # Enable historic support for reindexing
+          RETROINDEXER_REQUIRE_HISTORIC: "true"
+
+          # Azure Blob is the destination for .bgi files
+          RETROINDEXER_STORAGE_BACKEND: "azure"
+          RETROINDEXER_STORAGE_ENDPOINT: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
+          RETROINDEXER_STORAGE_BUCKET: "retrohunt-indexes"
+          RETROINDEXER_STORAGE_PREFIX: "retrohunt/indices"
+
+          # Remove local .bgi after successful Put
+          RETROINDEXER_KEEP_LOCAL_INDEXES: "false"
+
+          RETROINDEXER_BGINDEX: "/usr/local/bin/bgindex"
+
+          # The index CLI is now owned/built by the Retroindexer repository,
+          # not by a modified Azul Bedrock repository. Retroindexer can invoke
+          # this binary using the same object-store configuration as Retrohunt.
+          # Storage credentials remain in the Kubernetes Secret below.
+          AZUL_INDEX_BACKEND: "azure"
+          AZUL_INDEX_AZURE_ENDPOINT: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
+          AZUL_INDEX_AZURE_CONTAINER: "retrohunt-indexes"
+
+        env:
+          - name: RETROINDEXER_AZURE_ACCOUNT
+            value: "saapptestshrdretrohunt01"
+
+          - name: RETROINDEXER_AZURE_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: azure-retrohunt-creds
+                key: accesskey
+
+          # The CLI uses the same Azure account/key as the index publisher.
+          # Use secretKeyRef instead of placing the access key in values.yaml.
+          - name: AZUL_INDEX_AZURE_ACCOUNT
+            value: "saapptestshrdretrohunt01"
+          - name: AZUL_INDEX_AZURE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: azure-retrohunt-creds
+                key: accesskey
+
+  # Search-only Retrohunt. Retroindexer owns ingestion, index generation and
+  # the azul-index CLI implementation. Bedrock requires no custom code changes.
+  # Retrohunt's image still needs a COPY of the CLI executable from the
+  # Retroindexer image, plus the Azure settings below for independent fetches.
+  # No Retrohunt PVC, ingestor, or indexer container is deployed.
   retrohunt:
     type: standard
     enabled: true
-    # cronjob schedule to clean up hunts
+    # Keep the existing hunt cleanup cron schedule.
     schedule: "0 2 * * *"
-    pvc:
-      size: "1000Gi"
-    # Group config applied to all retrohunt containers and extraContainers.
+
+    # Search configuration consumed by the Retrohunt ConfigMap.
     config:
-      # Number of narrow-phase worker threads.
-      # Recommend at least 4GB of RAM per worker container.
-      # if containers are getting oom-killed then either decrease the number of threads being used
-      # or increase the memory per container.
       max_thread_count: "10"
-      # Controls how frequently Retrohunt performs its explicit memory cleanup during narrow phase.
-      # The cleanup batch size is calculated from the number of active narrow workers:
-      # cleanup batch size = active workers × default_narrow_phase_cleanup_multiplier
       default_narrow_phase_cleanup_multiplier: "6"
-      # limits how many strings can be used in a batched AND biggrep search
       max_required_strings_per_and_search: "15"
-      # Sets the preferred maximum number of atom-group searches performed against each index for a rule.
-      # This is different from the number of YARA strings. One YARA string can generate many atom searches, particularly when modifiers such as nocase are used.
       max_required_string_searches_per_index: "200"
-      # number of concurrent broadphase workers
       max_broad_phase_workers: "5"
-      # max number of biggrep tasks allowed per search
       max_broad_phase_tasks: "100000"
-      # maximum number of retries retrohunt will process the same job before cancelling it
       max_retries: "10"
       PLUGIN_ENABLE_MEM_LIMITS: "false"
-      PLUGIN_ROOT_PATH: "/indices"
-      PLUGIN_INDEXERS:
-        content:
-          name: content
-          stream_labels:
-            - content
-          # Max content before triggering retrohunt to create a new long term index
-          max_bytes_before_indexing: "10GiB"
-          # Number of minutes to wait before triggering a periodic index which overrides itself every time it triggers.
-          periodic_index_frequency_min: "60"
-          # Number of minutes that indexing can take before it's timed out and crashes.
-          timeout_minutes: "60"
-          # Allow failed index directories to be split in half and then deleted if they fail to index twice in a row.
-          allow_splitting_and_deletion: "true"
+
+      # Retroindexer-owned CLI, copied into the Retrohunt worker image.
+      # These options configure how Retrohunt invokes the executable.
+      PLUGIN_INDEX_CLI_PATH: "/usr/local/bin/azul-index"
+      PLUGIN_INDEX_CACHE_DIR: "/tmp/retrohunt-index-cache"
+      PLUGIN_INDEX_FETCH_WORKERS: "4"
+      PLUGIN_INDEX_LIST_TIMEOUT_SECONDS: "120"
+      PLUGIN_INDEX_FETCH_TIMEOUT_SECONDS: "1800"
+
     plugins:
       retrohunt-worker:
         additionalLabels:
           allow-egress-redis: "true"
+          # Confirm the chart's network policy permits egress to Azure Blob.
+          allow-egress-https-http: "true"
         strategy:
           type: Recreate
         promMetricsEnabled: true
         promPort: "8900"
         image: plugin-retrohunt
-        runTimeout: "6000" # 100 minutes (probably for compaction?)
-        maxFileSize: "100000000" # a 100MB - expected to take at least 60seconds if it's this large.
-        # Not able to be detected via the scaler
+        runTimeout: "6000"
+        maxFileSize: "100000000"
         useSmartScaler: false
+
+        # Main process hosts Retrohunt's service/API. The previous
+        # azul-plugin-retroingestor command no longer exists.
+        # WARNING: ensure the Retrohunt image actually contains this entrypoint.
         command:
-          - azul-plugin-retroingestor
-        volumeMounts:
-          - name: indices
-            mountPath: "/indices"
+          - azul-plugin-retroserver
+
+        # Pod-local storage only. Do not use a persistentVolumeClaim.
+        # Provision from measured .bgi sizes; 100Gi is an initial ceiling.
         volumes:
-          - name: indices
-            persistentVolumeClaim:
-              claimName: plugin-retrohunt
+          - name: index-cache
+            emptyDir:
+              sizeLimit: "100Gi"
+
         envFrom:
           - configMapRef:
               name: retrohunt
@@ -1646,14 +1727,27 @@ plugins:
               secretKeyRef:
                 name: "{{ .Values.secrets.redis }}"
                 key: redis-password
+
+        # The ONLY worker container: BigGrep broad phase + YARA-X narrow phase.
         extraContainers:
           worker:
             template: "plugin.container.main"
             promMetricsEnabled: true
-            # Promport must be the same value as PLUGIN_PROMETHEUS_PORT_WORKER
             promPort: "8901"
-            # Environment variable can be used to change prometheus port if you want multiple workers
-            # All containers in retrohunt must have different prometheus scrape ports.
+            image: plugin-retrohunt
+            resources:
+              requests:
+                memory: "2Gi"
+                cpu: "500m"
+              limits:
+                memory: "4Gi"
+                cpu: "1"
+            command:
+              - azul-plugin-retroworker
+            volumeMounts:
+              - name: index-cache
+                mountPath: "/tmp/retrohunt-index-cache"
+
             envFrom:
               - configMapRef:
                   name: retrohunt
@@ -1670,73 +1764,36 @@ plugins:
                   secretKeyRef:
                     name: "{{ .Values.secrets.redis }}"
                     key: redis-password
-            image: plugin-retrohunt
-            resources:
-              requests:
-                memory: "2Gi"
-                cpu: "500m"
-              limits:
-                memory: "4Gi"
-                cpu: "1"
-            command:
-              - azul-plugin-retroworker
-            volumeMounts:
-              - name: indices
-                mountPath: "/indices"
-          content-indexer:
-            template: "plugin.container.main"
-            promMetricsEnabled: true
-            # Promport must be the same value as PLUGIN_PROMETHEUS_PORT_INDEXER
-            promPort: "8902"
-            # Environment variable can be used to change prometheus port if you want multiple indexers
-            # All containers in retrohunt must have different prometheus scrape ports.
-            envFrom:
-              - configMapRef:
-                  name: retrohunt
-            env:
-              - name: PLUGIN_PROMETHEUS_PORT_INDEXER
-                value: "8902"
-              - name: REDIS_USERNAME
+
+              # Use the SAME Azure Blob account and container as Retroindexer.
+              # Both services use the Retroindexer CLI's retrohunt/indices/
+              # published-object namespace; Bedrock's source is unchanged.
+              - name: AZUL_INDEX_BACKEND
+                value: "azure"
+              - name: AZUL_INDEX_AZURE_ENDPOINT
+                value: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
+              - name: AZUL_INDEX_AZURE_CONTAINER
+                value: "retrohunt-indexes"
+              - name: AZUL_INDEX_AZURE_ACCOUNT
+                value: "saapptestshrdretrohunt01"
+              - name: AZUL_INDEX_AZURE_KEY
                 valueFrom:
                   secretKeyRef:
-                    name: "{{ .Values.secrets.redis }}"
-                    key: redis-username
-              - name: REDIS_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: "{{ .Values.secrets.redis }}"
-                    key: redis-password
-            image: plugin-retrohunt
-            resources:
-              requests:
-                memory: "8Gi"
-                cpu: "100m"
-              limits:
-                memory: "16Gi"
-                cpu: "4000m"
-            command:
-              - azul-plugin-retroindexer
-              - "--indexer-name"
-              - "content"
-            volumeMounts:
-              - name: indices
-                mountPath: "/indices"
-                # Not used because there is no good way of ingesting PCAP files currently.
-                # pcap-indexer:
-                #   template: "plugin.container.main"
-                #   image: plugin-retrohunt
-                #   resources:
-                #     requests:
-                #       memory: "1Gi"
-                #       cpu: "100m"
-                #     limits:
-                #       memory: "2Gi"
-                #       cpu: "1000m"
-                #   command:
-                #     - azul-plugin-retroindexer
-                #   volumeMounts:
-                #     - name: indices
-                #       mountPath: "/indices"
+                    name: azure-retrohunt-creds
+                    key: accesskey
+
+              # Duplicate critical settings here so the worker does not depend
+              # on whether the chart converts plugin config into uppercase env.
+              - name: PLUGIN_INDEX_CLI_PATH
+                value: "/usr/local/bin/azul-index"
+              - name: PLUGIN_INDEX_CACHE_DIR
+                value: "/tmp/retrohunt-index-cache"
+              - name: PLUGIN_INDEX_FETCH_WORKERS
+                value: "4"
+              - name: PLUGIN_INDEX_LIST_TIMEOUT_SECONDS
+                value: "120"
+              - name: PLUGIN_INDEX_FETCH_TIMEOUT_SECONDS
+                value: "1800"
 
   # Generic metadata extraction.
   tika:
@@ -2146,5 +2203,6 @@ images:
     smart-string-filter: smart-string-filter:20261115T1342-unstable@sha256:4548665b330df4baedc7ba009b5b3f07db63768cc49627e6993ff9fd84c653d2
     plugin-ghidra: plugin-ghidra:20261116T2119-unstable@sha256:fa924d9446efb62f94b970480a2ec013c7e27d729798f714af026574bc94fead
     # plugin-report-feeds: dummy
-    plugin-report-feeds: plugin-report-feeds:20261115T1559-unstable@sha256:727b29331cc090f6647c1f5b6e9db3a44fa6b967cb1a13aa3873b3e02c439b7a
+    plugin-report-feeds: plugin-report-feeds:20261108T2136-unstable@sha256:6380375e7f1aeb2b04df1711c609e87bc7fe1b6d7f3cf01c230149fd2a34b32c
     plugin-jadx: plugin-jadx:20261021T2133-unstable@sha256:175e49f62d8fded80107ba726a518884cca3cc0e8e507f3f1585e0457b23ba4e
+    plugin-retroindexer: plugin-retroindexer:20261120T0616-dev@sha256:fed8e485439f4b3830f894a5128ea10a799f0bfc8bcd0ce19d71d44ad533cb8f

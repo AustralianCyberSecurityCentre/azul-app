@@ -1,0 +1,3 @@
+{{- if ((.Values.plugins).retroindexer).enabled }}
+{{- include "pvc" (dict "root" .Values "name" "plugin-retroindexer" "size" .Values.plugins.retroindexer.pvc.size) | nindent 0 }}
+{{- end}}
