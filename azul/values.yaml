@@ -1606,8 +1606,8 @@ plugins:
           RETROINDEXER_INDEXER_NAME: "content"
           RETROINDEXER_STREAM_LABELS: "content"
 
-          # 100 MiB in bytes; deliberately small for POC
-          RETROINDEXER_MAX_BYTES_BEFORE_INDEXING: "104857600"
+          # 1 TiB (1024 GiB) in bytes
+          RETROINDEXER_MAX_BYTES_BEFORE_INDEXING: "1099511627776"
 
           RETROINDEXER_PERIODIC_MINUTES: "5"
           RETROINDEXER_TIMEOUT_MINUTES: "60"
