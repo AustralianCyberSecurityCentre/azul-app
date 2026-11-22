@@ -1606,8 +1606,10 @@ plugins:
           RETROINDEXER_INDEXER_NAME: "content"
           RETROINDEXER_STREAM_LABELS: "content"
 
-          # 10GB in bytes
+          # Rotate and index after 10 GiB of staged source binaries.
           RETROINDEXER_MAX_BYTES_BEFORE_INDEXING: "10737418240"
+          # Keep at least 5 GiB free before starting a new indexing operation.
+          RETROINDEXER_MIN_FREE_BYTES: "5368709120"
 
           RETROINDEXER_PERIODIC_MINUTES: "5"
           RETROINDEXER_TIMEOUT_MINUTES: "60"
@@ -1627,14 +1629,6 @@ plugins:
 
           RETROINDEXER_BGINDEX: "/usr/local/bin/bgindex"
 
-          # The index CLI is now owned/built by the Retroindexer repository,
-          # not by a modified Azul Bedrock repository. Retroindexer can invoke
-          # this binary using the same object-store configuration as Retrohunt.
-          # Storage credentials remain in the Kubernetes Secret below.
-          AZUL_INDEX_BACKEND: "azure"
-          AZUL_INDEX_AZURE_ENDPOINT: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
-          AZUL_INDEX_AZURE_CONTAINER: "retrohunt-indexes"
-
         env:
           - name: RETROINDEXER_AZURE_ACCOUNT
             value: "saapptestshrdretrohunt01"
@@ -1645,21 +1639,9 @@ plugins:
                 name: azure-retrohunt-creds
                 key: accesskey
 
-          # The CLI uses the same Azure account/key as the index publisher.
-          # Use secretKeyRef instead of placing the access key in values.yaml.
-          - name: AZUL_INDEX_AZURE_ACCOUNT
-            value: "saapptestshrdretrohunt01"
-          - name: AZUL_INDEX_AZURE_KEY
-            valueFrom:
-              secretKeyRef:
-                name: azure-retrohunt-creds
-                key: accesskey
-
-  # Search-only Retrohunt. Retroindexer owns ingestion, index generation and
-  # the azul-index CLI implementation. Bedrock requires no custom code changes.
-  # Retrohunt's image still needs a COPY of the CLI executable from the
-  # Retroindexer image, plus the Azure settings below for independent fetches.
-  # No Retrohunt PVC, ingestor, or indexer container is deployed.
+  # Search-only Retrohunt. Retroindexer owns ingestion and index generation.
+  # Retrohunt's Python shim downloads published .bgi objects from Azure/S3.
+  # No Retrohunt PVC, CLI, ingestor, or indexer container is deployed.
   retrohunt:
     type: standard
     enabled: true
@@ -1677,10 +1659,10 @@ plugins:
       max_retries: "10"
       PLUGIN_ENABLE_MEM_LIMITS: "false"
 
-      # Retroindexer-owned CLI, copied into the Retrohunt worker image.
-      # These options configure how Retrohunt invokes the executable.
-      PLUGIN_INDEX_CLI_PATH: "/usr/local/bin/azul-index"
+      # Python shim: stage and search .bgi objects in bounded local batches.
       PLUGIN_INDEX_CACHE_DIR: "/tmp/retrohunt-index-cache"
+      # 80 GiB max index bytes per batch within the 100 GiB emptyDir.
+      PLUGIN_INDEX_CACHE_MAX_BYTES: "85899345920"
       PLUGIN_INDEX_FETCH_WORKERS: "4"
       PLUGIN_INDEX_LIST_TIMEOUT_SECONDS: "120"
       PLUGIN_INDEX_FETCH_TIMEOUT_SECONDS: "1800"
@@ -1765,11 +1747,12 @@ plugins:
                     name: "{{ .Values.secrets.redis }}"
                     key: redis-password
 
-              # Use the SAME Azure Blob account and container as Retroindexer.
-              # Both services use the Retroindexer CLI's retrohunt/indices/
-              # published-object namespace; Bedrock's source is unchanged.
+              # Read indexes published by Retroindexer, using the Python shim.
+              # To use S3, switch the backend and provide S3 settings/credentials.
               - name: AZUL_INDEX_BACKEND
                 value: "azure"
+              - name: AZUL_INDEX_PREFIX
+                value: "retrohunt/indices"
               - name: AZUL_INDEX_AZURE_ENDPOINT
                 value: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
               - name: AZUL_INDEX_AZURE_CONTAINER
@@ -1784,10 +1767,10 @@ plugins:
 
               # Duplicate critical settings here so the worker does not depend
               # on whether the chart converts plugin config into uppercase env.
-              - name: PLUGIN_INDEX_CLI_PATH
-                value: "/usr/local/bin/azul-index"
               - name: PLUGIN_INDEX_CACHE_DIR
                 value: "/tmp/retrohunt-index-cache"
+              - name: PLUGIN_INDEX_CACHE_MAX_BYTES
+                value: "85899345920"
               - name: PLUGIN_INDEX_FETCH_WORKERS
                 value: "4"
               - name: PLUGIN_INDEX_LIST_TIMEOUT_SECONDS
@@ -2205,4 +2188,4 @@ images:
     # plugin-report-feeds: dummy
     plugin-report-feeds: plugin-report-feeds:20261108T2136-unstable@sha256:6380375e7f1aeb2b04df1711c609e87bc7fe1b6d7f3cf01c230149fd2a34b32c
     plugin-jadx: plugin-jadx:20261021T2133-unstable@sha256:175e49f62d8fded80107ba726a518884cca3cc0e8e507f3f1585e0457b23ba4e
-    plugin-retroindexer: plugin-retroindexer:20261120T0616-dev@sha256:fed8e485439f4b3830f894a5128ea10a799f0bfc8bcd0ce19d71d44ad533cb8f
+    plugin-retroindexer: plugin-retroindexer:20261122T2239-dev@sha256:6bb15b9de1637cbc43619edc936da6cd5d1a75cd25a34506558e663d762d654a
