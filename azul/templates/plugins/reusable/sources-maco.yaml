@@ -53,7 +53,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- include "harden.deployment" . | nindent 6 }}
+      {{- include "harden.deployment" $ | nindent 6 }}
       initContainers:
       # We need to create workingDir with correct permissions before the main container runs.
       # If this is omitted, /code/dest/<source.path> will be created with `drwxr-sr-x root azul`,
@@ -62,8 +62,12 @@ spec:
         image: {{ include "image.custom" (dict "images" $root.images "name" $image)}}
         command: ["mkdir", "-p", "/code/dest/{{ $source.path | default "" }}"]
         securityContext:
-          runAsUser: 21000
-          runAsGroup: 21000
+          {{- with $root.securityContext.runAsUser }}
+          runAsUser: {{ int64 . }}
+          {{- end }}
+          {{- with $root.securityContext.runAsGroup }}
+          runAsGroup: {{ int64 . }}
+          {{- end }}
           runAsNonRoot: true
           allowPrivilegeEscalation: false
           capabilities:
@@ -80,7 +84,7 @@ spec:
         # This is why the init container is used above to create the directory with the write permissions before the main container starts.
         workingDir: /code/dest/{{ $source.path | default "" }}
         imagePullPolicy: {{ $root.images.pullPolicy }}
-        {{- include "harden.container" . | nindent 8 }}
+        {{- include "harden.container" $ | nindent 8 }}
         {{- if $group.resources }}
         resources:
           {{- $group.resources | toYaml | nindent 10 }}

@@ -154,7 +154,11 @@ spec:
               secretKeyRef:
                 name: {{ .root.Values.secrets.redis }}
                 key: redis-password
+          # Cache directory for files coming in via restapi, while being hashed and identified.
           - name: DP.STREAMS.FCACHE.PATH
+            value: "/fcache"
+          # Cache directory for S3 files like AES/XOR
+          - name: BED.S3_CACHE_DIRECTORY
             value: "/fcache"
           - name: GODEBUG
             value: madvdontneed=1
@@ -239,17 +243,17 @@ spec:
       volumes:
       - name: tmp
         emptyDir:
-          sizeLimit: 200Mi
+          sizeLimit: {{ .config.tempCache.tmp }}
       - name: tmp-file-cache
         emptyDir:
-          sizeLimit: 10Gi
+          sizeLimit: {{ .config.tempCache.fcache }}
       # FUTURE fix loki integration to get logs out reliably, or use statefulsets for restapi, with PVCs
       - name: logs
         emptyDir:
-          sizeLimit: 200Mi
+          sizeLimit: {{ .config.tempCache.logs }}
       - name: alloy-data
         emptyDir:
-          sizeLimit: 200Mi
+          sizeLimit: {{ .config.tempCache.alloy }}
       {{- if .root.Values.CACertificateConfigMap }}
       - name: ca-cert
         configMap:

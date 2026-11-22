@@ -21,6 +21,16 @@ nodeSelector: {}
 # K8s toleration definitions to apply to Azul.
 tolerations: []
 
+# UID/GID that all Azul pods run as. These are applied to the pod and container securityContexts.
+# Any field set to null is omitted from the rendered manifests.
+# On OpenShift (restricted-v2 SCC) set runAsUser and fsGroup to null so the SCC injects values from the
+# namespace's uid-range / supplemental-groups. runAsGroup is not restricted by SCCs and should
+# stay at 21000 so the process keeps group access to files in the Azul images.
+securityContext:
+  runAsUser: 21000
+  runAsGroup: 21000
+  fsGroup: 21000
+
 # K8s node and pod affinity/anti-affinity definitions to apply to Azul.
 affinity: {}
 
@@ -185,7 +195,7 @@ secrets:
   #   clientId: <azure-app-registration-client-id>
   #   clientsecret: <secret-key-from-azure> # Get when creating a new authorized application.
   filestore: "s3-keys"
-  # Redis that is used by dispatcher (automatically created in infra chart if you are using the built-in chart)
+  # Redis that is used by dispatcher (automatically created in azul chart if you are using the built-in chart)
   # Must keep in sync with redis.author.existingSecret
   # data:
   #   redis-username: <redis-username> # username used when setting up redis
@@ -351,6 +361,11 @@ redis:
       memory: 512Mi
 
   pvcSize: "1Gi"
+
+  # Override the global securityContext UID/fsGroup for redis
+  securityContext:
+    runAsUser: null
+    fsGroup: null
 
   annotations:
     argocd.argoproj.io/sync-options: Prune=false
@@ -586,6 +601,7 @@ recovery:
 
   tmp: "400Mi"
   backup:
+    storagePvcSize: "1Gi"
     resources:
       requests:
         memory: "4Gi"
@@ -596,6 +612,7 @@ recovery:
   # generally you'd want restore to have more 'capacity' than backup as you run it in emergencies,
   # however it'll mostly be limited by performance of dispatcher
   restore:
+    storagePvcSize: "1Gi"
     resources:
       requests:
         memory: "4Gi"
@@ -810,6 +827,11 @@ dispatcher:
           limits:
             memory: "1Gi"
             cpu: "200m"
+        tempCache:
+          tmp: "200Mi"
+          fcache: "1Gi"
+          logs: "200Mi"
+          alloy: "200Mi"
         env:
           # size of cache used for events being consumed
           # this cache is useful - hit rate of 50% after historical catches up with live processing
@@ -830,6 +852,11 @@ dispatcher:
           limits:
             memory: "1Gi"
             cpu: "200m"
+        tempCache:
+          tmp: "200Mi"
+          fcache: "10Gi"
+          logs: "200Mi"
+          alloy: "200Mi"
         env:
           # allow deletion of s3 items - for data purging operations
           DP.STREAMS.API_ALLOW_DELETE: "true"
@@ -853,6 +880,11 @@ dispatcher:
           limits:
             memory: "2Gi"
             cpu: "1000m"
+        tempCache:
+          tmp: "200Mi"
+          fcache: "1Gi"
+          logs: "200Mi"
+          alloy: "200Mi"
         env:
           # size of cache used for events being consumed
           # this cache is useful - hit rate of 50% after historical catches up with live processing
@@ -878,6 +910,11 @@ dispatcher:
           limits:
             memory: "2Gi"
             cpu: "1000m"
+        tempCache:
+          tmp: "200Mi"
+          fcache: "10Gi"
+          logs: "200Mi"
+          alloy: "200Mi"
         env:
           # This cache greatly reduces calls dispatcher makes to S3 during plugin processing.
           # NOTE: Additional RAM consumed will equal DP.STREAMS.CACHE.SIZE * 1.5
@@ -897,6 +934,11 @@ lostTasks:
   args: ["lost-tasks"]
   replicas: 1
   env: {}
+  tempCache:
+    tmp: "200Mi"
+    fcache: "10Gi"
+    logs: "200Mi"
+    alloy: "200Mi"
   resources:
     requests:
       memory: "500Mi"
@@ -930,6 +972,11 @@ migration:
     config:
       args: ["reprocess"]
       replicas: 1
+      tempCache:
+        tmp: "200Mi"
+        fcache: "10Gi"
+        logs: "200Mi"
+        alloy: "200Mi"
       resources:
         # Reprocessing all topics requires substantial resources.
         # These values may need to be tuned to your environment depending on
@@ -950,6 +997,10 @@ metastore:
     number_of_replicas: 2
   # after updating these settings you will need to re-index for it to take affect.
   plugin_index:
+    number_of_shards: 3
+    number_of_replicas: 2
+  # after updating these settings you will need to re-index for it to take affect.
+  binary_index:
     number_of_shards: 3
     number_of_replicas: 2
   # Service for metastore to hit dispatcher instances
@@ -1037,6 +1088,34 @@ metastore:
           memory: "2Gi"
           cpu: "1000m"
 
+# Enabling the alerter allows users to raise alerts to webhooks, when enabled users can configure alerts through the API.
+alerter:
+  enabled: false
+  # List of webhooks with corresponding webhook_id's where alerts can be raised.
+  # NOTE - must be at least one webhook if this is enabled.
+  # Removing IDs after creation will likely lead to broken rules, as alerts that attempt to send to the removed Ids will fail.
+  webhooks: []
+  # - id: "test"
+  #   description: "test"
+  #   webhook_type: "mattermost"
+  #   url: "fake-endpoint"
+  # Maximum security level for events an alert can be raised for (events above this threshold are ignored and never raise alerts.)
+  max_security: ""
+  # Redis keys where the alert hits and configuration are stored.
+  alert_key: "alerts"
+  config_key: "config"
+  # Database Id to use in redis (note dispatcher uses 0-3, and retrohunt uses 15 by default)
+  redis_db: 4
+  # How often to check for new alerts.
+  alert_poll_frequency_seconds: 300
+  # String format of message to be sent via message to the webhook.
+  alert_format: "Alert raised for {sha256} the alert was id {alert_id} with message {alert_message}"
+  # Number of times to re-attempt sending an alert to a webhook before discarding it.
+  max_alert_reattempts: 10
+  # How often redis changes are propagated to the backend (dispatcher) that actually raises the alerts.
+  # Number of minutes that the backend waits before polling for config changes.
+  config_reload_frequency_min: 10
+
 # API server configuration
 restapi:
   readonlyMode: false
@@ -1089,6 +1168,16 @@ security:
   # Roles that if a user has at least one of means they are an admin user.
   admin_roles:
     - admin
+
+  # With oidc.enabled false, the restapi accepts every request unauthenticated
+  # with full API access. Set this to true to deploy that way on purpose,
+  # otherwise the chart refuses to render. There is no safe default here.
+  allowInsecure: false
+
+  # Note modifying these settings requires opensearch backend roles also be updated to match.
+  # This can be done using the azul-metastore cli or through the Opensearch security roles interface.
+  backend_opensearch_read_role: "azul-access" # Formerly azul_read
+  backend_opensearch_write_role: "azul_write"
   # OpenID Connect configuration
   oidc:
     enabled: false
@@ -1463,14 +1552,12 @@ plugins:
         command:
           - "azul-plugin-sylk"
 
-  # Note - not open-sourced yet.
   # Ingest reports and samples for analysis.
   # Only runs as a cronjob.
   # NOTE - if the feed your using requires credentials also create the report feeds secret and adjust the reportFeeds
   # name if required.
   report-feeds:
     type: reportFeeds
-    # Note - not open-sourced yet, cannot be enabled.
     enabled: false
     # Prometheus push gateway for collecting metrics
     prometheusPushGateway: "http://prometheus-pushgateway.monitoring.svc.cluster.local:9091"
@@ -1526,6 +1613,8 @@ plugins:
       max_broad_phase_workers: "5"
       # max number of biggrep tasks allowed per search
       max_broad_phase_tasks: "100000"
+      # maximum number of retries retrohunt will process the same job before cancelling it
+      max_retries: "10"
       PLUGIN_ENABLE_MEM_LIMITS: "false"
       PLUGIN_ROOT_PATH: "/indices"
       PLUGIN_INDEXERS:
@@ -1999,87 +2088,83 @@ plugins:
       shortcut:
         tmp: "1Gi"
       unbox:
-        maxFileSize: "1000000000" # 1gb
+        maxFileSize: "4000000000" # 4gb
         tmp: "4Gi"
         resources:
           requests:
             memory: "4Gi"
           limits:
             memory: "8Gi"
-        config:
-          # should handle larger files than most plugins to try and extract them.
-          PLUGIN_FILTER_MAX_CONTENT_SIZE: "4GiB"
 
 # Container registry image names
 images:
   pullPolicy: Always
   # External image dependencies - These will be cloned into our registry on release of Azul.
   external:
-    git-sync: registry.k8s.io/git-sync/git-sync:v4.5.0@sha256:0e64aedb0d0ae0a3bab880349a5109b2a31891d646dd61e433ca36ed220dff1f
-    tika_external: docker.io/apache/tika:3.2.3.0-full@sha256:21d8052de04e491ccf66e8680ade4da6f3d453a56d59f740b4167e54167219b7
-    alloy: docker.io/grafana/alloy:v1.14.1@sha256:8f5666aebb871ba43ee2d65159c5d1c26c903720efafaf2d9ed4e237afc3bc88
+    tika_external: docker.io/apache/tika:3.3.3.0-full@sha256:6ef30abd65df4b6c478907904099d0245bdb0e0686f94fb9bc7493558442bb74
+    alloy: docker.io/grafana/alloy:v1.21.1@sha256:4039c971193053a84e53dd9ed3e7d4561c069256b024631cd3498a353ed7ece8
     # Pod to scrape kafka consumer lag statistics from Kafka.
-    burrow: ghcr.io/linkedin/burrow/burrow:v1.9.5@sha256:670c59255a339e14e241ca2d8f80085628d9295e6a46102b4730ace820e51952
-    redis: docker.io/redis:8.6.1-trixie@sha256:315270d166080f537bbdf1b489b603aaaa213cb55a544acfa51feb7481abb1c0
+    burrow: ghcr.io/linkedin/burrow/burrow:v1.9.6@sha256:829fc72ba29e72b3d8c3ddf095f41c44516b991677c27066537ebad3a0d0fd24
+    redis: docker.io/redis:8.8.3-trixie@sha256:30928ad7fd204ec536f1eb84e3cd6826d29a7ebe06c9cf0143c287c466a4568f
   # custom registry to retrieve 'custom' images from (prepended)
   customRegistry: docker.io/asdazul/
   # images that form part of an azul release
   custom:
-    audit-forwarder: audit-forwarder:20260920T1422-unstable@sha256:8a709e29cf0b28c3ef06a6fc4a0fd734866ade3128ee04f22818f90b8b85e815
-    backup: backup:20260920T1415-unstable@sha256:12071578cc7f83eaaa844bcd2381c300d52b7c4c4f307aa9cab9a745b40b8e37
-    client: client:20260920T1605-unstable@sha256:3f41e31f4609faa3e57d260ab197bdd1897cf1d10452205f02315cdbf67d4ac1
-    dispatcher: dispatcher:20260919T1537-unstable@sha256:c5f2a87138732d846f7e4a9a81277fb6b53e6935b85f026a014ce21365d1fad5
-    docs: docs:20260919T0000-unstable@sha256:c42d87e653dcf492317e5899f0fce5da06fac6873b0a10b945f60b76c5242179
-    restapi-server: restapi-server:20260920T2357-unstable@sha256:dbe2bc37c129a4bd2168bcf18320abf4a35783c5792820c12fc11c5ce8eeeed2
-    webui: webui:20260920T1436-unstable@sha256:702ce11fde42cb4c02c0e1840a3edaccc11ee9f5a856fe5f473376e3f15770c0
-    plugin-alphabets: plugin-alphabets:20260920T1549-unstable@sha256:a433883ee3e28f4485c82a6792cd4c38dfe6c4af6acbe7382097a01938998bf2
-    plugin-android-parser: plugin-android-parser:20260920T1513-unstable@sha256:fc407204b51ef5db1d04e71c1b007cfee3d9525bd3d4b9cc53c625babce64bdc
-    plugin-assemblyline: plugin-assemblyline:20260920T1559-unstable@sha256:72b00ac0c43ddc2835a87e90510f2d4b67ecee086064d45d41eba36d6ddfc647
-    plugin-build-time-strings: plugin-build-time-strings:20260920T1558-unstable@sha256:6def5471c2202577066072ed532773e16d2f4e46889357304c13c3d3f6c74753
-    plugin-mandiant-capa: plugin-mandiant-capa:20260920T1539-unstable@sha256:c2c8ae6be14a533041c11fa91acd94910cf2b118e00362c2002649ef6e9e86c1
-    plugin-cape: plugin-cape:20260920T1521-unstable@sha256:4ee0008803db40ca1106362217b2b0954f4ab0344d1654ec1b6a10f182c0d15e
-    plugin-de4dot: plugin-de4dot:20260920T1527-unstable@sha256:d7d4ab1ac368f7f209a8cc48b51aa7418c405c0b87c5d0119cb2c1301f42d583
-    plugin-dotnet-decompiler: plugin-dotnet-decompiler:20260920T1528-unstable@sha256:74669a0e2df412b576b6f50d37db5a57d01c4fceec60f732682c3a3ee05d0cf3
-    plugin-dotnet-deob: plugin-dotnet-deob:20260920T1531-unstable@sha256:debb937fc42e06f07102458ed5f37aebfcddba9867fdb850221050642b963f35
-    plugin-email: plugin-email:20260921T0116-unstable@sha256:4778a4d3567d62a0ff6a8908595eb10eb1f82fa5414acd70bb3ea728ffb504ad
-    plugin-entropy: plugin-entropy:20260920T1514-unstable@sha256:baf55da68b29f7283c3ffd369f4cf55e2b8ac787c702d99ab6579e5d99e25a65
-    plugin-entrypointcheck: plugin-entrypointcheck:20260920T1530-unstable@sha256:afb80d7be08bc74267f6a78b7930d7cce5d7acafd6c0806a5dcf90b3e9f9294d
-    plugin-exiftool: plugin-exiftool:20260920T1531-unstable@sha256:816726eb9a995876df106d59b47d26fbcb5d7d09e120fc20eebcf79c5e4ac743
-    plugin-export-hashes: plugin-export-hashes:20260920T1532-unstable@sha256:357c1cde58a45848c45d48b992d31f829055f14dad523fa9b4acac2e7bd4ed20
-    plugin-maco: plugin-maco:20260920T1538-unstable@sha256:7741a510f39de5123ef77972ddeade4992a0fb8490862de991bcb58472269e1b
-    plugin-floss: plugin-floss:20260920T1537-unstable@sha256:7a5552868dfd1612db0fbc691e44fdff7aceb851555d02abddd262f16280f813
-    plugin-goinfo: plugin-goinfo:20260920T1525-unstable@sha256:287447f43c708b3c4cc49c5811de6cd8b9e4f9ea8dece5d86e6c9b0a22f2d292
-    plugin-image-convert: plugin-image-convert:20260920T1534-unstable@sha256:40616dcd30d8e14ad4bced915126121e293021a9a983c87ee05be06ada639e9c
-    plugin-index-coincidence: plugin-index-coincidence:20260920T1534-unstable@sha256:d85a4aab9a0bfa3630deea2578da25d6c193951161330116bd2bca44b653395e
-    plugin-js-deobf: plugin-js-deobf:20260920T1537-unstable@sha256:b3eaebc28f4e91a85b678a759af3afe0f48eb91304d5860fe7c77699497049cd
-    plugin-lief: plugin-lief:20260920T1533-unstable@sha256:1f8dadc4f2d828396be51e8c5129acd51d5b4a91eddf1c4a7227188e9746ab98
-    plugin-lookback: plugin-lookback:20260920T1537-unstable@sha256:ea45d494842afebf1aacfca1908af4769a20ede13d7735116ba6529b234fb490
-    plugin-malcarve: plugin-malcarve:20260920T2208-unstable@sha256:1f8c9d252f262915666d548d350deb6072e497a597bf50058665640530c8e6e6
-    plugin-netinfo: plugin-netinfo:20260920T1538-unstable@sha256:48386ee57aa194a138884daf9a4ef47c7af98ca3be47d385b772f6b5039a2ea9
-    plugin-nsrl: plugin-nsrl:20260920T1559-unstable@sha256:f9b8fdc42662f5cfca91e7ff9aae480334cb643f887226e5ca0af44f40cddbec
-    plugin-office: plugin-office:20260920T1539-unstable@sha256:a8109b08f3008b9519593585bdfa92244782c7d4893dc1d084d6cf7bcd7d3da8
-    plugin-pdftools: plugin-pdftools:20260920T1535-unstable@sha256:a357cd95c68d351c0fbe4a17a772566e51165184b52a3f21c09d522dcde2df77
-    plugin-python: plugin-python:20260920T1602-unstable@sha256:813c909c0779ff1f46372f1d2564939fbb1d65cfc95a9ac9239c8de638028e40
-    plugin-repeated-bytes: plugin-repeated-bytes:20260920T1543-unstable@sha256:95a7e35d197df1954a1982e12d5f9ada92b2220955ab969c3ce2c41c134efceb
-    plugin-retrohunt: plugin-retrohunt:20260920T2341-unstable@sha256:287f53e9bf80f6ecd96e9d8396d6e4f93333a8e6331f85d621b0534ffc5cfe4c
-    plugin-richid: plugin-richid:20260920T1544-unstable@sha256:db3d66b889c25d5a99813366082cdf85e746cee0998bcbeb37cafca7d342b84d
-    plugin-script-decoder: plugin-script-decoder:20260920T1548-unstable@sha256:3d8f14fee5b91cbf8bf62fd215b105801e3d1527dcea779f005ea3726e3b5d1a
-    plugin-shortcut: plugin-shortcut:20260920T1548-unstable@sha256:5c2bf842eb7103be682d0924130aa97793ca69eeab13385a68351ef036591994
-    plugin-tika: plugin-tika:20260920T2328-unstable@sha256:310f6b973e0b5ebd4b1e7d82b26bdffd47488ae51f9487dda4b267bb0bdc8d4e
-    plugin-unbox: plugin-unbox:20260920T1554-unstable@sha256:885d2b35397fcf26ee0c424024e714424b7e274aa2db687f06a87c846b9a68ec
-    plugin-virustotal: plugin-virustotal:20260920T1534-unstable@sha256:4ee8f9876e0a46d4d4d496d9aa12512193ed7804e1131d89c70fe1bb0549544c
-    stats: stats:20260920T1620-unstable@sha256:89eff8f5ef7ad8e417fdeb15970f1eb0d78719628d737b788b2021255c9174e2
-    nsrl-lookup-server: nsrl-lookup-server:20260920T1434-unstable@sha256:907e99e9cf9fe3de1a2c16585489b31cd88de608ce83cb3b9f8a17e0c8c6317b
-    plugin-suricata: plugin-suricata:20260920T1549-unstable@sha256:3cf6c59e296bb17cc8e656b0e0e3430412d0cfba11e901fd7c86cbe945f7baa1
-    scaler: scaler:20260920T1428-unstable@sha256:13c3ba16ee9ee11044c70731578a982f5612c9fff2fdc9d8825ddbdfd15743e1
-    plugin-debloat: plugin-debloat:20260920T1521-unstable@sha256:9c81e0060e49dafdb29ac0d7ac95f2883b607e74cfab6219e77409383fafbd08
-    plugin-yara: plugin-yara:20260920T2232-unstable@sha256:4385259cc4f4960fa234541beb030cfcb33a07b7c56061a70e1e9b749df042a0
-    plugin-portex: plugin-portex:20260920T1559-unstable@sha256:249fb693632ada156c820c461a8378eba8a1e3560757b5d34e6a9116d1ce0779
-    plugin-truncated: plugin-truncated:20260920T1550-unstable@sha256:658dd28b8837ac675bc36dfe28eda5a65fc554138394b887572556cf6ed2e4ba
-    plugin-certificates: plugin-certificates:20260920T1521-unstable@sha256:9be57ebbd59ac37eb083de337b323be9ac977ae0a0d79d2ed30ef506c576dd59
-    plugin-qrcode: plugin-qrcode:20260920T1601-unstable@sha256:367683691e210725534a4ad62b30ae6bfd99ebc4deb4019817031a1943fead29
-    smart-string-filter: smart-string-filter:20260920T1452-unstable@sha256:f09c9efdf1cd45658689d5524756014ba920bf91219828dc3f9c09d34ede24b2
-    plugin-ghidra: plugin-ghidra:20260920T1535-unstable@sha256:b1e803f365bb8222ecf7dcf6f128f5fb564f09e7b8110f26831a7df52b00e703
+    audit-forwarder: audit-forwarder:20261122T1320-unstable@sha256:fa19c77816f01bb2f38ed9e26ab8a9d61f44a136690d93a294637c440333cfa1
+    backup: backup:20261122T1323-unstable@sha256:03548df8c104d1405eeb7c58fe36decc7bb5726d632175abbb0f7076769e280d
+    client: client:20261122T1424-unstable@sha256:14fcac1aed454e0205d8f9ba6ffe7f3b66cef734e07f4423063db0f48fef7853
+    dispatcher: dispatcher:20261120T1340-unstable@sha256:d6a614548a2976405c5a145e5edeb0b05135508c734f022bd57e32e522f191a8
+    docs: docs:20261121T0001-unstable@sha256:4f179bb4d897c66ba7aea105ee19411692e764e533899fa54853f855aa449e6b
+    restapi-server: restapi-server:20261122T1347-unstable@sha256:d6a97bb5551c2c56822792ab91c6b218c99264b9ed258b62627312e6287c528b
+    webui: webui:20261122T1351-unstable@sha256:9e2a92dccceedeff2cc2f8b21b5f45667b99dfdc40c873e930aecc78b8012369
+    plugin-alphabets: plugin-alphabets:20261122T1427-unstable@sha256:2e0aee8abf20320037eac270be4a1f0c6bfd74b6aa430d2542f4650bc1df11a3
+    plugin-android-parser: plugin-android-parser:20261122T1413-unstable@sha256:7e1ea56240512f2b3cbc8fac5c8a466b6e9a64a739297ff920ba7bf298fce7ff
+    plugin-assemblyline: plugin-assemblyline:20261122T1411-unstable@sha256:c63277f21651bf0e8855bdfeedc3b644830d841231c2a801a24ad7d92ebca0f1
+    plugin-build-time-strings: plugin-build-time-strings:20261122T1411-unstable@sha256:72f84350f387b751e02a48fc351411b361b3c7f077fa18d5260f06b371ba744a
+    plugin-mandiant-capa: plugin-mandiant-capa:20261115T1552-unstable@sha256:3ff49703836ff58a0d9a0357bca33d1c4d9c63c92d30b41ee856a0fb63094cdd
+    plugin-cape: plugin-cape:20261122T1419-unstable@sha256:4400f1d1beba32a4588a8f3a15061180b0db37229d8748d33b02dc9ab9cf98c3
+    plugin-de4dot: plugin-de4dot:20261122T1427-unstable@sha256:9cf159f0afde09a1acc6c2a3c94bdce118423256c194280c1609db569faf7d64
+    plugin-dotnet-decompiler: plugin-dotnet-decompiler:20261122T1425-unstable@sha256:1b4153343c91bc6c42a4bc13826f7efe499f0e13d6327ec260e5837ad82fed7c
+    plugin-dotnet-deob: plugin-dotnet-deob:20261122T1430-unstable@sha256:5ba83d0b03f583aa57282f76e2e5798346b819a1dd03668945ccdbeb3f7f8358
+    plugin-email: plugin-email:20261122T1428-unstable@sha256:79d84eb95945304869cbad77807de5586e31ae6772a0b763d46c24377152055c
+    plugin-entropy: plugin-entropy:20261122T1416-unstable@sha256:1ce51e51341a81e7a28bf91a49e40055a48ad1a0fe88ae1e75d2e2c1511d9492
+    plugin-entrypointcheck: plugin-entrypointcheck:20261122T1430-unstable@sha256:fc155f6a750f4f0a9e8ac5850b1503942631505884f1ece8c63df58cc4805f54
+    plugin-exiftool: plugin-exiftool:20261115T1544-unstable@sha256:094f1d7e2b0c72851c6544a3c1589127ac70e57147635199aae737ff23d68ca1
+    plugin-export-hashes: plugin-export-hashes:20261122T1435-unstable@sha256:9c9dfb879dd3054300dd6fca1826e67c47f25b970117449a8c9761591d5a563c
+    plugin-maco: plugin-maco:20261115T1550-unstable@sha256:5089a54b9dfd33815f383992c1ab898b1d6e859733d55749e4af037f04e12dea
+    plugin-floss: plugin-floss:20261115T1554-unstable@sha256:49f5ce8108ab8f03fc514d3982ba962154098a8de84e0b4443beb8b4f8ca32aa
+    plugin-goinfo: plugin-goinfo:20261122T1421-unstable@sha256:8c6c96a03f3683b468d18b5e369375ccf72ef90d31e76a143604194cb62ae777
+    plugin-image-convert: plugin-image-convert:20261115T1547-unstable@sha256:550bb70b1cbce719961c02352e137654485342e0d705fbe914887379777a9f89
+    plugin-index-coincidence: plugin-index-coincidence:20261116T2110-unstable@sha256:1c82a15e1f4be53106897771e02fd80d7b96b775650a52b267b5fec7b1ddf9c4
+    plugin-js-deobf: plugin-js-deobf:20261116T2114-unstable@sha256:052031a0ae8984055159072851c0c14f68ee4af350e69f1fedb9b1ee0baa0b33
+    plugin-lief: plugin-lief:20261115T1549-unstable@sha256:e2f23633697e34927f3d4b3c974fee43c43c96afa26a62003d8e584e29b380f1
+    plugin-lookback: plugin-lookback:20261109T0110-unstable@sha256:c6b9ded90a343b5df8bfe0d596388059086936ff0e8f3c1c0003dad47a96dcc0
+    plugin-malcarve: plugin-malcarve:20261122T1342-unstable@sha256:57c5c1c514730ba39c45f667b2c0f6978dc934f28a6602691e7df50200583e3e
+    plugin-netinfo: plugin-netinfo:20261115T1553-unstable@sha256:8847e7f1c47d79d717cdc2cb37c59b6d1f897e9f775b670e5232371c7a8df4eb
+    plugin-nsrl: plugin-nsrl:20261122T1422-unstable@sha256:a81eebe7d48e97392c04951c5c152c2d903263d0847999df6eee7920d548adbd
+    plugin-office: plugin-office:20261115T1553-unstable@sha256:405425bdb20d4165173bc96b7d5ffa8a466102f8e242f1d846f2793192b5dc10
+    plugin-pdftools: plugin-pdftools:20261115T1552-unstable@sha256:57ccd4198f614782e9cfffb7c4fa5c2840f7f542682425960be84c275b020760
+    plugin-python: plugin-python:20261115T1555-unstable@sha256:061264da4c3b942c64bcec8d9a86b183e24718cfaa60ef17fb8d9c1672eb43ed
+    plugin-repeated-bytes: plugin-repeated-bytes:20261116T2110-unstable@sha256:e6d99d7299d9247b66452ff63617c178602d520754e74d284d2e8220ce017d6d
+    plugin-retrohunt: plugin-retrohunt:20261115T1615-unstable@sha256:d0dcdd7269245c62c5a2a3c755f582e63086d2f80ba2d02c258d5869f6e5378c
+    plugin-richid: plugin-richid:20261115T1557-unstable@sha256:f98340574bc61e8c3d55569a4cd5f2dfa323180619f94bb77b1111d5431927c0
+    plugin-script-decoder: plugin-script-decoder:20261115T1556-unstable@sha256:654cb5888633dbc35950e4516f74b46228bf6e0ac9cecac6cd1626673afbb804
+    plugin-shortcut: plugin-shortcut:20261115T1558-unstable@sha256:42684a2b32051bcb86bd80c325434e2204ac6dd4b5fb578c0fff0dac1fe51bce
+    plugin-tika: plugin-tika:20261115T2332-unstable@sha256:711a8bae5d0cf58141f4b565757369b9ffb581a73424f1a79aa449eff8b82942
+    plugin-unbox: plugin-unbox:20261115T1607-unstable@sha256:35045839acc9af93eb9c5e8a1dfd5f14a94d52b491c297f2835f286075bf2c4e
+    plugin-virustotal: plugin-virustotal:20261121T1324-unstable@sha256:40efbdf03b7ee0eeba1a2055f403f53c1713a30e08ead99e06b63f7a4056529c
+    stats: stats:20261115T1524-unstable@sha256:24530df34b685baf1f90ee7f8db7a08423f510b508cd1408ef1fe60366bd4746
+    nsrl-lookup-server: nsrl-lookup-server:20261122T1339-unstable@sha256:01264e2ed40429760c7cba9b88154bb9eda8827e2674b87d67f9a2844ef0497f
+    plugin-suricata: plugin-suricata:20261115T1602-unstable@sha256:7f577353c3611e550f3accee00b385dd86f03f30463444dba483dc56c7b12409
+    scaler: scaler:20261122T1356-unstable@sha256:f4f3145158efc09bc9dc128627ad1165463f927e9952f8d101c4dbd2fbd4d7aa
+    plugin-debloat: plugin-debloat:20261122T1423-unstable@sha256:8b8b8d4c8837caff88c65aa22860983c8eead3050a90bfa26efc32dea130a81a
+    plugin-yara: plugin-yara:20261116T0343-unstable@sha256:445128df43505bca4e0122d38b1729c8c959fbef995b5df97cefd0647c47d63e
+    plugin-portex: plugin-portex:20261115T1552-unstable@sha256:922256bcf94f60b57838f3d07407a5d33b5860621723790654c7b27d694235fd
+    plugin-truncated: plugin-truncated:20261115T1601-unstable@sha256:58c7769b311cda616968d13d74fdb8c813756b94bb707e520055559b71ec1826
+    plugin-certificates: plugin-certificates:20261122T1422-unstable@sha256:0c9e9ee86b9ef10c92b141cceb38df346b47d88a706833d2e1a0d1feb0f80f8a
+    plugin-qrcode: plugin-qrcode:20261115T2327-unstable@sha256:64e9ee92450764b4f68341cf6e9a27bf11ffa65859b89f9cea0178a553271099
+    smart-string-filter: smart-string-filter:20261122T1351-unstable@sha256:079a630ac06b4761f03b9c87e022dfb8440c03933dc63b5c2f7fe1481659a147
+    plugin-ghidra: plugin-ghidra:20261116T2119-unstable@sha256:fa924d9446efb62f94b970480a2ec013c7e27d729798f714af026574bc94fead
     # plugin-report-feeds: dummy
-    plugin-report-feeds: plugin-report-feeds:20260920T1545-unstable@sha256:fcc38207589b2acdf8a14f50663a996a12bda3061bfb3238a3805790ce25a2e8
-    plugin-jadx: plugin-jadx:20260919T1456-unstable@sha256:5193df0e93e1131b49811149c693176a7c3f3db281ebb63d678f56b4ce2d1b47
+    plugin-report-feeds: plugin-report-feeds:20261115T1559-unstable@sha256:727b29331cc090f6647c1f5b6e9db3a44fa6b967cb1a13aa3873b3e02c439b7a
+    plugin-jadx: plugin-jadx:20261021T2133-unstable@sha256:175e49f62d8fded80107ba726a518884cca3cc0e8e507f3f1585e0457b23ba4e

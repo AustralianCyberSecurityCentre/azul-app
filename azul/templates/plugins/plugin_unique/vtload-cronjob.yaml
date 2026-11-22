@@ -10,7 +10,7 @@ metadata:
     component: virustotal
 spec:
   concurrencyPolicy: Forbid
-  schedule: "*/5 * * * *"
+  schedule: "0 * * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 2
   jobTemplate:
@@ -74,16 +74,19 @@ spec:
                 memory: "2Gi"
                 cpu: "1000m"
             env:
+            {{- if eq .Values.plugins.virustotal.pullFromApi "vt" }}
             - name: VIRUSTOTAL_APIKEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secrets.virustotalCreds }}
                   key: apikey
+            {{- else if eq .Values.plugins.virustotal.pullFromApi "azure" }}
             - name: AZURE_STORAGE_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secrets.azureStorageCreds }}
                   key: connectionString
+            {{- end }}
             {{- if .Values.external.services.virustotal }}
             - name: VIRUSTOTAL_APISERVER
               value: {{ .Values.external.services.virustotal }}

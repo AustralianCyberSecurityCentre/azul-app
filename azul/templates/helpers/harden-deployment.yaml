@@ -1,14 +1,25 @@
 {{- define "harden.deployment" -}}
+{{/* helper may be called with the root context or a dict containing "root" */}}
+{{- $root := . -}}
+{{- if not .Values }}{{ $root = .root }}{{ end -}}
+{{- $sc := $root.Values.securityContext -}}
 # prevent environment spam from services
 # env vars from services clash with our config
 enableServiceLinks: false
 # Security setting to prevent leaking kubernetes JWTs.
 automountServiceAccountToken: false
 # enforce security hardening
+{{- /* runAsUser/runAsGroup/fsGroup are omitted when null so OpenShift SCCs can inject them. */}}
 securityContext:
-  fsGroup: 21000
-  runAsUser: 21000
-  runAsGroup: 21000
+  {{- with $sc.fsGroup }}
+  fsGroup: {{ int64 . }}
+  {{- end }}
+  {{- with $sc.runAsUser }}
+  runAsUser: {{ int64 . }}
+  {{- end }}
+  {{- with $sc.runAsGroup }}
+  runAsGroup: {{ int64 . }}
+  {{- end }}
   runAsNonRoot: true
   seccompProfile:
     type: RuntimeDefault

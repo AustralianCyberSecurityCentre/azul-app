@@ -105,7 +105,7 @@ stringData:
   user: admin
 kind: Secret
 metadata:
-  name: main-seaweed
+  name: admin-seaweed
 type: Opaque
 ```
 
@@ -130,7 +130,7 @@ NOTE the secret name `seaweed-s3` is configurable in the `filer.s3.existingConfi
           "secretKey":"s3secretkeykeepitsecret"
         }
       ],
-      "actions": ["Admin","Read","Write"]
+      "actions": ["Admin","Read","Write","List","Tagging"]
     },
     { 
       "name":"anvReadOnly",
@@ -176,6 +176,29 @@ seaweedfs-main:
         cert-manager.io/private-key-size: "4096"
         cert-manager.io/private-key-rotation-policy: Always
         nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+```
+
+#### Recommended secret
+
+It's recommended to create the filer's Db secret to avoid it re-creating and breaking the cluster.
+If the cluster breaks in this way deleting all the pods does fix it but it's not always clear to debug.
+
+`kubectl create secret seaweed-db-credentials --from-literal=user=admin --from-literal=password=password`
+
+And then add this section to the filer:
+
+```yaml
+seaweedfs-main:
+  filer:
+    secretExtraEnvironmentVars:
+      WEED_MYSQL_USERNAME:
+        secretKeyRef:
+          name: seaweed-db-credentials
+          key: user
+      WEED_MYSQL_PASSWORD:
+        secretKeyRef:
+          name: seaweed-db-credentials
+          key: password
 ```
 
 ### OpenSearch
@@ -239,26 +262,31 @@ Apply with:
 kubectl apply -f creds.yaml
 ```
 
-- IMPORTANT! - you need to manually create internal users in opensearch because there is a bug with the opensearch
-  operator (2.8.2+)
+- IMPORTANT:
+  For OpenSearch Operator versions 2.8.2 through 2.x, internal users may not
+  be created from the security configuration due to a known operator issue:
   https://github.com/opensearch-project/opensearch-k8s-operator/issues/1371
-  This means you need to manually create all the users in opensearch that aren't admin and kibanaserver through the
-  opensearch dashboards user interface and map them to the appropriate backend roles and roles.
+  If using an affected version, you must manually create any required internal
+  users (other than the default admin and kibanaserver users) in the OpenSearch
+  Dashboards UI and assign the appropriate backend roles and role mappings.
   The main user that must be created is the `azul_writer` user.
   The `monitor` user is also important.
-  Also, Opensearch operator 3+ deletes all internal users every time the securityconfig job runs.
-  When this job runs it also clears any roles and role mappings you've added manually.
+  In affected versions, running the securityconfig job may also remove manually
+  created internal users, roles, and role mappings, requiring them to be
+  recreated.
+  This issue was fixed in OpenSearch Operator 3.0.0. These manual steps
+  are only required when running older operator versions.
 
-- Alternative option: if you don't want to manually create the azul_writer user you can instead use the `internalUsersAlt`
+- Preferred option: if you don't want to manually create the azul_writer user you can instead use the `internalUsersAlt`
   value and set it to
   ```yaml
-  internalUsersAlt: {}
+  internalUsersAlt:
     monitor:
       backendRoles: []
     azul-writer:
       backendRoles: ["azul_write"]
   ```
-  and then also create the `azul-opensearch-user-passwords` secret witha  spec similar to this:
+  and then also create the `azul-opensearch-user-passwords` secret with a spec similar to this:
   ```yaml
   apiVersion: v1
   kind: Secret
@@ -275,7 +303,7 @@ kubectl apply -f creds.yaml
   not underscores as the name is used for the username and the kubernetes resource.
   And kubernetes resources can't have `_` in their name.
 
-- To prevent roles and role mappings being deleted you can set the values `opensearch.disableSecurityConfigUpdates` to  true.
+- If using Opensearch Operator < 3.0.0 (including 3.0.0 beta): to prevent roles and role mappings being deleted you can set the values `opensearch.disableSecurityConfigUpdates` to  true.
   This flag means only config.yml updates apply which are updates to your OIDC configuration
   Roles and role mappings will no longer be removed, however internal users will still be cleared everytime the securityconfig job runs (note this will occur when you disable this option)
 
@@ -313,6 +341,77 @@ helm upgrade opensearch-operator opensearch-operator/opensearch-operator
 ```
 
 Next update the version of Opensearch in `values.yaml`
+
+#### Opensearch - Advanced
+
+If Opensearch needs to be distributed in multiple regions to ensure data redundancy this can be achieved 
+through routing awareness attributes.
+
+The purpose of this configuration is to ensure opensearch is aware of how the opensearch nodes are distributed in the Kubernetes cluster so Opensearch 
+can target what kubernetes node opensearch nodes are on and then ensure replicas and primaries are split up between the different nodes to ensure a node failure doesn't take out a replica 
+because all replicas will be split up based on the node affinities defined in `redundantMultiNodePool`.
+This is flexible enough to work between datacenters as well if required.
+
+This configuration makes `replicas * #redundantMultiNodePool` so if the replicas are 3 and the number of
+redundantMultiNodePool is 3 it's a total of 9 replicas. (3 per pool)
+
+The example configuration and validation uses the routing awareness attribute of "dc".
+If you need a different routing awareness attribute you can disable the validation by setting `awarenessValidation` to false.
+
+Example opensearch general configuration for settings up
+
+```yaml
+opensearch:
+  enable: true
+  awarenessValidation: true # disable if the awareness attribute isn't dc
+  general:
+    additionalConfig:
+      # routing awareness attribute used within opensearch.
+      cluster.routing.allocation.awareness.attributes: "dc"
+      # NOTE - dc1/dc2/dc3 just have to match whatever is listed as the node.attr.dc in the redundancy configurations.
+      cluster.routing.allocation.awareness.force.dc.values: "dc1,dc2,dc3"
+```
+
+Example node pool configurations using dc1, dc2 and dc3.
+Note with the nodeSelector and affinity rules you should choose one or the other.
+
+Also note c
+
+```yaml
+opensearch:
+  redundantMultiNodePool:
+    # Node pool configuration
+    - additionalConfig:
+        node.attr.dc: dc1
+      nodeSelector:
+        topology.kubernetes.io/zone: node-attribute-1
+      topologySpreadConstraints: # Optional (label selectors are pre-defined) e.g:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+    - additionalConfig:
+        node.attr.dc: dc2
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                - node-attribute-2
+    - additionalConfig:
+        node.attr.dc: dc3
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+              - key: topology.kubernetes.io/zone
+                operator: In
+                values:
+                - node-attribute-3
+```
 
 ### Keycloak
 

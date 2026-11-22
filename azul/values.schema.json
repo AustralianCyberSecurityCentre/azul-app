@@ -73,6 +73,21 @@
         "additionalProperties": false
       }
     },
+    "securityContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "runAsUser": {
+          "type": ["integer", "null"]
+        },
+        "runAsGroup": {
+          "type": ["integer", "null"]
+        },
+        "fsGroup": {
+          "type": ["integer", "null"]
+        }
+      }
+    },
     "affinity": {
       "type": "object",
       "properties": {
@@ -445,6 +460,18 @@
         "persistentVolumeClaimRetentionPolicy":{
           "type": "object",
           "additionalProperties": true
+        },
+        "securityContext": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "runAsUser": {
+              "type": ["integer", "null"]
+            },
+            "fsGroup": {
+              "type": ["integer", "null"]
+            }
+          }
         }
       },
       "allOf": [
@@ -698,6 +725,15 @@
             }
           ]
         },
+        "tempCache": {
+          "type": "object",
+          "properties": {
+            "tmp": {"type": "string"},
+            "fcache": {"type": "string"},
+            "logs": {"type": "string"},
+            "alloy": {"type": "string"}
+          }
+        },
         "resources": {
           "type": "object",
           "allOf": [
@@ -738,6 +774,15 @@
                     "type": "string"
                   }
                 },
+                "tempCache": {
+                  "type": "object",
+                  "properties": {
+                    "tmp": {"type": "string"},
+                    "fcache": {"type": "string"},
+                    "logs": {"type": "string"},
+                    "alloy": {"type": "string"}
+                  }
+                },
                 "replicas": {
                   "type": "integer",
                   "minimum": 1
@@ -768,6 +813,7 @@
       "properties": {
         "status_index": { "$ref": "#/definitions/opensearchConfig" },
         "plugin_index": { "$ref": "#/definitions/opensearchConfig" },
+        "binary_index": { "$ref": "#/definitions/opensearchConfig" },
         "env": {
           "type": "object"
         },
@@ -846,6 +892,83 @@
           "$ref": "#/definitions/metastoreEnv"
         }
       ]
+    },
+    "alerter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "webhooks":{
+            "type": "array",
+            "items":{
+              "additionalProperties": false,
+              "required": ["id", "description", "webhook_type", "url"],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "description":{
+                  "type": "string"
+                },
+                "webhook_type": {
+                  "type": "string",
+                  "enum": ["msteams", "mattermost"]
+                },
+                "message_field": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+          }
+        },
+        "enabled":{
+          "type": "boolean"
+        },
+        "max_security": {
+          "type": "string"
+        },
+        "alert_key": {
+          "type": "string"
+        },
+        "config_key": {
+          "type": "string"
+        },
+        "redis_db":{
+          "type": "integer",
+          "minimum": 0
+        },
+        "alert_poll_frequency_seconds": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "alert_format":{
+          "type": "string"
+        },
+        "max_alert_reattempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "config_reload_frequency_min": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "webhooks":{
+            "minItems": 1
+          }
+        }
+      },
+      "else": {}
     },
     "restapi": {
       "type": "object",
@@ -981,6 +1104,15 @@
       "properties": {
         "admin_roles": {
           "type": "array"
+        },
+        "allowInsecure": {
+          "type": "boolean"
+        },
+        "backend_opensearch_read_role": {
+          "type": "string"
+        },
+        "backend_opensearch_write_role": {
+          "type": "string"
         },
         "oidc": {
           "type": "object",
@@ -1767,6 +1899,9 @@
         },
         "backup": {
           "type": "object",
+          "properties": {
+            "storagePvcSize": {"type": "string"}
+          },
           "allOf": [
             {
               "$ref": "#/definitions/resources"
@@ -1775,6 +1910,9 @@
         },
         "restore": {
           "type": "object",
+          "properties": {
+            "storagePvcSize": {"type": "string"}
+          },
           "allOf": [
             {
               "$ref": "#/definitions/resources"
@@ -2231,13 +2369,23 @@
             }
           ]
         },
+        "tempCache": {
+          "type": "object",
+          "properties": {
+            "tmp": {"type": "string"},
+            "fcache": {"type": "string"},
+            "logs": {"type": "string"},
+            "alloy": {"type": "string"}
+          }
+        },
         "resources": {
           "$ref": "#/definitions/resources"
         },
         "env": {
           "$ref": "#/definitions/dispatcherEnv"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "migrationProfile": {
       "description": "Configuration for migrating Prefixless topics to prefixed topics.",
@@ -2709,6 +2857,15 @@
                   }
                 },
                 "required": ["name"]
+              },
+              "secret":{
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": ["secretName"]
               },
               "emptyDir": {
                 "type": "object"
