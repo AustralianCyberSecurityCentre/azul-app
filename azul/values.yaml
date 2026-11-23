@@ -1704,73 +1704,57 @@ plugins:
                 name: "{{ .Values.secrets.redis }}"
                 key: redis-password
 
-        # The ONLY worker container: BigGrep broad phase + YARA-X narrow phase.
-        extraContainers:
-          worker:
-            template: "plugin.container.main"
-            promMetricsEnabled: true
-            promPort: "8901"
-            image: plugin-retrohunt
-            resources:
-              requests:
-                memory: "2Gi"
-                cpu: "500m"
-              limits:
-                memory: "4Gi"
-                cpu: "1"
-            command:
-              - azul-plugin-retroworker
-            volumeMounts:
-              - name: index-cache
-                mountPath: "/tmp/retrohunt-index-cache"
+        # Run one Retrohunt worker in the primary container.
+        command:
+          - azul-plugin-retroworker
 
-            envFrom:
-              - configMapRef:
-                  name: retrohunt
-            env:
-              - name: PLUGIN_PROMETHEUS_PORT_WORKER
-                value: "8901"
-              - name: REDIS_USERNAME
-                valueFrom:
-                  secretKeyRef:
-                    name: "{{ .Values.secrets.redis }}"
-                    key: redis-username
-              - name: REDIS_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: "{{ .Values.secrets.redis }}"
-                    key: redis-password
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "1"
 
-              # Read indexes published by Retroindexer, using the Python shim.
-              # To use S3, switch the backend and provide S3 settings/credentials.
-              - name: AZUL_INDEX_BACKEND
-                value: "azure"
-              - name: AZUL_INDEX_PREFIX
-                value: "retrohunt/indices"
-              - name: AZUL_INDEX_AZURE_ENDPOINT
-                value: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
-              - name: AZUL_INDEX_AZURE_CONTAINER
-                value: "retrohunt-indexes"
-              - name: AZUL_INDEX_AZURE_ACCOUNT
-                value: "saapptestshrdretrohunt01"
-              - name: AZUL_INDEX_AZURE_KEY
-                valueFrom:
-                  secretKeyRef:
-                    name: azure-retrohunt-creds
-                    key: accesskey
+        volumeMounts:
+          - name: index-cache
+            mountPath: "/tmp/retrohunt-index-cache"
 
-              # Duplicate critical settings here so the worker does not depend
-              # on whether the chart converts plugin config into uppercase env.
-              - name: PLUGIN_INDEX_CACHE_DIR
-                value: "/tmp/retrohunt-index-cache"
-              - name: PLUGIN_INDEX_CACHE_MAX_BYTES
-                value: "85899345920"
-              - name: PLUGIN_INDEX_FETCH_WORKERS
-                value: "4"
-              - name: PLUGIN_INDEX_LIST_TIMEOUT_SECONDS
-                value: "120"
-              - name: PLUGIN_INDEX_FETCH_TIMEOUT_SECONDS
-                value: "1800"
+        # Secrets in baseEnv remain available on the primary container.
+        # Azure/S3 and cache settings were moved from extraContainers.worker.
+        env:
+          - name: PLUGIN_PROMETHEUS_PORT_WORKER
+            value: "8900"
+          # Read indexes published by Retroindexer, using the Python shim.
+          # To use S3, switch the backend and provide S3 settings/credentials.
+          - name: AZUL_INDEX_BACKEND
+            value: "azure"
+          - name: AZUL_INDEX_PREFIX
+            value: "retrohunt/indices"
+          - name: AZUL_INDEX_AZURE_ENDPOINT
+            value: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
+          - name: AZUL_INDEX_AZURE_CONTAINER
+            value: "retrohunt-indexes"
+          - name: AZUL_INDEX_AZURE_ACCOUNT
+            value: "saapptestshrdretrohunt01"
+          - name: AZUL_INDEX_AZURE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: azure-retrohunt-creds
+                key: accesskey
+
+          # Duplicate critical settings here so the worker does not depend
+          # on whether the chart converts plugin config into uppercase env.
+          - name: PLUGIN_INDEX_CACHE_DIR
+            value: "/tmp/retrohunt-index-cache"
+          - name: PLUGIN_INDEX_CACHE_MAX_BYTES
+            value: "85899345920"
+          - name: PLUGIN_INDEX_FETCH_WORKERS
+            value: "4"
+          - name: PLUGIN_INDEX_LIST_TIMEOUT_SECONDS
+            value: "120"
+          - name: PLUGIN_INDEX_FETCH_TIMEOUT_SECONDS
+            value: "1800"
 
   # Generic metadata extraction.
   tika:
@@ -2160,7 +2144,7 @@ images:
     plugin-pdftools: plugin-pdftools:20261122T1446-unstable@sha256:37d4e440da94432f4738e3053d2922a1bb3331ed6f47b7190a2ddf67814c6dbb
     plugin-python: plugin-python:20261122T1448-unstable@sha256:9157602eae18fc1b7c58ad5d999979a4dd498aa81b6488eea07ce43db22c6158
     plugin-repeated-bytes: plugin-repeated-bytes:20261122T1443-unstable@sha256:b3c30ef6bccb2e4ba5d55753cd4f8b1f3ccbc742d333080f6a228d713a712ef8
-    plugin-retrohunt: plugin-retrohunt:20261123T0351-unstable@sha256:921894ef13f083f5f7b5e822853e8d43c6e415f9f836ca5558f41f8b0999ed55
+    plugin-retrohunt: plugin-retrohunt:20261123T0602-unstable@sha256:ee723a105c51c693067aca0010c5eea8eecb33396dadbf9eee7a6d1304d5b99e
     plugin-richid: plugin-richid:20261122T1444-unstable@sha256:70efcf28aac9fe1564d1ee1592202c4a40e1a0bc79670054bdf4b88d50ebb7da
     plugin-script-decoder: plugin-script-decoder:20261122T1447-unstable@sha256:5f1c92a8be0250b8acec85d03aa1b80e492abde0951a7d19f235301c32e31e8f
     plugin-shortcut: plugin-shortcut:20261122T1505-unstable@sha256:48bb0f97433af50cc4e4cd4707437c99a5d9e60c5c4321d42368e146ab97cc93
