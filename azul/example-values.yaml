@@ -176,6 +176,10 @@ alerter:
   max_security: "MORE OFFICIAL"
 
 security:
+  # With oidc.enabled false, the restapi accepts every request unauthenticated
+  # with full API access. Set this to true to deploy that way on purpose,
+  # otherwise the chart refuses to render. There is no safe default here.
+  allowInsecure: true
   default: OFFICIAL
   minimumRequiredAccess:
     - LESS OFFICIAL
