@@ -1682,12 +1682,6 @@ plugins:
         maxFileSize: "100000000"
         useSmartScaler: false
 
-        # Main process hosts Retrohunt's service/API. The previous
-        # azul-plugin-retroingestor command no longer exists.
-        # WARNING: ensure the Retrohunt image actually contains this entrypoint.
-        command:
-          - azul-plugin-retroserver
-
         # Pod-local storage only. Do not use a persistentVolumeClaim.
         # Provision from measured .bgi sizes; 100Gi is an initial ceiling.
         volumes:
