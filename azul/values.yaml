@@ -1650,33 +1650,55 @@ plugins:
 
     # Search configuration consumed by the Retrohunt ConfigMap.
     config:
+      # Maximum concurrent threads used by the BigGrep/YARA search.
       max_thread_count: "10"
+      # Controls cleanup frequency during narrow-phase verification.
       default_narrow_phase_cleanup_multiplier: "6"
+      # Limit required strings combined into one AND search.
       max_required_strings_per_and_search: "15"
+      # Cap required-string searches against each index.
       max_required_string_searches_per_index: "200"
+      # Concurrent broad-phase BigGrep search workers.
       max_broad_phase_workers: "5"
+      # Cap broad-phase tasks to prevent excessive search work.
       max_broad_phase_tasks: "100000"
+      # Retry limit for a search operation.
       max_retries: "10"
+      # Disable generic plugin memory guards for long-running Retrohunt searches.
       PLUGIN_ENABLE_MEM_LIMITS: "false"
 
-      # Worker-local index reuse: evict towards 80 GiB before exceeding 90 GiB.
-      # Reserve 10 GiB of real free space before downloading a new index.
+      # Persistent per-worker index cache and storage transfer limits.
+      # Path to the worker-local persistent PVC index cache.
       PLUGIN_INDEX_CACHE_DIR: "/data/index-cache"
+      # Cache eviction threshold: 90 GiB.
       PLUGIN_INDEX_CACHE_MAX_BYTES: "96636764160"
+      # Cache size target after eviction: 80 GiB.
       PLUGIN_INDEX_CACHE_TARGET_BYTES: "85899345920"
+      # Reserve at least 10 GiB of filesystem free space for downloads.
       PLUGIN_INDEX_CACHE_FREE_BYTES: "10737418240"
+      # Concurrent object-size lookups when building a hunt manifest.
       PLUGIN_INDEX_FETCH_WORKERS: "4"
+      # Concurrent index downloads per Retrohunt worker pod.
+      PLUGIN_INDEX_DOWNLOAD_WORKERS: "2"
+      # Timeout in seconds for listing index objects.
       PLUGIN_INDEX_LIST_TIMEOUT_SECONDS: "120"
+      # Timeout in seconds for fetching an index object.
       PLUGIN_INDEX_FETCH_TIMEOUT_SECONDS: "1800"
 
-      # Share workers fairly between queued hunts after each shard completes.
-      # Set worker count to the number of worker replicas in this scheduling pool.
+      # Distributed shard scheduling and fairness between active hunts.
+      # Enable Redis-backed distributed hunt sharding.
       PLUGIN_DISTRIBUTED_HUNTS: "true"
+      # Total worker pods sharing this scheduling pool (must match replicas).
       PLUGIN_HUNT_WORKER_COUNT: "4"
+      # Redis scheduler pool identifier shared by the workers.
       PLUGIN_HUNT_WORKER_POOL: "default"
+      # Number of shards created for each submitted hunt.
       PLUGIN_HUNT_SHARDS: "32"
+      # Upper bound on simultaneous shards per hunt.
       PLUGIN_HUNT_MAX_PARALLEL_SHARDS: "32"
+      # Time a worker can own a shard without renewing its lease.
       PLUGIN_HUNT_SHARD_LEASE_SECONDS: "180"
+      # Maximum attempts permitted for a failing shard.
       PLUGIN_HUNT_SHARD_MAX_RETRIES: "3"
 
     plugins:
@@ -1702,11 +1724,13 @@ plugins:
           - configMapRef:
               name: retrohunt
         baseEnv:
+          # Read the Redis username from the configured Kubernetes secret.
           - name: REDIS_USERNAME
             valueFrom:
               secretKeyRef:
                 name: "{{ .Values.secrets.redis }}"
                 key: redis-username
+          # Read the Redis password from the configured Kubernetes secret.
           - name: REDIS_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -1735,59 +1759,34 @@ plugins:
         # Secrets in baseEnv remain available on the primary container.
         # Azure/S3 and cache settings were moved from extraContainers.worker.
         env:
+          # Port for worker Prometheus metrics (must match promPort).
           - name: PLUGIN_PROMETHEUS_PORT_WORKER
             value: "8900"
-          # Read indexes published by Retroindexer, using the Python shim.
-          # To use S3, switch the backend and provide S3 settings/credentials.
+          # Index storage settings. For S3, replace the Azure settings with S3 credentials.
+          # Index object-store backend: Azure Blob or S3.
           - name: AZUL_INDEX_BACKEND
             value: "azure"
+          # Logical source/label prefix shared with Retroindexer.
           - name: AZUL_INDEX_PREFIX
             value: "retrohunt/indices"
+          # Azure Blob storage account endpoint hosting the indexes.
           - name: AZUL_INDEX_AZURE_ENDPOINT
             value: "https://saapptestshrdretrohunt01.blob.core.windows.net/"
+          # Azure Blob container holding the published indexes.
           - name: AZUL_INDEX_AZURE_CONTAINER
             value: "retrohunt-indexes"
+          # Azure storage account name for index access.
           - name: AZUL_INDEX_AZURE_ACCOUNT
             value: "saapptestshrdretrohunt01"
+          # Maximum Azure SDK parallel requests per index transfer.
+          - name: AZUL_INDEX_AZURE_DOWNLOAD_CONCURRENCY
+            value: "4"
+          # Azure storage access key provided by Kubernetes Secret.
           - name: AZUL_INDEX_AZURE_KEY
             valueFrom:
               secretKeyRef:
                 name: azure-retrohunt-creds
                 key: accesskey
-
-          # Duplicate critical settings here so the worker does not depend
-          # on whether the chart converts plugin config into uppercase env.
-          - name: PLUGIN_INDEX_CACHE_DIR
-            value: "/data/index-cache"
-          # Cache ceiling 90 GiB, eviction target 80 GiB, free-space reserve 10 GiB.
-          - name: PLUGIN_INDEX_CACHE_MAX_BYTES
-            value: "96636764160"
-          - name: PLUGIN_INDEX_CACHE_TARGET_BYTES
-            value: "85899345920"
-          - name: PLUGIN_INDEX_CACHE_FREE_BYTES
-            value: "10737418240"
-          - name: PLUGIN_INDEX_FETCH_WORKERS
-            value: "4"
-          - name: PLUGIN_INDEX_LIST_TIMEOUT_SECONDS
-            value: "120"
-          - name: PLUGIN_INDEX_FETCH_TIMEOUT_SECONDS
-            value: "1800"
-
-          # Distributed Retrohunt settings (primary worker container).
-          - name: PLUGIN_DISTRIBUTED_HUNTS
-            value: "true"
-          - name: PLUGIN_HUNT_WORKER_COUNT
-            value: "4"
-          - name: PLUGIN_HUNT_WORKER_POOL
-            value: "default"
-          - name: PLUGIN_HUNT_SHARDS
-            value: "32"
-          - name: PLUGIN_HUNT_MAX_PARALLEL_SHARDS
-            value: "32"
-          - name: PLUGIN_HUNT_SHARD_LEASE_SECONDS
-            value: "180"
-          - name: PLUGIN_HUNT_SHARD_MAX_RETRIES
-            value: "3"
 
   # Generic metadata extraction.
   tika:
