@@ -1643,7 +1643,7 @@ plugins:
   # Retrohunt's Python shim downloads published .bgi objects from Azure/S3.
   # No Retrohunt PVC, CLI, ingestor, or indexer container is deployed.
   retrohunt:
-    type: standard
+    type: stateful
     enabled: true
     # Keep the existing hunt cleanup cron schedule.
     schedule: "0 2 * * *"
@@ -1661,7 +1661,7 @@ plugins:
 
       # Worker-local index reuse: evict towards 80 GiB before exceeding 90 GiB.
       # Reserve 10 GiB of real free space before downloading a new index.
-      PLUGIN_INDEX_CACHE_DIR: "/tmp/retrohunt-index-cache"
+      PLUGIN_INDEX_CACHE_DIR: "/data/index-cache"
       PLUGIN_INDEX_CACHE_MAX_BYTES: "96636764160"
       PLUGIN_INDEX_CACHE_TARGET_BYTES: "85899345920"
       PLUGIN_INDEX_CACHE_FREE_BYTES: "10737418240"
@@ -1693,13 +1693,8 @@ plugins:
         runTimeout: "6000"
         maxFileSize: "100000000"
         useSmartScaler: false
-
-        # NOTE: emptyDir is not persistent; for cache reuse after pod recreation,
-        # replace this volume with a per-worker 100Gi PVC via a StatefulSet/chart support.
-        volumes:
-          - name: index-cache
-            emptyDir:
-              sizeLimit: "100Gi"
+        # Each StatefulSet replica receives its own persistent index-cache claim.
+        pvcSize: "100Gi"
 
         envFrom:
           - configMapRef:
@@ -1730,7 +1725,7 @@ plugins:
 
         volumeMounts:
           - name: index-cache
-            mountPath: "/tmp/retrohunt-index-cache"
+            mountPath: "/data/index-cache"
 
         # Secrets in baseEnv remain available on the primary container.
         # Azure/S3 and cache settings were moved from extraContainers.worker.
@@ -1758,7 +1753,7 @@ plugins:
           # Duplicate critical settings here so the worker does not depend
           # on whether the chart converts plugin config into uppercase env.
           - name: PLUGIN_INDEX_CACHE_DIR
-            value: "/tmp/retrohunt-index-cache"
+            value: "/data/index-cache"
           # Cache ceiling 90 GiB, eviction target 80 GiB, free-space reserve 10 GiB.
           - name: PLUGIN_INDEX_CACHE_MAX_BYTES
             value: "96636764160"
