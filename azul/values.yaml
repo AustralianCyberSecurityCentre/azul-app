@@ -1659,18 +1659,23 @@ plugins:
       max_retries: "10"
       PLUGIN_ENABLE_MEM_LIMITS: "false"
 
-      # Python shim: stage and search .bgi objects in bounded local batches.
+      # Worker-local index reuse: evict towards 80 GiB before exceeding 90 GiB.
+      # Reserve 10 GiB of real free space before downloading a new index.
       PLUGIN_INDEX_CACHE_DIR: "/tmp/retrohunt-index-cache"
-      # 80 GiB max index bytes per batch within the 100 GiB emptyDir.
-      PLUGIN_INDEX_CACHE_MAX_BYTES: "85899345920"
+      PLUGIN_INDEX_CACHE_MAX_BYTES: "96636764160"
+      PLUGIN_INDEX_CACHE_TARGET_BYTES: "85899345920"
+      PLUGIN_INDEX_CACHE_FREE_BYTES: "10737418240"
       PLUGIN_INDEX_FETCH_WORKERS: "4"
       PLUGIN_INDEX_LIST_TIMEOUT_SECONDS: "120"
       PLUGIN_INDEX_FETCH_TIMEOUT_SECONDS: "1800"
 
-      # Redis-coordinated distributed hunts; opt in after deploying compatible worker images.
-      PLUGIN_DISTRIBUTED_HUNTS: "false"
-      PLUGIN_HUNT_SHARDS: "8"
-      PLUGIN_HUNT_MAX_PARALLEL_SHARDS: "4"
+      # Share workers fairly between queued hunts after each shard completes.
+      # Set worker count to the number of worker replicas in this scheduling pool.
+      PLUGIN_DISTRIBUTED_HUNTS: "true"
+      PLUGIN_HUNT_WORKER_COUNT: "4"
+      PLUGIN_HUNT_WORKER_POOL: "default"
+      PLUGIN_HUNT_SHARDS: "32"
+      PLUGIN_HUNT_MAX_PARALLEL_SHARDS: "32"
       PLUGIN_HUNT_SHARD_LEASE_SECONDS: "180"
       PLUGIN_HUNT_SHARD_MAX_RETRIES: "3"
 
@@ -1689,8 +1694,8 @@ plugins:
         maxFileSize: "100000000"
         useSmartScaler: false
 
-        # Pod-local storage only. Do not use a persistentVolumeClaim.
-        # Provision from measured .bgi sizes; 100Gi is an initial ceiling.
+        # NOTE: emptyDir is not persistent; for cache reuse after pod recreation,
+        # replace this volume with a per-worker 100Gi PVC via a StatefulSet/chart support.
         volumes:
           - name: index-cache
             emptyDir:
@@ -1754,8 +1759,12 @@ plugins:
           # on whether the chart converts plugin config into uppercase env.
           - name: PLUGIN_INDEX_CACHE_DIR
             value: "/tmp/retrohunt-index-cache"
-          # batch size
+          # Cache ceiling 90 GiB, eviction target 80 GiB, free-space reserve 10 GiB.
           - name: PLUGIN_INDEX_CACHE_MAX_BYTES
+            value: "96636764160"
+          - name: PLUGIN_INDEX_CACHE_TARGET_BYTES
+            value: "85899345920"
+          - name: PLUGIN_INDEX_CACHE_FREE_BYTES
             value: "10737418240"
           - name: PLUGIN_INDEX_FETCH_WORKERS
             value: "4"
@@ -1767,10 +1776,14 @@ plugins:
           # Distributed Retrohunt settings (primary worker container).
           - name: PLUGIN_DISTRIBUTED_HUNTS
             value: "true"
-          - name: PLUGIN_HUNT_SHARDS
-            value: "8"
-          - name: PLUGIN_HUNT_MAX_PARALLEL_SHARDS
+          - name: PLUGIN_HUNT_WORKER_COUNT
             value: "4"
+          - name: PLUGIN_HUNT_WORKER_POOL
+            value: "default"
+          - name: PLUGIN_HUNT_SHARDS
+            value: "32"
+          - name: PLUGIN_HUNT_MAX_PARALLEL_SHARDS
+            value: "32"
           - name: PLUGIN_HUNT_SHARD_LEASE_SECONDS
             value: "180"
           - name: PLUGIN_HUNT_SHARD_MAX_RETRIES
