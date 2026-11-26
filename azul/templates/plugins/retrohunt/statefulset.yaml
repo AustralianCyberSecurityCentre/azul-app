@@ -1,8 +1,8 @@
-{{- /* Dedicated PVC per Retrohunt worker. Set plugins.retrohunt.type: stateful
-      to prevent plugin-maker.yaml from also creating a Deployment and HPA. */ -}}
+{{- /* Dedicated PVC per Retrohunt worker. Set retrohunt-worker.stateful: true
+      to have plugin-maker.yaml skip the standard Deployment and HPA. */ -}}
 {{- $group := .Values.plugins.retrohunt -}}
 {{- $worker := index $group.plugins "retrohunt-worker" -}}
-{{- if and .Values.pluginsEnabled $group.enabled (eq $group.type "stateful") $worker (ne $worker.enabled false) -}}
+{{- if and .Values.pluginsEnabled (ne $group.enabled false) (eq $group.type "standard") $worker $worker.stateful (ne $worker.enabled false) -}}
 {{- $replicas := int (default .Values.pluginHPA.minReplicas $worker.minReplicas) -}}
 {{- $maxReplicas := int (default $replicas $worker.maxReplicas) -}}
 {{- if ne $replicas $maxReplicas -}}

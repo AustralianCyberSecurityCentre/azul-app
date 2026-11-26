@@ -1643,7 +1643,7 @@ plugins:
   # Retrohunt's Python shim downloads published .bgi objects from Azure/S3.
   # No Retrohunt PVC, CLI, ingestor, or indexer container is deployed.
   retrohunt:
-    type: stateful
+    type: standard
     enabled: true
     # Keep the existing hunt cleanup cron schedule.
     schedule: "0 2 * * *"
@@ -1681,6 +1681,8 @@ plugins:
 
     plugins:
       retrohunt-worker:
+        # Use the dedicated StatefulSet with per-replica persistent storage.
+        stateful: true
         additionalLabels:
           allow-egress-redis: "true"
           # Confirm the chart's network policy permits egress to Azure Blob.
@@ -1722,6 +1724,9 @@ plugins:
           limits:
             memory: "4Gi"
             cpu: "1"
+
+        # The PVC is declared in statefulset.yaml; keep this key for the chart schema.
+        volumes: []
 
         volumeMounts:
           - name: index-cache

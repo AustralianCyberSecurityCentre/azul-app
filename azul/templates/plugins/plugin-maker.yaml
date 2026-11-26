@@ -33,7 +33,7 @@
         {{/* ------------------------------------------------------- */}}
         {{/* STANDARD PLUGIN */}}
         {{/* ------------------------------------------------------- */}}
-        {{- if eq $group.type "standard"}}
+        {{- if and (eq $group.type "standard") (not $plugin.stateful) }}
           {{- if gt (len (default (list) $plugin.instanceOverrides)) 1 }}
             {{/* Plugin with hardcoded pod variations that won't use a HPA */}}
             {{- range $instanceIndex, $overrides := $plugin.instanceOverrides }}
