@@ -2176,7 +2176,7 @@ images:
     plugin-pdftools: plugin-pdftools:20261123T0640-unstable@sha256:c36b1d2bf7a7961b381c06a6b86d8b437a54d6b7184bf87868371cc43fbb54a9
     plugin-python: plugin-python:20261123T0641-unstable@sha256:1ce84c2fe26286f4b73a27518725078fd91648860671eaa53146419b6c355a25
     plugin-repeated-bytes: plugin-repeated-bytes:20261122T1443-unstable@sha256:b3c30ef6bccb2e4ba5d55753cd4f8b1f3ccbc742d333080f6a228d713a712ef8
-    plugin-retrohunt: plugin-retrohunt:20261126T2330-unstable@sha256:3d926f61722332aef1edb089d007121a602286e6d2e0e2166dd16f4a30436efd
+    plugin-retrohunt: plugin-retrohunt:20261127T0420-unstable@sha256:ead3819d9ab303dc5bc941cc67a5250a44fa77bef2d141d3d616afce12e2bf39
     plugin-richid: plugin-richid:20261122T1444-unstable@sha256:70efcf28aac9fe1564d1ee1592202c4a40e1a0bc79670054bdf4b88d50ebb7da
     plugin-script-decoder: plugin-script-decoder:20261122T1447-unstable@sha256:5f1c92a8be0250b8acec85d03aa1b80e492abde0951a7d19f235301c32e31e8f
     plugin-shortcut: plugin-shortcut:20261122T1505-unstable@sha256:48bb0f97433af50cc4e4cd4707437c99a5d9e60c5c4321d42368e146ab97cc93
@@ -2198,4 +2198,4 @@ images:
     # plugin-report-feeds: dummy
     plugin-report-feeds: plugin-report-feeds:20261123T0713-unstable@sha256:4da8875e6d041c00dad16b37226cf1414000b524f0762613d19019f8bac16daf
     plugin-jadx: plugin-jadx:20261021T2133-unstable@sha256:175e49f62d8fded80107ba726a518884cca3cc0e8e507f3f1585e0457b23ba4e
-    plugin-retroindexer: plugin-retroindexer:20261122T2239-dev@sha256:6bb15b9de1637cbc43619edc936da6cd5d1a75cd25a34506558e663d762d654a
+    plugin-retroindexer: plugin-retroindexer:20261127T0245-dev@sha256:e1eaf8dea51740a2afd0a86aeaa5b8727f9c20f9b0ce5d5b50d21b36d534ebce
