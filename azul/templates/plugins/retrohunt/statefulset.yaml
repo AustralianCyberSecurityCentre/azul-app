@@ -1,0 +1,119 @@
+{{- /* Dedicated PVC per Retrohunt worker. Set retrohunt-worker.stateful: true
+      to have plugin-maker.yaml skip the standard Deployment and HPA. */ -}}
+{{- $group := .Values.plugins.retrohunt -}}
+{{- $worker := index $group.plugins "retrohunt-worker" -}}
+{{- if and .Values.pluginsEnabled (ne $group.enabled false) (eq $group.type "standard") $worker $worker.stateful (ne $worker.enabled false) -}}
+{{- $replicas := int (default .Values.pluginHPA.minReplicas $worker.minReplicas) -}}
+{{- $maxReplicas := int (default $replicas $worker.maxReplicas) -}}
+{{- if ne $replicas $maxReplicas -}}
+{{- fail "retrohunt StatefulSet uses fixed replicas: set retrohunt-worker minReplicas and maxReplicas to the same value" -}}
+{{- end -}}
+{{- $claimSize := default "100Gi" $worker.pvcSize -}}
+{{- $context := dict "root" . "k" "retrohunt-worker" "plugin" $worker "plugin_name" "plugin-retrohunt-worker" "deployment_name" "plugin-retrohunt-worker" "group" $group "group_name" "retrohunt" -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plugin-retrohunt-worker-headless
+  labels:
+    part-of: azul
+    section: plugins
+    component: retrohunt
+spec:
+  clusterIP: None
+  selector:
+    app: plugin-retrohunt-worker
+  ports:
+    - name: metrics
+      port: {{ default "8900" $worker.promPort }}
+      targetPort: {{ default "8900" $worker.promPort }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: plugin-retrohunt-worker
+  labels:
+    part-of: azul
+    section: plugins
+    component: retrohunt
+spec:
+  serviceName: plugin-retrohunt-worker-headless
+  replicas: {{ $replicas }}
+  podManagementPolicy: Parallel
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  selector:
+    matchLabels:
+      app: plugin-retrohunt-worker
+  template:
+    metadata:
+      labels:
+        app: plugin-retrohunt-worker
+        part-of: azul
+        section: plugins
+        component: retrohunt
+        allow-egress-dispatcher: "true"
+        {{- with $worker.additionalLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/config: {{ include "plugin.config" (dict "name" "plugin-retrohunt" "config" $group.config) | sha256sum }}
+        {{- if $worker.promMetricsEnabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ default "8900" $worker.promPort | quote }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $worker.debug }}
+      {{- include "soften.deployment" $context | nindent 6 }}
+      {{- else }}
+      {{- include "harden.deployment" $context | nindent 6 }}
+      {{- end }}
+      containers:
+        {{- include "plugin.container.main" $context | nindent 8 }}
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: {{ default "200Mi" $worker.tmp }}
+        {{- if .Values.CACertificateConfigMap }}
+        - name: ca-cert
+          configMap:
+            name: {{ .Values.CACertificateConfigMap }}
+        {{- end }}
+        {{- with $worker.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: index-cache
+        labels:
+          part-of: azul
+          section: plugins
+          component: retrohunt
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: {{ .Values.storageClassName | quote }}
+        resources:
+          requests:
+            storage: {{ $claimSize | quote }}
+{{- end }}

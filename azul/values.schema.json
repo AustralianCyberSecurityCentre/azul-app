@@ -29,7 +29,9 @@
             "type": "string"
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "additionalProperties": false
       }
     },
@@ -69,7 +71,10 @@
             "minimum": 0
           }
         },
-        "required": ["effect", "key"],
+        "required": [
+          "effect",
+          "key"
+        ],
         "additionalProperties": false
       }
     },
@@ -78,13 +83,22 @@
       "additionalProperties": false,
       "properties": {
         "runAsUser": {
-          "type": ["integer", "null"]
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "runAsGroup": {
-          "type": ["integer", "null"]
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "fsGroup": {
-          "type": ["integer", "null"]
+          "type": [
+            "integer",
+            "null"
+          ]
         }
       }
     },
@@ -107,7 +121,10 @@
       "additionalProperties": false
     },
     "pipconfig": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "storageClassName": {
       "type": "string"
@@ -177,11 +194,15 @@
               }
             }
           },
-          "required": ["limits"],
+          "required": [
+            "limits"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "additionalProperties": false
     },
     "coreHPA": {
@@ -191,7 +212,11 @@
           "$ref": "#/definitions/hpa"
         }
       ],
-      "required": ["averageUtilization", "maxReplicas", "minReplicas"]
+      "required": [
+        "averageUtilization",
+        "maxReplicas",
+        "minReplicas"
+      ]
     },
     "pluginHPA": {
       "allOf": [
@@ -286,14 +311,21 @@
               "type": "string"
             }
           },
-          "required": ["endpoint", "partition", "username"],
+          "required": [
+            "endpoint",
+            "partition",
+            "username"
+          ],
           "additionalProperties": false
         },
         "filestore": {
           "type": "object",
           "properties": {
             "backend": {
-              "enum": ["s3", "azure"]
+              "enum": [
+                "s3",
+                "azure"
+              ]
             },
             "endpoint": {
               "type": "string"
@@ -314,10 +346,19 @@
               "type": "boolean"
             },
             "aesEnabled": {
-              "enum": ["disabled", "enabled", "readonly"]
+              "enum": [
+                "disabled",
+                "enabled",
+                "readonly"
+              ]
             }
           },
-          "required": ["backend", "endpoint", "location", "xorEncoding"],
+          "required": [
+            "backend",
+            "endpoint",
+            "location",
+            "xorEncoding"
+          ],
           "additionalProperties": false
         },
         "redis": {
@@ -342,7 +383,9 @@
               "type": "integer"
             }
           },
-          "required": ["endpoint"],
+          "required": [
+            "endpoint"
+          ],
           "additionalProperties": false
         },
         "loki": {
@@ -352,7 +395,9 @@
               "type": "string"
             }
           },
-          "required": ["endpoint"],
+          "required": [
+            "endpoint"
+          ],
           "additionalProperties": false
         },
         "services": {
@@ -416,7 +461,9 @@
                     "additionalProperties": false
                   }
                 },
-                "required": ["topic"],
+                "required": [
+                  "topic"
+                ],
                 "additionalProperties": false
               }
             }
@@ -430,26 +477,30 @@
           "additionalProperties": false
         }
       },
-      "required": ["filestore", "kafka", "opensearch"],
+      "required": [
+        "filestore",
+        "kafka",
+        "opensearch"
+      ],
       "additionalProperties": false
     },
     "redis": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "enabled":{
+        "enabled": {
           "type": "boolean"
         },
         "resources": {
           "type": "object"
         },
         "pvcSize": {
-          "type":"string"
+          "type": "string"
         },
         "annotations": {
           "$ref": "#/definitions/label"
         },
-        "persistentVolumeClaimRetentionPolicy":{
+        "persistentVolumeClaimRetentionPolicy": {
           "type": "object",
           "additionalProperties": true
         },
@@ -458,10 +509,16 @@
           "additionalProperties": false,
           "properties": {
             "runAsUser": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "fsGroup": {
-              "type": ["integer", "null"]
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         }
@@ -533,13 +590,17 @@
               "type": "string"
             },
             "unavailable_help": {
-              "type":"string"
+              "type": "string"
             },
             "banner_message": {
               "type": "string"
             },
             "banner_severity": {
-              "enum": ["info", "warning", "error"]
+              "enum": [
+                "info",
+                "warning",
+                "error"
+              ]
             },
             "banner_dismissable": {
               "type": "boolean"
@@ -547,7 +608,7 @@
             "highlight_features": {
               "type": "array",
               "description": "List of feature names that should appear like tags if a binary has a value for it.",
-              "items":{
+              "items": {
                 "type": "string"
               }
             },
@@ -559,7 +620,13 @@
                   "if": {
                     "type": "string"
                   },
-                  "operator": { "enum": ["eq", "exists", "regex"] },
+                  "operator": {
+                    "enum": [
+                      "eq",
+                      "exists",
+                      "regex"
+                    ]
+                  },
                   "display_name": {
                     "type": "string"
                   },
@@ -573,24 +640,45 @@
                     }
                   }
                 },
-                "required": ["if", "operator", "display_name", "url"],
+                "required": [
+                  "if",
+                  "operator",
+                  "display_name",
+                  "url"
+                ],
                 "unevaluatedProperties": false,
                 "if": {
                   "properties": {
-                    "operator": { "enum": ["eq", "regex"] }
+                    "operator": {
+                      "enum": [
+                        "eq",
+                        "regex"
+                      ]
+                    }
                   }
                 },
                 "then": {
                   "properties": {
-                    "match": { "type": "string" }
+                    "match": {
+                      "type": "string"
+                    }
                   },
-                  "required": ["if", "operator", "match", "display_name", "url"]
+                  "required": [
+                    "if",
+                    "operator",
+                    "match",
+                    "display_name",
+                    "url"
+                  ]
                 }
               }
             }
           },
           "dependentRequired": {
-            "banner_message": ["banner_severity", "banner_dismissable"]
+            "banner_message": [
+              "banner_severity",
+              "banner_dismissable"
+            ]
           },
           "required": [
             "deployment_text",
@@ -625,7 +713,11 @@
           ]
         }
       },
-      "required": ["config", "replicas", "pdb"]
+      "required": [
+        "config",
+        "replicas",
+        "pdb"
+      ]
     },
     "dispatcher": {
       "type": "object",
@@ -641,8 +733,15 @@
           "type": "object",
           "properties": {
             "defaultLogLevel": {
-              "type":"string", 
-              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
+              "type": "string",
+              "enum": [
+                "DEBUG",
+                "INFO",
+                "WARN",
+                "WARNING",
+                "ERROR",
+                "FATAL"
+              ]
             },
             "metastore": {
               "type": "object",
@@ -692,7 +791,9 @@
           "additionalProperties": false
         }
       },
-      "required": ["config"],
+      "required": [
+        "config"
+      ],
       "additionalProperties": false
     },
     "lostTasks": {
@@ -720,10 +821,18 @@
         "tempCache": {
           "type": "object",
           "properties": {
-            "tmp": {"type": "string"},
-            "fcache": {"type": "string"},
-            "logs": {"type": "string"},
-            "alloy": {"type": "string"}
+            "tmp": {
+              "type": "string"
+            },
+            "fcache": {
+              "type": "string"
+            },
+            "logs": {
+              "type": "string"
+            },
+            "alloy": {
+              "type": "string"
+            }
           }
         },
         "resources": {
@@ -769,10 +878,18 @@
                 "tempCache": {
                   "type": "object",
                   "properties": {
-                    "tmp": {"type": "string"},
-                    "fcache": {"type": "string"},
-                    "logs": {"type": "string"},
-                    "alloy": {"type": "string"}
+                    "tmp": {
+                      "type": "string"
+                    },
+                    "fcache": {
+                      "type": "string"
+                    },
+                    "logs": {
+                      "type": "string"
+                    },
+                    "alloy": {
+                      "type": "string"
+                    }
                   }
                 },
                 "replicas": {
@@ -788,24 +905,36 @@
                   ]
                 }
               },
-              "required": ["args"],
+              "required": [
+                "args"
+              ],
               "additionalProperties": false
             }
           },
-          "required": ["config"],
+          "required": [
+            "config"
+          ],
           "additionalProperties": false
         }
       },
-      "required": ["kafka"],
+      "required": [
+        "kafka"
+      ],
       "additionalProperties": false
     },
     "metastore": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "status_index": { "$ref": "#/definitions/opensearchConfig" },
-        "plugin_index": { "$ref": "#/definitions/opensearchConfig" },
-        "binary_index": { "$ref": "#/definitions/opensearchConfig" },
+        "status_index": {
+          "$ref": "#/definitions/opensearchConfig"
+        },
+        "plugin_index": {
+          "$ref": "#/definitions/opensearchConfig"
+        },
+        "binary_index": {
+          "$ref": "#/definitions/opensearchConfig"
+        },
         "env": {
           "type": "object"
         },
@@ -878,7 +1007,9 @@
           }
         }
       },
-      "required": ["instances"],
+      "required": [
+        "instances"
+      ],
       "allOf": [
         {
           "$ref": "#/definitions/metastoreEnv"
@@ -889,32 +1020,40 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "webhooks":{
-            "type": "array",
-            "items":{
-              "additionalProperties": false,
-              "required": ["id", "description", "webhook_type", "url"],
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "description":{
-                  "type": "string"
-                },
-                "webhook_type": {
-                  "type": "string",
-                  "enum": ["msteams", "mattermost"]
-                },
-                "message_field": {
-                  "type": "string"
-                },
-                "url": {
-                  "type": "string"
-                }
+        "webhooks": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "description",
+              "webhook_type",
+              "url"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "webhook_type": {
+                "type": "string",
+                "enum": [
+                  "msteams",
+                  "mattermost"
+                ]
+              },
+              "message_field": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
               }
+            }
           }
         },
-        "enabled":{
+        "enabled": {
           "type": "boolean"
         },
         "max_security": {
@@ -926,7 +1065,7 @@
         "config_key": {
           "type": "string"
         },
-        "redis_db":{
+        "redis_db": {
           "type": "integer",
           "minimum": 0
         },
@@ -934,7 +1073,7 @@
           "type": "integer",
           "minimum": 1
         },
-        "alert_format":{
+        "alert_format": {
           "type": "string"
         },
         "max_alert_reattempts": {
@@ -955,7 +1094,7 @@
       },
       "then": {
         "properties": {
-          "webhooks":{
+          "webhooks": {
             "minItems": 1
           }
         }
@@ -1049,7 +1188,14 @@
             },
             "logLevel": {
               "type": "string",
-              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
+              "enum": [
+                "DEBUG",
+                "INFO",
+                "WARN",
+                "WARNING",
+                "ERROR",
+                "FATAL"
+              ]
             }
           }
         },
@@ -1121,17 +1267,19 @@
             "scopes": {
               "type": "string"
             },
-            "enable_pat":{
+            "enable_pat": {
               "type": "boolean"
             },
-            "security_index_username":{
+            "security_index_username": {
               "type": "string"
             },
-            "security_index":{
+            "security_index": {
               "type": "string"
             }
           },
-          "required": ["enabled"],
+          "required": [
+            "enabled"
+          ],
           "additionalProperties": false
         },
         "default": {
@@ -1189,12 +1337,18 @@
                         "pattern": "^[0-9]+$"
                       }
                     },
-                    "required": ["name", "priority"],
+                    "required": [
+                      "name",
+                      "priority"
+                    ],
                     "additionalProperties": false
                   }
                 }
               },
-              "required": ["options", "title"],
+              "required": [
+                "options",
+                "title"
+              ],
               "additionalProperties": false
             },
             "caveat": {
@@ -1226,7 +1380,11 @@
                         "pattern": "^[0-9]+$"
                       }
                     },
-                    "required": ["name", "min_priority", "max_priority"],
+                    "required": [
+                      "name",
+                      "min_priority",
+                      "max_priority"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -1261,7 +1419,9 @@
                         ]
                       }
                     },
-                    "required": ["name"],
+                    "required": [
+                      "name"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -1291,7 +1451,9 @@
                         "type": "boolean"
                       }
                     },
-                    "required": ["name"],
+                    "required": [
+                      "name"
+                    ],
                     "additionalProperties": false
                   }
                 }
@@ -1299,7 +1461,12 @@
               "additionalProperties": false
             }
           },
-          "required": ["caveat", "classification", "releasability", "tlp"],
+          "required": [
+            "caveat",
+            "classification",
+            "releasability",
+            "tlp"
+          ],
           "additionalProperties": false
         }
       },
@@ -1321,7 +1488,13 @@
         "type": "object",
         "properties": {
           "partition_unit": {
-            "enum": ["all", "year", "month", "week", "day"]
+            "enum": [
+              "all",
+              "year",
+              "month",
+              "week",
+              "day"
+            ]
           },
           "expire_events_after": {
             "type": "string",
@@ -1334,7 +1507,9 @@
           "exclude_from_backup": {
             "type": "boolean"
           },
-          "elastic": { "$ref": "#/definitions/opensearchConfig" },
+          "elastic": {
+            "$ref": "#/definitions/opensearchConfig"
+          },
           "icon_class": {
             "type": "string"
           },
@@ -1359,7 +1534,11 @@
                   "type": "boolean"
                 }
               },
-              "required": ["description", "name", "required"],
+              "required": [
+                "description",
+                "name",
+                "required"
+              ],
               "additionalProperties": false
             }
           },
@@ -1400,7 +1579,9 @@
     "pluginConfig": {
       "type": "object",
       "additionalProperties": {
-        "type": ["string"]
+        "type": [
+          "string"
+        ]
       },
       "required": [],
       "allOf": [
@@ -1468,8 +1649,8 @@
         },
         "retrohunt": {
           "allOf": [
-            { 
-             "$ref": "#/definitions/pluginGroup" 
+            {
+              "$ref": "#/definitions/pluginGroup"
             }
           ]
         },
@@ -1488,7 +1669,11 @@
             },
             "pullFromApi": {
               "type": "string",
-              "enum": ["vt", "azure", "disabled"]
+              "enum": [
+                "vt",
+                "azure",
+                "disabled"
+              ]
             },
             "plugins": {
               "$comment": "Force definition of vtfilefeedserver as it's a special case referenced by name.",
@@ -1500,7 +1685,9 @@
                       "$ref": "#/definitions/pluginIngress"
                     }
                   },
-                  "required": ["ingress"],
+                  "required": [
+                    "ingress"
+                  ],
                   "allOf": [
                     {
                       "$ref": "#/definitions/pluginGeneric"
@@ -1508,7 +1695,9 @@
                   ]
                 }
               },
-              "required": ["vtfilefeedserver"]
+              "required": [
+                "vtfilefeedserver"
+              ]
             }
           },
           "allOf": [
@@ -1589,7 +1778,9 @@
           "type": "string"
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "additionalProperties": false
     },
     "auditForwarder": {
@@ -1640,7 +1831,9 @@
         "headers": {
           "type": "object",
           "additionalProperties": {
-            "type": ["string"]
+            "type": [
+              "string"
+            ]
           }
         },
         "excludedLogPatterns": {
@@ -1655,12 +1848,17 @@
                 "type": "string"
               }
             },
-            "required": ["path", "userAgent"],
+            "required": [
+              "path",
+              "userAgent"
+            ],
             "additionalProperties": false
           }
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "additionalProperties": false
     },
     "apiServices": {
@@ -1675,9 +1873,16 @@
             "replicas": {
               "type": "integer"
             },
-            "logLevel":{
+            "logLevel": {
               "type": "string",
-              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
+              "enum": [
+                "DEBUG",
+                "INFO",
+                "WARN",
+                "WARNING",
+                "ERROR",
+                "FATAL"
+              ]
             }
           },
           "allOf": [
@@ -1705,7 +1910,14 @@
             },
             "logLevel": {
               "type": "string",
-              "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
+              "enum": [
+                "DEBUG",
+                "INFO",
+                "WARN",
+                "WARNING",
+                "ERROR",
+                "FATAL"
+              ]
             },
             "opensearch": {
               "type": "object",
@@ -1834,7 +2046,11 @@
       "properties": {
         "mode": {
           "type": "string",
-          "enum": ["off", "backup", "restore"]
+          "enum": [
+            "off",
+            "backup",
+            "restore"
+          ]
         },
         "restoreType": {
           "type": "string"
@@ -1844,10 +2060,17 @@
         },
         "s3AuthMode": {
           "description": "The type of S3 authentication to use.",
-          "enum": ["keys", "service_account"]
+          "enum": [
+            "keys",
+            "service_account"
+          ]
         },
         "aesState": {
-          "enum": ["disabled", "enabled", "readonly"]
+          "enum": [
+            "disabled",
+            "enabled",
+            "readonly"
+          ]
         },
         "externalS3Secure": {
           "type": "string"
@@ -1858,7 +2081,7 @@
         "label": {
           "type": "string"
         },
-        "nextBackupLabel":{
+        "nextBackupLabel": {
           "type": "string"
         },
         "bucketNamePrefix": {
@@ -1869,7 +2092,14 @@
         },
         "logLevel": {
           "type": "string",
-          "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
+          "enum": [
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "WARNING",
+            "ERROR",
+            "FATAL"
+          ]
         },
         "enableAutomaticAgeoff": {
           "type": "boolean"
@@ -1892,7 +2122,9 @@
         "backup": {
           "type": "object",
           "properties": {
-            "storagePvcSize": {"type": "string"}
+            "storagePvcSize": {
+              "type": "string"
+            }
           },
           "allOf": [
             {
@@ -1903,7 +2135,9 @@
         "restore": {
           "type": "object",
           "properties": {
-            "storagePvcSize": {"type": "string"}
+            "storagePvcSize": {
+              "type": "string"
+            }
           },
           "allOf": [
             {
@@ -1926,7 +2160,9 @@
           "additionalProperties": {
             "type": "string"
           },
-          "required": ["alloy"]
+          "required": [
+            "alloy"
+          ]
         },
         "customRegistry": {
           "type": "string"
@@ -1937,7 +2173,12 @@
           "additionalProperties": {
             "type": "string"
           },
-          "required": ["dispatcher", "docs", "restapi-server", "webui"]
+          "required": [
+            "dispatcher",
+            "docs",
+            "restapi-server",
+            "webui"
+          ]
         }
       }
     }
@@ -2073,7 +2314,9 @@
           "$ref": "#/definitions/ingressSecurity"
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "if": {
         "properties": {
           "enabled": {
@@ -2082,7 +2325,11 @@
         }
       },
       "then": {
-        "required": ["hosts", "secretName", "security"]
+        "required": [
+          "hosts",
+          "secretName",
+          "security"
+        ]
       },
       "else": {}
     },
@@ -2099,7 +2346,9 @@
           "minimum": 0
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "if": {
         "properties": {
           "enabled": {
@@ -2108,22 +2357,29 @@
         }
       },
       "then": {
-        "required": ["minAvailable"]
+        "required": [
+          "minAvailable"
+        ]
       },
       "else": {}
     },
     "labelSelector": {
       "type": "object",
-      "properties": {    
+      "properties": {
         "matchExpressions": {
           "type": "object",
           "properties": {
             "key": {
               "type": "string"
             },
-            "operator":{
+            "operator": {
               "type": "string",
-              "enum": ["In", "NotIn", "Exists", "DoesNotExist"]
+              "enum": [
+                "In",
+                "NotIn",
+                "Exists",
+                "DoesNotExist"
+              ]
             },
             "values": {
               "type": "array",
@@ -2135,7 +2391,7 @@
             "additionalProperties": false
           }
         },
-        "matchLabels":{
+        "matchLabels": {
           "type": "object"
         }
       },
@@ -2143,7 +2399,7 @@
     },
     "topologySpreadConstraints": {
       "type": "array",
-      "items":  {
+      "items": {
         "type": "object",
         "properties": {
           "matchLabelKeys": {
@@ -2157,7 +2413,7 @@
             "type": "integer",
             "minimum": 1
           },
-          "minDomains":{
+          "minDomains": {
             "type": "integer"
           },
           "nodeAffinityPolicy": {
@@ -2171,12 +2427,14 @@
           },
           "whenUnsatisfiable": {
             "type": "string",
-            "enum": ["DoNotSchedule", "ScheduleAnyway"]
+            "enum": [
+              "DoNotSchedule",
+              "ScheduleAnyway"
+            ]
           }
         },
         "additionalProperties": false
       }
-
     },
     "securityLabel": {
       "description": "A human readable security marking.",
@@ -2201,7 +2459,9 @@
           ]
         }
       },
-      "required": ["csp"]
+      "required": [
+        "csp"
+      ]
     },
     "csp": {
       "description": "Key:Value pairs used to build a Content Security Policy (CSP).",
@@ -2249,15 +2509,25 @@
               "type": "string"
             }
           },
-          "required": ["size", "path"],
+          "required": [
+            "size",
+            "path"
+          ],
           "additionalProperties": false
         },
         "error_log": {
           "type": "boolean"
         },
-        "logLevel":{
+        "logLevel": {
           "type": "string",
-          "enum": ["DEBUG", "INFO", "WARN", "WARNING", "ERROR", "FATAL"]
+          "enum": [
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "WARNING",
+            "ERROR",
+            "FATAL"
+          ]
         }
       },
       "allOf": [
@@ -2268,7 +2538,9 @@
           "$ref": "#/definitions/hpa"
         }
       ],
-      "required": ["command"]
+      "required": [
+        "command"
+      ]
     },
     "dispatcherEnv": {
       "description": "Key:Value configuration for Dispatcher.",
@@ -2288,7 +2560,11 @@
         }
       },
       "additionalProperties": {
-        "type": ["string", "number", "boolean"]
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
       }
     },
     "dispatcherWorkload": {
@@ -2318,10 +2594,18 @@
         "tempCache": {
           "type": "object",
           "properties": {
-            "tmp": {"type": "string"},
-            "fcache": {"type": "string"},
-            "logs": {"type": "string"},
-            "alloy": {"type": "string"}
+            "tmp": {
+              "type": "string"
+            },
+            "fcache": {
+              "type": "string"
+            },
+            "logs": {
+              "type": "string"
+            },
+            "alloy": {
+              "type": "string"
+            }
           }
         },
         "resources": {
@@ -2371,7 +2655,9 @@
           "additionalProperties": false
         }
       },
-      "required": ["enabled"]
+      "required": [
+        "enabled"
+      ]
     },
     "volumeMounts": {
       "description": "K8s volumeMounts definition.",
@@ -2392,7 +2678,10 @@
             "type": "boolean"
           }
         },
-        "required": ["mountPath", "name"],
+        "required": [
+          "mountPath",
+          "name"
+        ],
         "additionalProperties": false
       }
     },
@@ -2401,11 +2690,17 @@
       "type": "object",
       "patternProperties": {
         "^PLUGIN_.+$": {
-          "type": ["string", "object"]
+          "type": [
+            "string",
+            "object"
+          ]
         }
       },
       "additionalProperties": {
-        "type": ["string", "object"]
+        "type": [
+          "string",
+          "object"
+        ]
       }
     },
     "pluginEnv": {
@@ -2418,7 +2713,11 @@
             "type": "string"
           },
           "value": {
-            "type": ["string", "number", "boolean"]
+            "type": [
+              "string",
+              "number",
+              "boolean"
+            ]
           },
           "valueFrom": {
             "type": "object",
@@ -2433,7 +2732,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["key", "name"],
+                "required": [
+                  "key",
+                  "name"
+                ],
                 "additionalProperties": false
               },
               "configMapKeyRef": {
@@ -2446,7 +2748,10 @@
                     "type": "string"
                   }
                 },
-                "required": ["key", "name"],
+                "required": [
+                  "key",
+                  "name"
+                ],
                 "additionalProperties": false
               }
             }
@@ -2454,10 +2759,16 @@
         },
         "anyOf": [
           {
-            "required": ["name", "value"]
+            "required": [
+              "name",
+              "value"
+            ]
           },
           {
-            "required": ["name", "valueFrom"]
+            "required": [
+              "name",
+              "valueFrom"
+            ]
           }
         ]
       }
@@ -2474,7 +2785,9 @@
           "$ref": "#/definitions/pluginIngress"
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "allOf": [
         {
           "$ref": "#/definitions/resources"
@@ -2610,7 +2923,9 @@
               "type": "string"
             }
           },
-          "required": ["template"]
+          "required": [
+            "template"
+          ]
         }
       ]
     },
@@ -2621,6 +2936,10 @@
       "properties": {
         "enabled": {
           "type": "boolean"
+        },
+        "stateful": {
+          "type": "boolean",
+          "description": "Use a dedicated StatefulSet rather than a standard Deployment/HPA."
         },
         "debug": {
           "description": "DO NOT USE IN PRODUCTION. Runs container as root to support debugging.",
@@ -2743,7 +3062,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "nameSuffix":{
+              "nameSuffix": {
                 "description": "Name suffix for the particular plugin pod instance.",
                 "type": "string"
               },
@@ -2756,7 +3075,9 @@
                 ]
               }
             },
-            "required": ["nameSuffix"]
+            "required": [
+              "nameSuffix"
+            ]
           }
         },
         "strategy": {
@@ -2764,7 +3085,10 @@
           "type": "object",
           "properties": {
             "type": {
-              "enum": ["Recreate", "RollingUpdate"]
+              "enum": [
+                "Recreate",
+                "RollingUpdate"
+              ]
             },
             "rollingUpdate": {
               "type": "object",
@@ -2779,7 +3103,9 @@
               "additionalProperties": false
             }
           },
-          "required": ["type"],
+          "required": [
+            "type"
+          ],
           "additionalProperties": false
         },
         "volumes": {
@@ -2798,16 +3124,20 @@
                     "type": "string"
                   }
                 },
-                "required": ["name"]
+                "required": [
+                  "name"
+                ]
               },
-              "secret":{
+              "secret": {
                 "type": "object",
                 "properties": {
                   "name": {
                     "type": "string"
                   }
                 },
-                "required": ["secretName"]
+                "required": [
+                  "secretName"
+                ]
               },
               "emptyDir": {
                 "type": "object"
@@ -2816,9 +3146,15 @@
                 "type": "object"
               }
             },
-            "required": ["name"],
+            "required": [
+              "name"
+            ],
             "additionalProperties": false
           }
+        },
+        "pvcSize": {
+          "type": "string",
+          "description": "Per-worker PVC storage request for StatefulSet plugins."
         },
         "tmp": {
           "description": "Specifies the /tmp size limit.",
@@ -2845,23 +3181,47 @@
                 "minItems": 1
               }
             },
-            "required": ["instanceOverrides"]
+            "required": [
+              "instanceOverrides"
+            ]
           },
           "then": {
             "not": {
               "anyOf": [
-                { "required": ["maxReplicas"] },
-                { "required": ["minReplicas"] },
-                { "required": ["averageUtilization"] },
-                { "required": ["useSmartScaler"] },
-                { "required": ["maxQueueLength"] }
+                {
+                  "required": [
+                    "maxReplicas"
+                  ]
+                },
+                {
+                  "required": [
+                    "minReplicas"
+                  ]
+                },
+                {
+                  "required": [
+                    "averageUtilization"
+                  ]
+                },
+                {
+                  "required": [
+                    "useSmartScaler"
+                  ]
+                },
+                {
+                  "required": [
+                    "maxQueueLength"
+                  ]
+                }
               ]
             }
           }
         }
       ],
       "dependencies": {
-        "volumeMounts": ["volumes"]
+        "volumeMounts": [
+          "volumes"
+        ]
       }
     },
     "source": {
@@ -2914,7 +3274,11 @@
         },
         "includeSubmodules": {
           "description": "The type of clone to perform and if it should include submodules as well.",
-          "enum": ["off", "shallow", "recursive"]
+          "enum": [
+            "off",
+            "shallow",
+            "recursive"
+          ]
         },
         "security": {
           "description": "The human readable security marking of the source content.",
@@ -2943,7 +3307,9 @@
           "$ref": "#/definitions/hpa"
         }
       },
-      "required": ["enabled"],
+      "required": [
+        "enabled"
+      ],
       "if": {
         "properties": {
           "enabled": {
@@ -2952,7 +3318,10 @@
         }
       },
       "then": {
-        "required": ["branch", "repo"]
+        "required": [
+          "branch",
+          "repo"
+        ]
       },
       "else": {}
     },
@@ -2967,7 +3336,9 @@
         "type": {
           "const": "standard"
         },
-        "debug": { "type": "boolean" },
+        "debug": {
+          "type": "boolean"
+        },
         "env": {
           "$ref": "#/definitions/pluginEnv"
         },
@@ -2990,15 +3361,23 @@
             "$ref": "#/definitions/pluginGeneric"
           }
         },
-        "pvc": { "type": "object" },
-        "demoConfig": { "type": "boolean" },
-        "pullFromApi": { "type": "string" },
+        "pvc": {
+          "type": "object"
+        },
+        "demoConfig": {
+          "type": "boolean"
+        },
+        "pullFromApi": {
+          "type": "string"
+        },
         "schedule": {
           "type": "string",
           "description": "Cron schedule for this plugin"
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "$comment": "If `enabled` is not provided (ie `null`) it is considered `true`",
       "if": {
         "properties": {
@@ -3009,7 +3388,9 @@
       },
       "then": {},
       "else": {
-        "required": ["plugins"]
+        "required": [
+          "plugins"
+        ]
       }
     },
     "pluginSrc": {
@@ -3018,12 +3399,18 @@
       "type": "object",
       "properties": {
         "type": {
-          "enum": ["maco", "yara-x", "suricata"]
+          "enum": [
+            "maco",
+            "yara-x",
+            "suricata"
+          ]
         },
         "image": {
           "type": "string"
         },
-        "debug": { "type": "boolean" },
+        "debug": {
+          "type": "boolean"
+        },
         "enabled": {
           "type": "boolean"
         },
@@ -3055,7 +3442,10 @@
           }
         }
       },
-      "required": ["enabled", "type"],
+      "required": [
+        "enabled",
+        "type"
+      ],
       "if": {
         "properties": {
           "enabled": {
@@ -3064,7 +3454,10 @@
         }
       },
       "then": {
-        "required": ["image", "sources"]
+        "required": [
+          "image",
+          "sources"
+        ]
       },
       "else": {}
     },
@@ -3088,7 +3481,9 @@
           ]
         }
       },
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "allOf": [
         {
           "if": {
@@ -3153,7 +3548,10 @@
           "type": "string"
         }
       },
-      "required": ["number_of_replicas", "number_of_shards"],
+      "required": [
+        "number_of_replicas",
+        "number_of_shards"
+      ],
       "additionalProperties": false
     }
   }
